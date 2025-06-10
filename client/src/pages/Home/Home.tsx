@@ -32,15 +32,3 @@ function Accueil() {
 }
 
 export default Accueil;
-
-// APP_PORT=3310
-// DATABASE_URL=postgresql://postgres.pybwvhylthnzyfhwgacr:Ilovefood2025!@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
-
-// useEffect(() => {
-//     fetch(API_URL)
-//       .then((response) => response.json())
-//       .then((data) => {
-//         setItems(data);
-//         setItemsApi(data);
-//       });
-//   }, []);
