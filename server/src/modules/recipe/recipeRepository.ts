@@ -1,33 +1,28 @@
+import type { TypeRecipe } from "../../../../client/src/types/TypeFiles";
 import databaseClient from "../../../database/client"; // On suppose que c’est un client pg déjà configuré
 
-type Item = {
-  id: number;
-  title: string;
-  user_id: number;
-};
+class recipeRepository {
+  //   // Création (C de CRUD)
+  //   async create(item: Omit<Item, "id">) {
+  //     // En PG, on utilise $1, $2 comme placeholders, et on ajoute RETURNING id
+  //     const result = await databaseClient.query<{ id: number }>(
+  //       /* sql */ `
+  //         INSERT INTO item (title, user_id)
+  //         VALUES ($1, $2)
+  //         RETURNING id
+  //       `,
+  //       [item.title, item.user_id],
+  //     );
 
-class ItemRepository {
-  // Création (C de CRUD)
-  async create(item: Omit<Item, "id">) {
-    // En PG, on utilise $1, $2 comme placeholders, et on ajoute RETURNING id
-    const result = await databaseClient.query<{ id: number }>(
-      /* sql */ `
-        INSERT INTO item (title, user_id)
-        VALUES ($1, $2)
-        RETURNING id
-      `,
-      [item.title, item.user_id],
-    );
-
-    // result.rows[0].id contient l'ID retourné
-    return result.rows[0].id;
-  }
+  //     // result.rows[0].id contient l'ID retourné
+  //     return result.rows[0].id;
+  //   }
 
   // Lecture d’un seul élément (R de CRUD)
   async read(id: number) {
-    const result = await databaseClient.query<Item>(
+    const result = await databaseClient.query<TypeRecipe>(
       /* sql */ `
-        SELECT * FROM item
+        SELECT * FROM recipe
         WHERE id = $1
       `,
       [id],
@@ -39,9 +34,9 @@ class ItemRepository {
 
   // Lecture de tous les éléments
   async readAll() {
-    const result = await databaseClient.query<Item>(
+    const result = await databaseClient.query<TypeRecipe>(
       /* sql */ `
-        SELECT * FROM item
+        SELECT * FROM recipe
       `,
       [], // Pas de paramètres ici
     );
@@ -49,7 +44,7 @@ class ItemRepository {
     return result.rows;
   }
 
-  // (U de CRUD) -- Exemple de squelette pour la mise à jour, si tu veux t’entraîner :
+  // // (U de CRUD) -- Exemple de squelette pour la mise à jour, si tu veux t’entraîner :
   // async update(item: Item) {
   //   const result = await databaseClient.query(
   //     `
@@ -63,7 +58,7 @@ class ItemRepository {
   //   return result.rows[0] as Item;
   // }
 
-  // (D de CRUD) -- Exemple de squelette pour la suppression :
+  // // (D de CRUD) -- Exemple de squelette pour la suppression :
   // async delete(id: number) {
   //   const result = await databaseClient.query(
   //     `
@@ -76,4 +71,4 @@ class ItemRepository {
   // }
 }
 
-export default new ItemRepository();
+export default new recipeRepository();

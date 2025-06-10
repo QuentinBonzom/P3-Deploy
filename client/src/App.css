@@ -1,3 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900");
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "daisyui";
+
+* {
+  box-sizing: border-box;
+  font-family: "league spartan", sans-serif;
+  letter-spacing: 1px;
+}
+
+:root {
+  --color-primary: #dd682d;
+  --color-secondary: #452a00;
+  --color-background: #fde9cc;
+}
+
+body {
+  background-color: #fde9cc;
+}
+
+h1 {
+  font-size: 28px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+h2,
+p {
+  color: var(--color-secondary);
+}
+
+a {
+  color: var(--color-secondary);
+  font-weight: semi-bold;
+}
