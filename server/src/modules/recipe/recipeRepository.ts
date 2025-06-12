@@ -69,6 +69,74 @@ class recipeRepository {
   //   );
   //   return result.rowCount; // renvoie 1 si un enregistrement a bien été supprimé
   // }
+
+  async search(id: string) {
+    const searchWord = `%${id}%`; // On utilise le caractère de pourcentage pour la recherche partielle
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name , d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      WHERE r.name ILIKE $1 OR i.name ILIKE $1;
+      `,
+      [searchWord], // Pas de paramètres ici
+    );
+
+    return result.rows;
+  }
+
+  async category(id: string) {
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      LEFT JOIN category c ON r.id_category = c.id
+      WHERE c.name ILIKE $1;
+    `,
+      [id],
+    );
+    return result.rows;
+  }
+
+  async diet(id: string) {
+    const searchWord = `%${id}%`;
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      WHERE d.name ILIKE $1;
+    `,
+      [searchWord],
+    );
+    return result.rows;
+  }
+
+  async difficulty(id: string) {
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      WHERE r.difficulty ILIKE $1;
+    `,
+      [id],
+    );
+    return result.rows;
+  }
 }
 
 export default new recipeRepository();

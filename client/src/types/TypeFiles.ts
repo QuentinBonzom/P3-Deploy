@@ -6,6 +6,7 @@ export interface TypeRecipe {
   difficulty: string;
   steps: string;
   kcal: number;
+  recipe_name: string;
 }
 
 export interface TypeDiet {
