@@ -3,37 +3,37 @@ import { Link } from "react-router";
 function Footer() {
   return (
     <>
-      <section className=" flex flex-row pb-5">
-        <section className="flex flex-column justify-center gap-5 p-5 pt-10">
-          <p>
-            <a href="https://www.facebook.com/">
-              <i className="text-4xl bi bi-facebook" />
-            </a>
+      <section className="border-t-2 border-primary flex flex-col md:flex-row justify-between items-center md:items-start px-4 md:px-8 xl:px-16">
+        <div className="order-1 md:order-2 flex justify-center py-4 w-full md:w-1/3">
+          <img
+            className="max-w-[30%] md:max-w-[30%] xl:max-w-[30%]"
+            src="/cook-bonjour.png"
+            alt="bonjour"
+          />
+        </div>
+        <div className="order-2 md:order-3 flex flex-col items-center md:items-end lg:py-10 md:py-8 xl:py-10 w-full md:w-1/3 text-base md:text-lg xl:text-xl">
+          <p className="font-bold">
+            <Link to="/Contact">Contact</Link>
           </p>
-          <p>
-            <a href="https://www.instagram.com/">
-              <i className="text-4xl bi bi-instagram" />
-            </a>
+          <p className="font-bold">
+            <Link to="/Mentions_legales">Mentions légales</Link>
           </p>
-          <p>
-            <a href="https://fr.pinterest.com/">
-              {" "}
-              <i className="text-4xl bi bi-pinterest" />
-            </a>
-          </p>
-        </section>
-        <section>
-          <img src="../public/cook-bonjour.png" alt="bonjour" />
-        </section>
-        <section className="flex flex-column items-center gap-1">
-          <Link to="/Contact">Contact</Link>
-          <Link to="/Mentions_legales">Mentions légales</Link>
-
-          <p className="font-semibold">
-            <i className="text-xl bi bi-c-circle" /> Easy Cook
-          </p>
-        </section>
+        </div>
+        <div className="order-3 md:order-1 flex justify-center md:justify-start gap-2 py-4 lg:py-10 md:py-8 xl:py-10 w-full md:w-1/3">
+          <a href="https://www.facebook.com/">
+            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-facebook" />
+          </a>
+          <a href="https://www.instagram.com/">
+            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-instagram" />
+          </a>
+          <a href="https://fr.pinterest.com/">
+            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-pinterest" />
+          </a>
+        </div>
       </section>
+      <p className="text-center font-bold py-2 text-sm md:text-base xl:text-lg">
+        <i className="bi bi-c-circle" /> Easy Cook
+      </p>
     </>
   );
 }
