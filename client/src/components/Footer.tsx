@@ -23,7 +23,7 @@ function Footer() {
           </p>
         </section>
         <section>
-          <img src="../public/cook-bonjour.png" alt="bonjour" />
+          <img className="h-20 w-20" src="/cook-bonjour.png" alt="bonjour" />
         </section>
         <section className="flex flex-column items-center gap-1">
           <Link to="/Contact">Contact</Link>

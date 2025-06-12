@@ -21,15 +21,15 @@ const browse: RequestHandler = async (req, res, next) => {
 const read: RequestHandler = async (req, res, next) => {
   try {
     // Fetch a specific item based on the provided ID
-    const itemId = Number(req.params.id);
-    const item = await recipeRepository.read(itemId);
+    const recipiesId = Number(req.params.id);
+    const recipe = await recipeRepository.read(recipiesId);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with the item in JSON format
-    if (item == null) {
+    if (recipe == null) {
       res.sendStatus(404);
     } else {
-      res.json(item);
+      res.json(recipe);
     }
   } catch (err) {
     // Pass any errors to the error-handling middleware
@@ -57,4 +57,60 @@ const read: RequestHandler = async (req, res, next) => {
 //   }
 // };
 
-export default { browse, read };
+const search: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all items
+    const searchWord = String(req.params.id);
+    const recipies = await recipeRepository.search(searchWord);
+
+    // Respond with the items in JSON format
+    res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const category: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all items
+    const choosedCategory = String(req.params.id);
+    const recipies = await recipeRepository.category(choosedCategory);
+
+    // Respond with the items in JSON format
+    res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const diet: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all items
+    const choosedDiet = String(req.params.id);
+    const recipies = await recipeRepository.diet(choosedDiet);
+
+    // Respond with the items in JSON format
+    res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const difficulty: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all items
+    const choosedDifficulty = String(req.params.id);
+    const recipies = await recipeRepository.difficulty(choosedDifficulty);
+
+    // Respond with the items in JSON format
+    res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+export default { browse, read, search, category, diet, difficulty };
