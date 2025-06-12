@@ -1,33 +1,12 @@
-import type { TypeIngredient } from "@/types/TypeFiles";
-import { useEffect, useState } from "react";
+import OurSelection from "../../components/OurSelection";
+import SearchAccueil from "../../components/SearchAccueil";
 
 function Accueil() {
-  //const [recipes, setRecipies] = useState([] as TypeRecipe[]);
-  const [ingredients, setIngredients] = useState([] as TypeIngredient[]);
-
-  useEffect(() => {
-    // fetch("http://localhost:3310/api/recipe")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setRecipies(data);
-    //   });
-    fetch("http://localhost:3310/api/ingredient")
-      .then((response) => response.json())
-      .then((data) => {
-        setIngredients(data);
-      });
-  }, []);
-
   return (
-    <>
-      <h1>liste des recettes</h1>
-      {ingredients.map((ingredient) => (
-        <section key={ingredient.id}>
-          <h1>{ingredient.name}</h1>
-        </section>
-      ))}
-      ;
-    </>
+    <section className="flex flex-col ">
+      <SearchAccueil />
+      <OurSelection />
+    </section>
   );
 }
 

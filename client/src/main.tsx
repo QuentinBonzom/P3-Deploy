@@ -14,7 +14,7 @@ import Admin from "./pages/Admin/Admin.tsx";
 import Contact from "./pages/Contact/Contact.tsx";
 // Import additional components for new routes
 import Home from "./pages/Home/Home.tsx";
-import List from "./pages/List/List.tsx";
+import List from "./pages/List_Course/List.tsx";
 import Mentions from "./pages/Mentions/Mentions.tsx";
 import Mixer from "./pages/Mixer/Mixer.tsx";
 import NotFound from "./pages/NotFound.tsx";
