@@ -4,9 +4,11 @@ export interface TypeRecipe {
   time_preparation: number;
   description: string;
   difficulty: string;
+  picture: string;
   steps: string;
   kcal: number;
   recipe_name: string;
+  rate: number;
 }
 
 export interface TypeDiet {
@@ -51,4 +53,12 @@ export interface TypeUstencil {
 export interface TypeList {
   id: number;
   user_id: number;
+}
+
+export interface TypeRandom {
+  id: number;
+  picture: string;
+  name: string;
+  time_preparation: number;
+  rate: number;
 }

@@ -10,7 +10,7 @@ function NavBar_Mobile() {
 
   return (
     <div>
-      <section className="absolute top-5 right-5">
+      <section className="absolute top-5 right-5 ">
         <button
           type="button"
           className={`flex flex-col justify-between w-8 h-6 ${isOpen ? "open" : ""}`}
@@ -35,7 +35,7 @@ function NavBar_Mobile() {
       </section>
 
       {isOpen && (
-        <div className=" absolute w-[40%] right-0 shadow-2xl pt-2 bg-[#fde9cc] rounded-bl-2xl">
+        <div className=" absolute w-[40%] right-0 shadow-2xl pt-2 bg-[#fde9cc] rounded-bl-2xl z-3">
           <div className="font-semibold pb-4 text-right ">
             <Link
               to="/Recettes"

@@ -14,6 +14,7 @@ router.get("/api/ingredient", ingredientActions.browse);
 // Define recipe-related routes
 import recipeActions from "./modules/recipe/recipeActions";
 
+router.get("/api/recipe/random", recipeActions.random);
 router.get("/api/recipe", recipeActions.browse);
 router.get("/api/recipe/:id", recipeActions.read);
 router.get("/api/recipe/search/:id", recipeActions.search);
