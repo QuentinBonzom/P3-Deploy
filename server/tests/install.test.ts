@@ -1,47 +1,38 @@
-// // Load environment variables from .env file
-// import "dotenv/config";
+// Charge les variables d'environnement depuis le fichier .env
+import "dotenv/config";
+import fs from "node:fs";
 
-// import fs from "node:fs";
+// Connexion à la base PostgreSQL via Supabase (pg)
+import databaseClient from "../database/client";
+import type { Rows } from "../database/client";
 
-// import databaseClient from "../database/client";
+// Fermer la connexion après tous les tests
+afterAll((done) => {
+  databaseClient.end().then(done);
+});
 
-// import type { Rows } from "../database/client";
+describe("Installation", () => {
+  test("Vous avez créé /server/.env", () => {
+    expect(fs.existsSync(`${__dirname}/../.env`)).toBe(true);
+  });
 
-// // Close the database connection after all tests have run
-// afterAll((done) => {
-//   databaseClient.end().then(done);
-// });
+  test("Vous avez conservé /server/.env.sample", () => {
+    expect(fs.existsSync(`${__dirname}/../.env.sample`)).toBe(true);
+  });
 
-// // Test suite for environment installation
-// describe("Installation", () => {
-//   // Test: Check if the .env file exists
-//   test("You have created /server/.env", async () => {
-//     expect(fs.existsSync(`${__dirname}/../.env`)).toBe(true);
-//   });
+  test("Le fichier .env contient des infos valides de connexion à PostgreSQL", async () => {
+    expect.assertions(0);
+    try {
+      // Vérifie juste qu'une requête passe sans erreur
+      await databaseClient.query("SELECT 1");
+    } catch (error) {
+      expect(error).toBeUndefined(); // va forcer l'échec si la connexion échoue
+    }
+  });
 
-//   // Test: Check if the .env.sample file exists
-//   test("You have retained /server/.env.sample", async () => {
-//     expect(fs.existsSync(`${__dirname}/../.env.sample`)).toBe(true);
-//   });
-
-//   // Test: Check if the .env file is properly filled with valid database connection information
-//   test("You have filled /server/.env with valid information to connect to your database", async () => {
-//     expect.assertions(0);
-
-//     try {
-//       // Check if the connection is successful
-//       await databaseClient.connect();
-//     } catch (error) {
-//       expect(error).toBeDefined();
-//     }
-//   });
-
-//   // Test: Check if the database migration scripts have been executed
-//   test("You have executed the db:migrate scripts", async () => {
-//     // Query the 'item' table to check if any data has been inserted
-//     const result = await databaseClient.query<Rows>("select * from item");
-
-//     // Expecting rows to be returned, indicating successful migration
-//     expect(result.rows.length).toBeGreaterThanOrEqual(0);
-//   });
-// });
+  test("Les scripts de migration de la base ont été exécutés", async () => {
+    // ⚠️ Mets ici une vraie table de ta base PostgreSQL
+    const { rows } = await databaseClient.query("SELECT * FROM recipe LIMIT 1");
+    expect(Array.isArray(rows)).toBe(true);
+  });
+});
