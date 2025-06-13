@@ -77,7 +77,7 @@ class recipeRepository {
     const searchWord = `%${id}%`; // On utilise le caractère de pourcentage pour la recherche partielle
     const result = await databaseClient.query<TypeRecipe>(
       `
-      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name , d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name , d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
       FROM recipe r
       JOIN recip_ingredient ri ON r.id = ri.recipe_id
       JOIN ingredient i ON ri.ingredient_id = i.id
