@@ -113,4 +113,17 @@ const difficulty: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse, read, search, category, diet, difficulty };
+const random: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all items
+
+    const recipies = await recipeRepository.random();
+    // Respond with the items in JSON format
+    res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+export default { browse, read, search, category, diet, difficulty, random };

@@ -1,85 +1,72 @@
-// // Import Faker library for generating fake data
-// import { faker } from "@faker-js/faker";
+// Import Faker library for generating fake data
+import { faker } from "@faker-js/faker";
+import type { Faker } from "@faker-js/faker";
 
-// import type { Faker } from "@faker-js/faker";
+// Import database client
+import database from "../client";
+import type { DatabaseClient, Result, Rows } from "../client";
 
-// // Import database client
-// import database from "../client";
+// Declare an object to store created objects from their names
+type Ref = object & { insertId: number };
 
-// import type { Result } from "../client";
+const refs: { [key: string]: Ref } = {};
 
-// // Declare an object to store created objects from their names
-// type Ref = object & { insertId: number };
+type SeederOptions = {
+  table: string;
+  truncate?: boolean;
+  dependencies?: (typeof AbstractSeeder)[];
+};
 
-// const refs: { [key: string]: Ref } = {};
+// Provide faker access through AbstractSeed class
+abstract class AbstractSeeder implements SeederOptions {
+  table: string;
+  truncate: boolean;
+  dependencies: (typeof AbstractSeeder)[];
+  promises: Promise<void>[];
+  faker: Faker;
 
-// type SeederOptions = {
-//   table: string;
-//   truncate?: boolean;
-//   dependencies?: (typeof AbstractSeeder)[];
-// };
+  constructor({
+    table,
+    truncate = true,
+    dependencies = [] as (typeof AbstractSeeder)[],
+  }: SeederOptions) {
+    this.table = table;
+    this.truncate = truncate;
+    this.dependencies = dependencies;
+    this.promises = [];
+    this.faker = faker;
+  }
 
-// // Provide faker access through AbstractSeed class
-// abstract class AbstractSeeder implements SeederOptions {
-//   table: string;
-//   truncate: boolean;
-//   dependencies: (typeof AbstractSeeder)[];
-//   promises: Promise<void>[];
-//   faker: Faker;
+  async #doInsert(data: { refName?: string } & object) {
+    const { refName, ...values } = data;
 
-//   constructor({
-//     table,
-//     truncate = true,
-//     dependencies = [] as (typeof AbstractSeeder)[],
-//   }: SeederOptions) {
-//     this.table = table;
+    const fields = Object.keys(values);
+    const fieldNames = fields.join(",");
+    const placeholders = fields.map((_, i) => `$${i + 1}`).join(",");
 
-//     this.truncate = truncate;
+    const sql = `INSERT INTO ${this.table}(${fieldNames}) VALUES (${placeholders}) RETURNING id`;
 
-//     this.dependencies = dependencies;
+    const result = await database.query(sql, Object.values(values));
 
-//     this.promises = [];
+    if (refName != null) {
+      const insertId = result.rows[0].id;
+      refs[refName] = { ...values, insertId };
+    }
+  }
 
-//     this.faker = faker;
-//   }
+  insert(data: { refName?: string } & object) {
+    this.promises.push(this.#doInsert(data));
+  }
 
-//   async #doInsert(data: { refName?: string } & object) {
-//     // Extract ref name (if it exists)
-//     const { refName, ...values } = data;
+  run() {
+    throw new Error("You must implement this function");
+  }
 
-//     // Prepare the SQL statement: "insert into <table>(<fields>) values (<placeholders>)"
-//     const fields = Object.keys(values).join(",");
-//     const placeholders = new Array(Object.keys(values).length)
-//       .fill("?")
-//       .join(",");
+  getRef(name: string) {
+    return refs[name];
+  }
+}
 
-//     const sql = `insert into ${this.table}(${fields}) values (${placeholders})`;
-
-//     // Perform the query and if applicable store the insert id given the ref name
-//     const result = await database.query<Result>(sql, Object.values(values));
-
-//     if (refName != null) {
-//       // Adjust according to your database client result structure
-//       const insertId = (result as any).insertId ?? (Array.isArray(result) && result[0]?.insertId);
-
-//       refs[refName] = { ...values, insertId };
-//     }
-//   }
-
-//   insert(data: { refName?: string } & object) {
-//     this.promises.push(this.#doInsert(data));
-//   }
-
-//   run() {
-//     throw new Error("You must implement this function");
-//   }
-
-//   getRef(name: string) {
-//     return refs[name];
-//   }
-// }
-
-// // Ready to export
-// export default AbstractSeeder;
-
-// export type { AbstractSeeder };
+// Ready to export
+export default AbstractSeeder;
+export type { AbstractSeeder };

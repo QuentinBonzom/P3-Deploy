@@ -49,6 +49,12 @@ p {
   color: var(--color-secondary);
 }
 
+h3 {
+  font-size: 18px;
+  color: var(--color-secondary);
+  font-weight: bold;
+}
+
 a {
   color: var(--color-secondary);
   font-weight: semi-bold;
