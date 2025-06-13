@@ -52,3 +52,10 @@ export interface TypeList {
   id: number;
   user_id: number;
 }
+
+export interface TypeForm {
+  name: string;
+  lastname: string;
+  email: string;
+  message: string;
+};

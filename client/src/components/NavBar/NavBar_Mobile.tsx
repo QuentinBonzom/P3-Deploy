@@ -17,18 +17,18 @@ function NavBar_Mobile() {
           onClick={toggleMenu}
         >
           <span
-            className={`block h-1 w-full bg-secondary rounded transition-transform duration-300  ${
-              isOpen ? "transform rotate-45 translate-y-2.5 bg-primary" : ""
+            className={`block h-1 w-full rounded transition-transform duration-300  ${
+              isOpen ? "bg-primary transform rotate-45 translate-y-2.5 " : "bg-secondary"
             }`}
           />
           <span
-            className={`block h-1 w-full bg-secondary rounded transition-opacity  ${
-              isOpen ? "opacity-0" : ""
+            className={`block h-1 w-full rounded transition-opacity  ${
+              isOpen ? "opacity-0" : "bg-secondary"
             }`}
           />
           <span
-            className={`block h-1 w-full bg-secondary rounded transition-transform duration-300 ${
-              isOpen ? "transform -rotate-45 -translate-y-2.5 bg-primary" : ""
+            className={`block h-1 w-full rounded transition-transform duration-300 ${
+              isOpen ? "bg-primary transform -rotate-45 -translate-y-2.5" : "bg-secondary"
             }`}
           />
         </button>
