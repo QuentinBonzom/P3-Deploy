@@ -1,4 +1,7 @@
-import type { TypeRecipe } from "../../../../client/src/types/TypeFiles";
+import type {
+  TypeRandom,
+  TypeRecipe,
+} from "../../../../client/src/types/TypeFiles";
 import databaseClient from "../../../database/client"; // On suppose que c’est un client pg déjà configuré
 
 class recipeRepository {
@@ -74,7 +77,7 @@ class recipeRepository {
     const searchWord = `%${id}%`; // On utilise le caractère de pourcentage pour la recherche partielle
     const result = await databaseClient.query<TypeRecipe>(
       `
-      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name , d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name , d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
       FROM recipe r
       JOIN recip_ingredient ri ON r.id = ri.recipe_id
       JOIN ingredient i ON ri.ingredient_id = i.id
@@ -134,6 +137,22 @@ class recipeRepository {
       WHERE r.difficulty ILIKE $1;
     `,
       [id],
+    );
+    return result.rows;
+  }
+
+  async random() {
+    const result = await databaseClient.query<TypeRandom>(
+      /* sql */ `
+        SELECT r.id, r.picture, r.name, r.time_preparation, AVG(a.rate) as rate
+        FROM recipe r
+        LEFT JOIN action a ON r.id = a.recipe_id
+        GROUP BY r.id
+        ORDER BY RANDOM()
+        LIMIT 4;
+        
+      `,
+      [], // Pas de paramètres ici
     );
     return result.rows;
   }

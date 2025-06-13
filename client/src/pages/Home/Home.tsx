@@ -1,12 +1,14 @@
+import HowWorks from "@/components/HowWorks";
 import OurSelection from "../../components/OurSelection";
 import SearchAccueil from "../../components/SearchAccueil";
 
 function Accueil() {
   return (
-    <section className="flex flex-col ">
+    <>
       <SearchAccueil />
       <OurSelection />
-    </section>
+      <HowWorks />
+    </>
   );
 }
 

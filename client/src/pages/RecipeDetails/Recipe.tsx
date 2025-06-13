@@ -13,7 +13,6 @@ function Recettes() {
       .then((response) => response.json())
       .then((data) => {
         setRecipeSearchBar(data);
-        console.log("fetch lancé");
       });
   }, [searchWord]);
 
