@@ -55,13 +55,12 @@ export interface TypeList {
   user_id: number;
 }
 
-
 export interface TypeForm {
   name: string;
   lastname: string;
   email: string;
   message: string;
-};
+}
 
 export interface TypeRandom {
   id: number;
@@ -70,4 +69,3 @@ export interface TypeRandom {
   time_preparation: number;
   rate: number;
 }
-
