@@ -21,6 +21,7 @@ router.get("/api/recipe/search/:id", recipeActions.search);
 router.get("/api/recipe/category/:id", recipeActions.category);
 router.get("/api/recipe/diet/:id", recipeActions.diet);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
+router.get("/api/accueil/category", recipeActions.accueilCategory);
 
 // router.post("/api/items", recipeActions.add);
 
