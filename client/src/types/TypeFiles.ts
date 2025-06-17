@@ -22,7 +22,7 @@ export interface TypeCategory {
 }
 
 export interface TypeUser {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   password: string;
@@ -68,4 +68,11 @@ export interface TypeRandom {
   name: string;
   time_preparation: number;
   rate: number;
+}
+
+export interface newMember {
+  name: string;
+  email: string;
+  user_id: number;
+  password: string;
 }

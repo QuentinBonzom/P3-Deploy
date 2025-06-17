@@ -1,5 +1,4 @@
 import express from "express";
-
 const router = express.Router();
 
 /* ************************************************************************* */
@@ -22,6 +21,20 @@ router.get("/api/recipe/category/:id", recipeActions.category);
 router.get("/api/recipe/diet/:id", recipeActions.diet);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
 router.get("/api/accueil/category", recipeActions.accueilCategory);
+
+// Define member-related routes
+import memberActions from "./modules/user/memberActions";
+
+router.post("/api/signin", memberActions.add);
+router.post("/api/login", memberActions.login); //rajouter securité (middlewore)
+// router.get("api/user", userActions.browse);
+// router.get("api/user/:id", userActions.read);
+// router.put("api/user/:id", userActions.editAccount); //mdp, email, nom
+// router.delete("api/user/:id", userActions.deleteAccount) //supression compte
+// router.use("api/user/admin/:id", userActions.admin); //acces page admin
+// router.put("api/user/admin/:id", userActions.adminEdit); //  modifier tout
+// router.delete("api/user/admin:id", userActions.adminDelete); // suprimer tout
+// router.post("api/user/admin:id", userActions.adminCreate); // Ajouter recettes
 
 // router.post("/api/items", recipeActions.add);
 
