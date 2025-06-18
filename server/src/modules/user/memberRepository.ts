@@ -41,6 +41,7 @@ class userRepository {
     return result.rows[0].id;
   }
 
+  // Async quand tu le sais tu l'attend avec Await
   async login(email: string, password: string) {
     const result = await databaseClient.query(
       `SELECT id, email, password FROM member
@@ -48,7 +49,7 @@ class userRepository {
         AND password = $2`,
       [email, password],
     );
-    //console.log(result.rows[0])
+    //retourn la ligne crée
     return result.rows[0];
   }
 }

@@ -4,40 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/context/UserContext";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { Link } from "react-router";
-// import { useNavigate } from "react-router";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { userOnline, setUserOnline, setIsConnected } = useUser();
-  // const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { handleSubmit, setEmail, email, setPassword, password } = useUser();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setUserOnline(data);
-      setIsConnected(true);
-      console.log(userOnline);
-      // navigate("/Compte")
-    } else {
-      alert("compte inconnu");
-    }
-  }
-  // console.log(userOnline);
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 border-none m-auto">

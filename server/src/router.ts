@@ -26,7 +26,9 @@ router.get("/api/accueil/category", recipeActions.accueilCategory);
 import memberActions from "./modules/user/memberActions";
 
 router.post("/api/signin", memberActions.add);
-router.post("/api/login", memberActions.login); //rajouter securité (middlewore)
+// Method = ( post, get, patch (petit update), put(Gros update), delete)
+// Module Actions (on fait appel a la methode crée dans le module actions : login)
+router.post("/api/login", memberActions.login); //rajouter securité (middleware)
 // router.get("api/user", userActions.browse);
 // router.get("api/user/:id", userActions.read);
 // router.put("api/user/:id", userActions.editAccount); //mdp, email, nom

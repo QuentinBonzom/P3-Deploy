@@ -50,14 +50,22 @@ const add: RequestHandler = async (req, res, next) => {
   }
 };
 
+// RequestHandler = Typage de gestion de requete. Async doit etre toujour etre accompagné de await.
+
 const login: RequestHandler = async (req, res, next) => {
   try {
+    // Recupere les inputs(infos) du Form(body du fetch) et l'envoi dans une requete Body.
     const { email, password } = req.body;
 
+    // Declaration d'une variable en Attente de la reponse du Repository.login pour la stocker.
     const user = await memberRepository.login(email, password);
+
+    //conditions
     if (user) {
       res
-        .status(201)
+        .status(201) // Statuts creation Ok
+
+        //Renvoi au client les info {}
         .json({ id: user.id, email: user.email, password: user.password });
       return;
     }

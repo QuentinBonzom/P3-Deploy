@@ -10,8 +10,6 @@ import App from "./App";
 
 import About from "./pages/About/About.tsx";
 import Account from "./pages/Account/Account.tsx";
-import LogIn from "./pages/Account/LogIn.tsx";
-import SignUp from "./pages/Account/SignUp.tsx";
 import Admin from "./pages/Admin/Admin.tsx";
 import Contact from "./pages/Contact/Contact.tsx";
 // Import additional components for new routes
@@ -76,14 +74,6 @@ const router = createBrowserRouter([
       {
         path: "/Contact",
         element: <Contact />,
-      },
-      {
-        path: "/LogIn",
-        element: <LogIn />,
-      },
-      {
-        path: "/SignUp",
-        element: <SignUp />,
       },
     ],
   },
