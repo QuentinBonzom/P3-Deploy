@@ -29,16 +29,16 @@ function OurSelection() {
         <img className="h-20 w-20" src="/cook-pointeur.png" alt="" />
         <h2>Notre sélection</h2>
       </section>
-      <section className="flex flex-wrap justify-center gap-16 pb-12">
+      <section className="flex flex-wrap justify-center gap-10 min-md:gap-25 pb-12">
         {randomRecipe.map((recipe) => (
           <article
             key={recipe.id}
-            className="text-secondary flex-shrink-0 w-64"
+            className="text-secondary flex-shrink-0 w-64 mx-5 bg-background shadow-md shadow-secondary/20 rounded-3xl  "
           >
             <img
               src={recipe.picture}
               alt=""
-              className="bg-amber-700 h-60 w-60 m-auto "
+              className="  h-60 w-60 m-auto "
             />
             <div className="my-2 px-2">{recipe.name}</div>
             <div className="flex flex-row my-2 px-2">

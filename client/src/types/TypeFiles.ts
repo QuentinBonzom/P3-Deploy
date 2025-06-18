@@ -9,6 +9,7 @@ export interface TypeRecipe {
   kcal: number;
   recipe_name: string;
   rate: number;
+  diet_name: string;
 }
 
 export interface TypeDiet {
