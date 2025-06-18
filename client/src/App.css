@@ -11,11 +11,12 @@
   textarea:-webkit-autofill:hover,
   textarea:-webkit-autofill:focus {
     /* Tailwind utilities via @apply: */
-@theme bg-white text-black;
+    @theme bg-white text-black;
     /* Then force the inset white bg and black text */
     box-shadow: 0 0 0px 1000px #fde9cc inset !important;
     -webkit-text-fill-color: #452a00 !important;
-  }}
+  }
+}
 
 * {
   box-sizing: border-box;
@@ -59,4 +60,3 @@ a {
   color: var(--color-secondary);
   font-weight: semi-bold;
 }
-

@@ -182,6 +182,25 @@ class recipeRepository {
   }
 
 
+  async accueilCategory() {
+    const result = await databaseClient.query<TypeRandom>(
+      `
+        SELECT c.id , c.name , r.picture
+    FROM category c
+    JOIN LATERAL (
+      SELECT r.picture
+      FROM recipe r
+      WHERE r.id_category = c.id
+      ORDER BY random()
+      LIMIT 1
+    ) r ON true
+    WHERE c.id IN (2, 3, 4);
+        
+      `,
+      [], // Pas de paramètres ici
+    );
+    return result.rows;
+  }
 
 }
 

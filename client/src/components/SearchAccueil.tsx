@@ -7,7 +7,6 @@ function SearchAccueil() {
 
   const HandleSetLocalStorage = (word: string) => {
     localStorage.setItem("searchWord", word);
-
     navigate("/Recettes");
   };
 
