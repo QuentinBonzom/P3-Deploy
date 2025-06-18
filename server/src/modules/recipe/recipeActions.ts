@@ -113,6 +113,21 @@ const difficulty: RequestHandler = async (req, res, next) => {
   }
 };
 
+const time: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all items
+    const choosedTime = String(req.params.id);
+    const recipies = await recipeRepository.time(choosedTime);
+
+    // Respond with the items in JSON format
+    res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+
 const random: RequestHandler = async (req, res, next) => {
   try {
     // Fetch all items
@@ -125,6 +140,7 @@ const random: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
 
 const accueilCategory: RequestHandler = async (req, res, next) => {
   try {
@@ -149,3 +165,4 @@ export default {
   random,
   accueilCategory,
 };
+

@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 const bannerItems: Record<string, string> = {
   "/": "/Banner_Accueil.png",
   "/Recettes": "Banner_Recettes.png",
+  "/Details": "Banner_Détails.png", 
   "/Courses": "Banner_Courses.png",
   "/Compte": "Banner_Membres.png",
   "/Mentions_legales": "Banner_Mentions_Legales.png",
