@@ -18,7 +18,9 @@ function NavBar_Mobile() {
         >
           <span
             className={`block h-1 w-full rounded transition-transform duration-300  ${
-              isOpen ? "bg-primary transform rotate-45 translate-y-2.5 " : "bg-secondary"
+              isOpen
+                ? "bg-primary transform rotate-45 translate-y-2.5 "
+                : "bg-secondary"
             }`}
           />
           <span
@@ -28,7 +30,9 @@ function NavBar_Mobile() {
           />
           <span
             className={`block h-1 w-full rounded transition-transform duration-300 ${
-              isOpen ? "bg-primary transform -rotate-45 -translate-y-2.5" : "bg-secondary"
+              isOpen
+                ? "bg-primary transform -rotate-45 -translate-y-2.5"
+                : "bg-secondary"
             }`}
           />
         </button>

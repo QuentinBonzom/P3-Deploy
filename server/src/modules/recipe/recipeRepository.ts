@@ -38,9 +38,17 @@ class recipeRepository {
   // Lecture de tous les éléments
   async readAll() {
     const result = await databaseClient.query<TypeRecipe>(
-      /* sql */ `
-        SELECT * FROM recipe
-      `,
+      /* sql */  `
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.description, r.time_preparation, r.kcal, AVG(a.rate) as rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      LEFT JOIN category c ON r.id_category = c.id
+      GROUP BY r.id, d.name
+      ORDER BY r.id;
+    `,
       [], // Pas de paramètres ici
     );
 
@@ -94,7 +102,7 @@ class recipeRepository {
   async category(id: string) {
     const result = await databaseClient.query<TypeRecipe>(
       `
-      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
       FROM recipe r
       JOIN recip_ingredient ri ON r.id = ri.recipe_id
       JOIN ingredient i ON ri.ingredient_id = i.id
@@ -112,7 +120,7 @@ class recipeRepository {
     const searchWord = `%${id}%`;
     const result = await databaseClient.query<TypeRecipe>(
       `
-      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
       FROM recipe r
       JOIN recip_ingredient ri ON r.id = ri.recipe_id
       JOIN ingredient i ON ri.ingredient_id = i.id
@@ -128,13 +136,29 @@ class recipeRepository {
   async difficulty(id: string) {
     const result = await databaseClient.query<TypeRecipe>(
       `
-      SELECT DISTINCT r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
       FROM recipe r
       JOIN recip_ingredient ri ON r.id = ri.recipe_id
       JOIN ingredient i ON ri.ingredient_id = i.id
       LEFT JOIN action a ON r.id = a.recipe_id
       JOIN diet d ON r.id_diet = d.id
       WHERE r.difficulty ILIKE $1;
+    `,
+      [id],
+    );
+    return result.rows;
+  }
+
+   async time(id: string) {
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      WHERE r.time_preparation ILIKE $1;
     `,
       [id],
     );
@@ -156,6 +180,28 @@ class recipeRepository {
     );
     return result.rows;
   }
+
+
+  async accueilCategory() {
+    const result = await databaseClient.query<TypeRandom>(
+      `
+        SELECT c.id , c.name , r.picture
+    FROM category c
+    JOIN LATERAL (
+      SELECT r.picture
+      FROM recipe r
+      WHERE r.id_category = c.id
+      ORDER BY random()
+      LIMIT 1
+    ) r ON true
+    WHERE c.id IN (2, 3, 4);
+        
+      `,
+      [], // Pas de paramètres ici
+    );
+    return result.rows;
+  }
+
 }
 
 export default new recipeRepository();
