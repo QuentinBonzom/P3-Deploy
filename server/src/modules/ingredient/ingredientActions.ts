@@ -17,4 +17,23 @@ const browse: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse };
+const recipeIngredient: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch a specific item based on the provided ID
+    const recipiesId = Number(req.params.id);
+    const recipe = await ingredientsRepository.recipeIngredient(recipiesId);
+
+    // If the item is not found, respond with HTTP 404 (Not Found)
+    // Otherwise, respond with the item in JSON format
+    if (recipe == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(recipe);
+    }
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+export default { browse, recipeIngredient };

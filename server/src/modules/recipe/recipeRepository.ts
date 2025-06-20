@@ -38,7 +38,7 @@ class recipeRepository {
   // Lecture de tous les éléments
   async readAll() {
     const result = await databaseClient.query<TypeRecipe>(
-      /* sql */  `
+      /* sql */ `
       SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.description, r.time_preparation, r.kcal, AVG(a.rate) as rate
       FROM recipe r
       JOIN recip_ingredient ri ON r.id = ri.recipe_id
@@ -149,7 +149,7 @@ class recipeRepository {
     return result.rows;
   }
 
-   async time(id: string) {
+  async time(id: string) {
     const result = await databaseClient.query<TypeRecipe>(
       `
       SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, a.rate
@@ -181,7 +181,6 @@ class recipeRepository {
     return result.rows;
   }
 
-
   async accueilCategory() {
     const result = await databaseClient.query<TypeRandom>(
       `
@@ -201,7 +200,6 @@ class recipeRepository {
     );
     return result.rows;
   }
-
 }
 
 export default new recipeRepository();

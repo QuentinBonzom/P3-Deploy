@@ -5,7 +5,13 @@ export interface TypeRecipe {
   description: string;
   difficulty: string;
   picture: string;
-  steps: string;
+  step1: string;
+  step2: string;
+  step3: string;
+  step4: string;
+  step5: string;
+  step6: string;
+  step7: string;
   kcal: number;
   recipe_name: string;
   rate: number;

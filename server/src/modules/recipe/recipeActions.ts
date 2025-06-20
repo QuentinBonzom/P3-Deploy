@@ -127,7 +127,6 @@ const time: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 const random: RequestHandler = async (req, res, next) => {
   try {
     // Fetch all items
@@ -140,7 +139,6 @@ const random: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const accueilCategory: RequestHandler = async (req, res, next) => {
   try {
@@ -164,5 +162,5 @@ export default {
   difficulty,
   random,
   accueilCategory,
+  time,
 };
-

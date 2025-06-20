@@ -5,17 +5,12 @@ const router = express.Router();
 // Define Your API Routes Here
 /* ************************************************************************* */
 
-//Define ingredient routes
-import ingredientActions from "./modules/ingredient/ingredientActions";
-
-router.get("/api/ingredient", ingredientActions.browse);
-
 // Define recipe-related routes
 import recipeActions from "./modules/recipe/recipeActions";
 
 router.get("/api/recipe/random", recipeActions.random);
 router.get("/api/recipe", recipeActions.browse);
-router.get("/api/recipe/:id", recipeActions.read);
+router.get("/api/recipe/detail/:id", recipeActions.read);
 router.get("/api/recipe/search/:id", recipeActions.search);
 router.get("/api/recipe/category/:id", recipeActions.category);
 router.get("/api/recipe/diet/:id", recipeActions.diet);
@@ -39,7 +34,17 @@ router.post("/api/login", memberActions.login); //rajouter securité (middleware
 // router.delete("api/user/admin:id", userActions.adminDelete); // suprimer tout
 // router.post("api/user/admin:id", userActions.adminCreate); // Ajouter recettes
 
-// router.post("/api/items", recipeActions.add);
+// Define ingredient-related routes
+
+import ingredientActions from "./modules/ingredient/ingredientActions";
+
+router.get("/api/ingredient", ingredientActions.browse);
+router.get("/api/ingredient/recipe/:id", ingredientActions.recipeIngredient); //tout les ingrediends, quantité et unite pour une recette(id)
+
+// Define ustensil-related routes
+import ustensilActions from "./modules/ustensil/ustensilActions";
+
+router.get("/api/ustensil/recipe/:id", ustensilActions.recipeUstensil); //tout les ustensiles pour une recette(id)
 
 /* ************************************************************************* */
 
