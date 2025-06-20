@@ -1,4 +1,5 @@
 import express from "express";
+import security from "./modules/middleware/security";
 const router = express.Router();
 
 /* ************************************************************************* */
@@ -26,6 +27,7 @@ router.get("/api/accueil/category", recipeActions.accueilCategory);
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";
 
+router.get("/api/member", security.checkToken, memberActions.checkId);
 router.post("/api/signin", memberActions.add);
 // Method = ( post, get, patch (petit update), put(Gros update), delete)
 // Module Actions (on fait appel a la methode crée dans le module actions : login)

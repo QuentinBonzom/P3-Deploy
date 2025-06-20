@@ -1,22 +1,8 @@
 import { LoginForm } from "@/components/Connexion/loginForm";
 import { useUser } from "@/context/UserContext";
-import { useEffect } from "react";
 
 function Account() {
-  const { setIsConnected, isConnected } = useUser();
-
-  useEffect(() => {
-    const connected = localStorage.getItem("UserConnected");
-    if (connected) {
-      setIsConnected(true);
-    }
-  }, [setIsConnected]);
-
-  function handleDisconnect() {
-    localStorage.removeItem("UserConnected");
-    setIsConnected(false);
-    window.location.reload();
-  }
+  const { isConnected, handleDisconnect } = useUser();
 
   return (
     <>
