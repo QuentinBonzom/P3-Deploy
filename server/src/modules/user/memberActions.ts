@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import jwt from "jsonwebtoken";
 import memberRepository from "./memberRepository";
 
 const browse: RequestHandler = async (req, res, next) => {
@@ -62,11 +63,13 @@ const login: RequestHandler = async (req, res, next) => {
 
     //conditions
     if (user) {
+      //création du token
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
       res
         .status(201) // Statuts creation Ok
 
         //Renvoi au client les info {}
-        .json({ id: user.id, email: user.email, password: user.password });
+        .send({ token: token, userId: user.id });
       return;
     }
     res.status(401).send("membre inconnu");
@@ -75,4 +78,20 @@ const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse, read, add, login };
+//Permet de contrôler si l'ID est à bien associé au token
+
+const checkId: RequestHandler = async (req, res, next) => {
+  try {
+    const user = await memberRepository.read(Number(req.userId));
+
+    if (user == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(user);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default { browse, read, add, login, checkId };
