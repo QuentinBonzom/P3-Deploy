@@ -36,6 +36,7 @@ export interface TypeUser {
 }
 
 export interface TypeIngredient {
+  ingredient_name: string;
   id: number;
   name: string;
   picture: string;
@@ -53,6 +54,7 @@ export interface TypeAction {
 }
 
 export interface TypeUstencil {
+  ustensil_name: string;
   id: number;
   name: string;
 }
