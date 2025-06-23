@@ -19,6 +19,7 @@ class ingredientRepository {
       SELECT
         i.id AS ingredient_id,
         i.name AS ingredient_name,
+        i.picture AS ingredient_picture,
         ri.quantity AS ingredient_quantity,
         u.value AS unit_name
       FROM recip_ingredient ri

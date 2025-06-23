@@ -36,6 +36,9 @@ export interface TypeUser {
 }
 
 export interface TypeIngredient {
+  unit_name: string;
+  ingredient_picture: string;
+  ingredient_quantity: number;
   ingredient_name: string;
   id: number;
   name: string;

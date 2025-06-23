@@ -57,7 +57,9 @@ function DetailsRecipe() {
             src="/horlogeIcone.png"
             alt="icone d'horloge"
           />
-          <article>{recipe?.time_preparation} min</article>
+          <article className="text-lg font-bold m-auto">
+            {recipe?.time_preparation} min
+          </article>
         </article>
 
         <article className="flex">
@@ -66,7 +68,7 @@ function DetailsRecipe() {
             src="/torseIcone.png"
             alt="icone de torse"
           />
-          <div className="bg-white h-10 min-w-56 rounded-2xl border-2 border-secondary flex items-center justify-center">
+          <div className="bg-white h-10 min-w-56 rounded-2xl border-2 border-secondary flex items-center justify-center m-auto">
             <button
               onClick={() => handleLess()}
               type="button"
@@ -93,21 +95,48 @@ function DetailsRecipe() {
           </div>
         </article>
         <article className="flex">
-          <span>Ajouter aux favoris</span>
-          <img className="w-14 h-14" src="/coeur.png" alt="icone en coeur" />
+          <h3 className="m-auto px-2">Ajouter aux favoris</h3>
+          <img
+            className="w-14 h-14 cursor-pointer"
+            src="/coeur.png"
+            alt="icone en coeur"
+          />
         </article>
       </section>
       <section className="flex flex-row">
         <article>
           <h3>Ingrédients</h3>
+          {ingredients?.map((ingredient) => (
+            <div key={ingredient.id} className="flex justify-between">
+              <img
+                className="w-14 h-14 bg-white rounded-full"
+                src={ingredient.ingredient_picture}
+                alt={ingredient.ingredient_name}
+              />
+              <h3>{ingredient.ingredient_name}</h3>
+              <div className="text-secondary text-lg font-bold">
+                {ingredient.ingredient_quantity * numberPersons}
+              </div>
+              <div className="text-secondary text-lg font-bold">
+                {ingredient.unit_name}
+              </div>
+            </div>
+          ))}
+        </article>
+        <article>
+          {ustensils?.map((ustensil) => (
+            <div key={ustensil.id} className="flex justify-between">
+              {/* <img className="w-14 h-14 bg-white rounded-full"
+              src={ustensil.ustensil_picture} alt={ustensil.ustensil_name} /> */}
+              <h3>{ustensil.ustensil_name}</h3>
+            </div>
+          ))}
         </article>
         <article>
           <h3>Préparation</h3>
           {recipe?.step6 ? <h3>{recipe?.step6}</h3> : null}
         </article>
       </section>
-      <div>{ingredients?.map((ingredient) => ingredient.ingredient_name)}</div>
-      <div>{ustensils?.map((ingredient) => ingredient.ustensil_name)}</div>
     </>
   );
 }
