@@ -5,7 +5,13 @@ export interface TypeRecipe {
   description: string;
   difficulty: string;
   picture: string;
-  steps: string;
+  step1: string;
+  step2: string;
+  step3: string;
+  step4: string;
+  step5: string;
+  step6: string;
+  step7: string;
   kcal: number;
   recipe_name: string;
   rate: number;
@@ -30,6 +36,11 @@ export interface TypeUser {
 }
 
 export interface TypeIngredient {
+  ingredient_id: number;
+  unit_name: string;
+  ingredient_picture: string;
+  ingredient_quantity: number;
+  ingredient_name: string;
   id: number;
   name: string;
   picture: string;
@@ -46,7 +57,10 @@ export interface TypeAction {
   comment: string;
 }
 
-export interface TypeUstencil {
+export interface TypeUstensil {
+  ustensil_picture: string;
+  ustensil_id: number;
+  ustensil_name: string;
   id: number;
   name: string;
 }

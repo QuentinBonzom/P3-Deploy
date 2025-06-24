@@ -26,7 +26,7 @@ function OurSelection() {
 
   const handleRecipeChoosed = (id: number) => {
     localStorage.setItem("recipeId", id.toString());
-    navigate("/Recettes/:id");
+    navigate("/Details");
   };
 
   return (
@@ -41,7 +41,7 @@ function OurSelection() {
             onClick={() => handleRecipeChoosed(recipe.id)}
             type="button"
             key={recipe.id}
-            className="text-secondary flex-shrink-0 w-64 mx-5 bg-background shadow-md shadow-secondary/20 rounded-3xl  "
+            className="text-secondary flex-shrink-0 w-64 mx-5 bg-background shadow-md shadow-secondary/20 rounded-3xl cursor-pointer"
           >
             <img src={recipe.picture} alt="" className="  h-60 w-60 m-auto " />
             <div className="my-2 ">{recipe.name}</div>
