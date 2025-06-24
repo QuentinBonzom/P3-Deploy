@@ -33,20 +33,21 @@ const read: RequestHandler = async (req, res, next) => {
 // // The A of BREAD - Add (Create) operation
 const add: RequestHandler = async (req, res, next) => {
   try {
-    // Extract the item data from the request body
     const newMember = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
     };
-
-    // Create the item
     const insertId = await memberRepository.create(newMember);
 
-    //Respond with HTTP 201 (Created) and the ID of the newly inserted item
-    res.status(201).json({ insertId });
+    /*je creer une nouvelle variable (ID de la table member qui s'auto-incrémente) donc elle crée un nouvel utilisateur dans la BD et récupére
+     directement les infos et continuer en temps que membre VIA le next(). */
+
+    const memberSignUp = await memberRepository.read(insertId);
+    // console.log("newComer ", memberSignUp);
+    req.user = memberSignUp; // Attach user to req
+    next(); // on bascule sur la prochaine etape.
   } catch (err) {
-    // Pass any errors to the error-handling middleware
     next(err);
   }
 };
@@ -55,24 +56,15 @@ const add: RequestHandler = async (req, res, next) => {
 
 const login: RequestHandler = async (req, res, next) => {
   try {
-    // Recupere les inputs(infos) du Form(body du fetch) et l'envoi dans une requete Body.
-    const { email, password } = req.body;
-
-    // Declaration d'une variable en Attente de la reponse du Repository.login pour la stocker.
-    const user = await memberRepository.login(email, password);
-
-    //conditions
+    const user =
+      req.user ||
+      (await memberRepository.login(req.body.email, req.body.password));
     if (user) {
-      //création du token
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
-      res
-        .status(201) // Statuts creation Ok
-
-        //Renvoi au client les info {}
-        .send({ token: token, userId: user.id });
-      return;
+      res.status(201).json({ token, userId: user.id });
+    } else {
+      res.status(401).send("membre inconnu");
     }
-    res.status(401).send("membre inconnu");
   } catch (err) {
     next(err);
   }

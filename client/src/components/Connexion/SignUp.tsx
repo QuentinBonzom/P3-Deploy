@@ -1,32 +1,7 @@
-import type { TypeUser } from "@/types/TypeFiles";
-import { useState } from "react";
+import { useUser } from "@/context/UserContext";
 
 function SignUp() {
-  const [user, setUser] = useState<TypeUser>({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    console.log(user);
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-    console.log(response);
-  }
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value,
-    });
-  }
+  const { handleSubmitSignUp, handleChange, user } = useUser();
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -34,7 +9,7 @@ function SignUp() {
         <h2 className="text-3xl font-bold mb-6 text-center text-secondary">
           Inscription
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmitSignUp} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-secondary mb-1">
               Nom

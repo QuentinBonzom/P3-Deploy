@@ -1,9 +1,10 @@
+import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 import { Link } from "react-router";
 
 function NavBar_Mobile() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { handleDisconnect, isConnected } = useUser();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -43,7 +44,7 @@ function NavBar_Mobile() {
           <div className="font-semibold pb-4 text-right ">
             <Link
               to="/Recettes"
-              className=" mr-8 mt-2 block"
+              className=" mr-8 mt-2 block text-secondary"
               onClick={() => setIsOpen(false)}
             >
               Recettes
@@ -53,7 +54,7 @@ function NavBar_Mobile() {
 
             <Link
               to="/Courses"
-              className=" mr-8 mt-2 block"
+              className=" mr-8 mt-2 block text-secondary"
               onClick={() => setIsOpen(false)}
             >
               Mes courses
@@ -63,7 +64,7 @@ function NavBar_Mobile() {
 
             <Link
               to="/A_propos"
-              className=" mr-8 mt-2 block"
+              className=" mr-8 mt-2 block text-secondary"
               onClick={() => setIsOpen(false)}
             >
               A propos
@@ -73,11 +74,34 @@ function NavBar_Mobile() {
 
             <Link
               to="/Mixer"
-              className=" mr-8 mt-2 block"
+              className=" mr-8 mt-2 block text-secondary"
               onClick={() => setIsOpen(false)}
             >
               Mixer
             </Link>
+
+            <span className="block border-t border-[#dd682d] my-3" />
+
+            {!isConnected ? (
+              <Link
+                to="/Compte"
+                className="mr-8 mt-2 block text-secondary"
+                onClick={() => setIsOpen(false)}
+              >
+                Connexion
+              </Link>
+            ) : (
+              <Link
+                to="/"
+                className="mr-8 mt-2 block text-secondary"
+                onClick={() => {
+                  handleDisconnect();
+                  setIsOpen(false);
+                }}
+              >
+                Déconnexion
+              </Link>
+            )}
           </div>
         </div>
       )}
