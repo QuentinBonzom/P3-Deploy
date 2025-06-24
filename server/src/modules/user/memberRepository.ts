@@ -52,6 +52,15 @@ class userRepository {
     //retourn la ligne crée
     return result.rows[0];
   }
+
+  async delete(memberId: number) {
+    const result = await databaseClient.query(
+      "DELETE FROM member WHERE id = $1 RETURNING id, email",
+      [memberId],
+    );
+
+    return result.rows[0];
+  }
 }
 
 export default new userRepository();
