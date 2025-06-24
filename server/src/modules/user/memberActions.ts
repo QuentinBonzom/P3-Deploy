@@ -78,8 +78,20 @@ const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-//Permet de contrôler si l'ID est à bien associé au token
+const deleteAccount: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number.parseInt(req.params.id);
 
+    const deleted = await memberRepository.delete(memberId);
+
+    if (!deleted) {
+      res.status(404).json({ message: "Utilisateur introuvable" });
+      return;
+    }
+
+    res.status(200).json({ message: "Compte supprimé avec succès" });
+
+//Permet de contrôler si l'ID est à bien associé au token
 const checkId: RequestHandler = async (req, res, next) => {
   try {
     const user = await memberRepository.read(Number(req.userId));
@@ -89,9 +101,10 @@ const checkId: RequestHandler = async (req, res, next) => {
     } else {
       res.json(user);
     }
+
   } catch (err) {
     next(err);
   }
 };
 
-export default { browse, read, add, login, checkId };
+export default { browse, read, add, login, checkId, deleteAccount };

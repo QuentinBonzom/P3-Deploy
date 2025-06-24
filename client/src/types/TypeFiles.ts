@@ -77,3 +77,9 @@ export interface newMember {
   user_id: number;
   password: string;
 }
+
+export interface Member {
+  name: string;
+  email: string;
+  id: number;
+}

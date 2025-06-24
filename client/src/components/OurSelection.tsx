@@ -11,7 +11,6 @@ function OurSelection() {
       .then((response) => response.json())
       .then((data) => {
         setRandomRecipe(data);
-        console.log(data);
       });
   }, []);
 
