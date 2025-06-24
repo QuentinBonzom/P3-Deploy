@@ -36,6 +36,7 @@ export interface TypeUser {
 }
 
 export interface TypeIngredient {
+  ingredient_id: number;
   unit_name: string;
   ingredient_picture: string;
   ingredient_quantity: number;
@@ -56,7 +57,9 @@ export interface TypeAction {
   comment: string;
 }
 
-export interface TypeUstencil {
+export interface TypeUstensil {
+  ustensil_picture: string;
+  ustensil_id: number;
   ustensil_name: string;
   id: number;
   name: string;

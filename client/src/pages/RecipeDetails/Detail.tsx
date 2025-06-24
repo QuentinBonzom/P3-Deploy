@@ -1,7 +1,9 @@
+import StepsRecipe from "@/components/StepsRecipe";
+import UstensilRecipe from "@/components/UstensilRecipe";
 import type {
   TypeIngredient,
   TypeRecipe,
-  TypeUstencil,
+  TypeUstensil,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
 
@@ -9,7 +11,7 @@ function DetailsRecipe() {
   const recipeId = Number(localStorage.getItem("recipeId"));
   const [recipe, setRecipe] = useState<TypeRecipe | null>(null);
   const [ingredients, setIngredients] = useState<TypeIngredient[]>([]);
-  const [ustensils, setUstensils] = useState<TypeUstencil[]>([]);
+  const [ustensils, setUstensils] = useState<TypeUstensil[]>([]);
   const [numberPersons, setNumberPersons] = useState<number>(1);
 
   // Fetch the recipe details using the recipeId
@@ -20,12 +22,14 @@ function DetailsRecipe() {
         console.log(data);
         setRecipe(data);
       });
+    //Fetch the ingredients for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         setIngredients(data);
       });
+    //Fetch the ustensils for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ustensil/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -34,6 +38,7 @@ function DetailsRecipe() {
       });
   }, [recipeId]);
 
+  //diminuer le nbr de personnes avec limite basse a 1
   function handleLess() {
     if (numberPersons > 1) {
       setNumberPersons(numberPersons - 1);
@@ -49,8 +54,8 @@ function DetailsRecipe() {
         src={recipe?.picture}
         alt={recipe?.name}
       />
-      <h2 className="p-12 ">{recipe?.name}</h2>
-      <section className="flex text-secondary justify-between mx-4">
+      <h2 className="p-8 pt-20 text-3xl">{recipe?.name}</h2>
+      <section className="flex text-secondary justify-between m-4">
         <article className="flex">
           <img
             className="w-14 h-14"
@@ -103,39 +108,53 @@ function DetailsRecipe() {
           />
         </article>
       </section>
-      <section className="flex flex-row">
-        <article>
-          <h3>Ingrédients</h3>
-          {ingredients?.map((ingredient) => (
-            <div key={ingredient.id} className="flex justify-between">
-              <img
-                className="w-14 h-14 bg-white rounded-full"
-                src={ingredient.ingredient_picture}
-                alt={ingredient.ingredient_name}
-              />
-              <h3>{ingredient.ingredient_name}</h3>
-              <div className="text-secondary text-lg font-bold">
-                {ingredient.ingredient_quantity * numberPersons}
+      <section className="flex">
+        <section className="flex flex-col w-2/5">
+          <article>
+            <h3 className="m-4">Ingrédients</h3>
+            {ingredients?.map((ingredient) => (
+              <div
+                key={ingredient.ingredient_id}
+                className="flex justify-between m-6"
+              >
+                <div className="flex gap-4 items-center">
+                  <img
+                    className="w-14 h-14 bg-white rounded-full"
+                    src={ingredient.ingredient_picture}
+                    alt={ingredient.ingredient_name}
+                  />
+                  <h3>{ingredient.ingredient_name}</h3>
+                </div>
+                <div className="text-secondary text-lg font-bold flex items-center">
+                  {ingredient.ingredient_quantity * numberPersons}
+                  {ingredient.unit_name}
+                </div>
               </div>
-              <div className="text-secondary text-lg font-bold">
-                {ingredient.unit_name}
-              </div>
-            </div>
-          ))}
-        </article>
-        <article>
-          {ustensils?.map((ustensil) => (
-            <div key={ustensil.id} className="flex justify-between">
-              {/* <img className="w-14 h-14 bg-white rounded-full"
-              src={ustensil.ustensil_picture} alt={ustensil.ustensil_name} /> */}
-              <h3>{ustensil.ustensil_name}</h3>
-            </div>
-          ))}
-        </article>
-        <article>
-          <h3>Préparation</h3>
-          {recipe?.step6 ? <h3>{recipe?.step6}</h3> : null}
-        </article>
+            ))}
+          </article>
+          <button
+            type="button"
+            className="bg-primary h-10 w-80 cursor-pointer rounded-full flex justify-between px-2 items-center m-auto my-8"
+          >
+            Ajouter à ma liste de courses{" "}
+            <img src="/caddy.png" alt="caddy" className="w-8 h-8" />
+          </button>
+          <article>
+            <UstensilRecipe ustensil={ustensils} />
+          </article>
+        </section>
+        <section className="w-3/5 bg-primary/20 m-4 p-4 rounded-lg ">
+          <h3 className="my-4">Préparation</h3>
+          <StepsRecipe recipe={recipe} />
+        </section>
+      </section>
+      <section className="flex items-center">
+        <img
+          className="h-20 w-20"
+          src="/cook-bonjour.png"
+          alt="logo qui donneune note"
+        />
+        <h3>Donnez votre avis</h3>
       </section>
     </>
   );

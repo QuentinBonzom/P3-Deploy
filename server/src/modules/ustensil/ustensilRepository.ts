@@ -1,9 +1,9 @@
-import type { TypeUstencil } from "../../../../client/src/types/TypeFiles";
+import type { TypeUstensil } from "../../../../client/src/types/TypeFiles";
 import databaseClient from "../../../database/client";
 
 class ustensilRepository {
   async recipeUstensil(id: number) {
-    const result = await databaseClient.query<TypeUstencil>(
+    const result = await databaseClient.query<TypeUstensil>(
       /* sql */ `
         SELECT
           u.id AS ustensil_id,
