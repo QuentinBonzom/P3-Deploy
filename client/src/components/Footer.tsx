@@ -12,22 +12,23 @@ function Footer() {
           />
         </div>
         <div className="order-2 md:order-3 flex flex-col items-center md:items-end lg:py-10 md:py-8 xl:py-10 w-full md:w-1/3 text-base md:text-lg xl:text-xl">
-          <p className="font-bold">
-            <Link to="/Contact">Contact</Link>
-          </p>
-          <p className="font-bold">
-            <Link to="/Mentions_legales">Mentions légales</Link>
-          </p>
+          <Link to="/Contact" className=" font-bold text-secondary">
+            Contact
+          </Link>
+
+          <Link to="/Mentions_legales" className=" font-bold text-secondary">
+            Mentions légales
+          </Link>
         </div>
         <div className="order-3 md:order-1 flex justify-center md:justify-start gap-2 py-4 lg:py-10 md:py-8 xl:py-10 w-full md:w-1/3">
           <a href="https://www.facebook.com/">
-            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-facebook" />
+            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-facebook text-secondary" />
           </a>
           <a href="https://www.instagram.com/">
-            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-instagram" />
+            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-instagram text-secondary" />
           </a>
           <a href="https://fr.pinterest.com/">
-            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-pinterest" />
+            <i className="text-3xl md:text-4xl xl:text-5xl bi bi-pinterest text-secondary" />
           </a>
         </div>
       </section>

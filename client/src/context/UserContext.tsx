@@ -1,3 +1,4 @@
+import type { TypeUser } from "@/types/TypeFiles";
 import {
   type ReactNode,
   createContext,
@@ -18,11 +19,15 @@ interface UserContextValue {
   isConnected: boolean;
   email: string;
   password: string;
+  user: TypeUser;
   // setUserOnline: React.Dispatch<React.SetStateAction<string>>; // Commented out or remove if not used elsewhere
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
+  setUser: React.Dispatch<React.SetStateAction<TypeUser>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmitSignUp: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDisconnect: () => void;
 }
 
@@ -39,6 +44,11 @@ export function UserProvider({ children }: ContextInterface) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [user, setUser] = useState<TypeUser>({
+    name: "",
+    email: "",
+    password: "",
+  });
 
   // Verification du Token --------------------------------------
   useEffect(() => {
@@ -85,10 +95,7 @@ export function UserProvider({ children }: ContextInterface) {
 
     if (response.ok) {
       const data = await response.json();
-      localStorage.setItem("token", JSON.stringify(data.token));
-      //Change l'etat de setIsConnected en true pour afficher la page "Compte" et redirection vers "Compte"
-      // et redirection vers "Compte" avec useNavigate
-
+      localStorage.setItem("token", data.token); // stocké en string
       setIsConnected(true);
       navigate("/Compte");
     } else {
@@ -96,6 +103,31 @@ export function UserProvider({ children }: ContextInterface) {
       navigate("/Compte");
       alert("Compte inconnu");
     }
+  }
+
+  async function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log(user);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      setIsConnected(true);
+      navigate("/Compte");
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
   }
 
   // Supression Token avec bouton --------------------------------
@@ -106,7 +138,6 @@ export function UserProvider({ children }: ContextInterface) {
   }
 
   // console.log(isConnected);
-
   //return provider avec tout les UseState/ logique / fetch Applicable sur les composants ou App.tsx consommant le context
   return (
     <UserContext.Provider
@@ -119,6 +150,10 @@ export function UserProvider({ children }: ContextInterface) {
         setPassword,
         handleDisconnect,
         handleSubmit,
+        handleSubmitSignUp,
+        handleChange,
+        user,
+        setUser,
       }}
     >
       {children}

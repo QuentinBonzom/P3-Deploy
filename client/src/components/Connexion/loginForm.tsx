@@ -50,11 +50,11 @@ export function LoginForm({
                         htmlFor="password"
                         className="block text-secondary "
                       >
-                        Password
+                        Mot de passe
                       </Label>
                       <a
                         href="#password" // ---------------------------------------------------------------ATTENTION !!!!!!
-                        className="ml-auto text-sm underline-offset-2 hover:underline"
+                        className="ml-auto text-sm underline-offset-2 hover:underline text-secondary"
                       >
                         Mot de passe oublié
                       </a>
@@ -144,9 +144,13 @@ export function LoginForm({
               </div>
             </CardContent>
           </Card>
-          <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            <a href="./Mentions_Legales">Mentions Legales</a>.
-          </div>
+          <a
+            href="./Mentions_Legales"
+            className=" text-secondary text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4"
+          >
+            Mentions Legales
+          </a>
+          .
         </div>
       )}
     </>
