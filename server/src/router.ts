@@ -18,7 +18,8 @@ router.get("/api/recipe/diet/:id", recipeActions.diet);
 router.get("/api/recipe/time/:id", recipeActions.time);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
 router.get("/api/accueil/category", recipeActions.accueilCategory);
-
+router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note et les commentaires d'une recette
+router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";
 

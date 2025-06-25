@@ -29,6 +29,7 @@ interface UserContextValue {
   handleSubmitSignUp: (e: React.FormEvent<HTMLFormElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDisconnect: () => void;
+  idUserOnline: number | null;
 }
 
 // creation du context
@@ -37,7 +38,7 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 //Creation composant Provider (appliquant le context sur tout les enfants)
 export function UserProvider({ children }: ContextInterface) {
   //Initialisation du State avec la conversion du LocalStorage en String.
-  // const [userOnline, setUserOnline] = useState(
+  const [idUserOnline, setIdUserOnline] = useState<number | null>(null);
   //   JSON.stringify(localStorage.getItem("token") || ""),
   // );
   const [isConnected, setIsConnected] = useState(false);
@@ -71,11 +72,13 @@ export function UserProvider({ children }: ContextInterface) {
       })
         .then((response) => response.json())
         .then((data) => {
-          // console.log(data);
+          //console.log(data);
           if (data.message !== " Unauthorized") {
             setIsConnected(true);
+            setIdUserOnline(data.id);
           } else {
             setIsConnected(false);
+            setIdUserOnline(null);
           }
         });
     }
@@ -95,11 +98,14 @@ export function UserProvider({ children }: ContextInterface) {
 
     if (response.ok) {
       const data = await response.json();
+      //console.log(data);
       localStorage.setItem("token", data.token); // stocké en string
       setIsConnected(true);
+      setIdUserOnline(data.userId);
       navigate("/Compte");
     } else {
       setIsConnected(false);
+      setIdUserOnline(null);
       navigate("/Compte");
       alert("Compte inconnu");
     }
@@ -154,6 +160,7 @@ export function UserProvider({ children }: ContextInterface) {
         handleChange,
         user,
         setUser,
+        idUserOnline,
       }}
     >
       {children}

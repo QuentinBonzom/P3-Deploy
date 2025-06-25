@@ -1,3 +1,4 @@
+import CommentRecipe from "@/components/CommentRecipe";
 import StepsRecipe from "@/components/StepsRecipe";
 import UstensilRecipe from "@/components/UstensilRecipe";
 import type {
@@ -6,6 +7,10 @@ import type {
   TypeUstensil,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
+interface CommentInterface {
+  text: string;
+  member: string;
+}
 
 function DetailsRecipe() {
   const recipeId = Number(localStorage.getItem("recipeId"));
@@ -13,30 +18,48 @@ function DetailsRecipe() {
   const [ingredients, setIngredients] = useState<TypeIngredient[]>([]);
   const [ustensils, setUstensils] = useState<TypeUstensil[]>([]);
   const [numberPersons, setNumberPersons] = useState<number>(1);
+  const [rate, setRate] = useState<number>(0);
+  const [comments, setComments] = useState<CommentInterface[]>([]);
 
   // Fetch the recipe details using the recipeId
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/recipe/detail/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setRecipe(data);
       });
     //Fetch the ingredients for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setIngredients(data);
       });
     //Fetch the ustensils for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ustensil/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setUstensils(data);
       });
+    //fetch rate and comments
+    fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe/${recipeId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setRate(data.rate);
+        setComments(data.comments);
+        // console.log(data.rate);
+        // console.log(data.comments);
+      });
   }, [recipeId]);
+
+  const renderStars = (rate: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rate) {
+        stars.push(<span key={i}>⭐</span>);
+      }
+    }
+    return stars;
+  };
 
   //diminuer le nbr de personnes avec limite basse a 1
   function handleLess() {
@@ -54,7 +77,9 @@ function DetailsRecipe() {
         src={recipe?.picture}
         alt={recipe?.name}
       />
-      <h2 className="p-8 pt-20 text-3xl">{recipe?.name}</h2>
+      <h2 className="p-8 pt-20 text-3xl">
+        {recipe?.name} {renderStars(rate)}
+      </h2>
       <section className="flex text-secondary justify-between m-4">
         <article className="flex">
           <img
@@ -148,6 +173,7 @@ function DetailsRecipe() {
           <StepsRecipe recipe={recipe} />
         </section>
       </section>
+      <CommentRecipe comments={comments} />
       <section className="flex items-center">
         <img
           className="h-20 w-20"

@@ -142,11 +142,61 @@ const random: RequestHandler = async (req, res, next) => {
 
 const accueilCategory: RequestHandler = async (req, res, next) => {
   try {
-    // Fetch all items
-
     const recipies = await recipeRepository.accueilCategory();
-    // Respond with the items in JSON format
+    // Respond  in JSON format
     res.json(recipies);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const rate: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.params.id);
+    const note = await recipeRepository.note(recipeId);
+    const comments = await recipeRepository.comment(recipeId);
+    // Respond  in JSON format
+    res.json({
+      rate: note,
+      comments: comments.map((comment) => ({
+        text: comment.comment,
+        member: comment.name,
+      })),
+    });
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const addComment: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.body.recipeId);
+    const userId = Number(req.body.userId);
+    const commentText = String(req.body.text);
+    //verifier si le combo user/recipe existe deja
+    const existingCombo = await recipeRepository.checkComment(recipeId, userId);
+    if (existingCombo) {
+      // If it exists, update the comment
+      await recipeRepository.updateComment(recipeId, userId, commentText);
+      // Respond with a success message
+      res.json({ message: "Comment updated successfully" });
+      return;
+    }
+    // If it doesn't exist, add a new comment
+    if (!recipeId || !userId || !commentText) {
+      res.status(400).json({ error: "Missing required fields" });
+      return;
+    }
+    // Add the comment
+    const comment = await recipeRepository.addComment(
+      recipeId,
+      userId,
+      commentText,
+    );
+    // Respond  in JSON format
+    res.json(comment);
   } catch (err) {
     // Pass any errors to the error-handling middleware
     next(err);
@@ -163,4 +213,6 @@ export default {
   random,
   accueilCategory,
   time,
+  rate,
+  addComment,
 };
