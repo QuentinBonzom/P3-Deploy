@@ -13,10 +13,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { ChevronRight } from "lucide-react";
-import type * as React from "react";
+import { useState } from "react";
 
 // This is sample data.
 const data = {
@@ -67,6 +66,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [activeItem, setActiveItem] = useState("");
+
   return (
     <Sidebar {...props}>
       <SidebarHeader className="bg-primary">Gestion</SidebarHeader>
@@ -77,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             key={item.title}
             title={item.title}
             defaultOpen
-            className=" group/collapsible "
+            className="group/collapsible "
           >
             <SidebarGroup>
               <SidebarGroupLabel
@@ -94,7 +95,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={activeItem === item.title}
+                          onClick={() => setActiveItem(item.title)}
+                        >
                           <a href={item.url}>{item.title}</a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -106,7 +111,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </Collapsible>
         ))}
       </SidebarContent>
-      <SidebarRail />
     </Sidebar>
   );
 }
