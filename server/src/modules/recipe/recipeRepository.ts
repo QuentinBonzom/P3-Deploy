@@ -1,6 +1,7 @@
 import type {
   TypeRandom,
   TypeRecipe,
+  ingredientDetails,
 } from "../../../../client/src/types/TypeFiles";
 import databaseClient from "../../../database/client"; // On suppose que c’est un client pg déjà configuré
 
@@ -199,6 +200,72 @@ class recipeRepository {
       [], // Pas de paramètres ici
     );
     return result.rows;
+  }
+
+  async listRecipes() {
+    const result = await databaseClient.query<{ name: string }>(
+      "SELECT id, name FROM recipe",
+    );
+
+    return result.rows; // renvoie un tableau de { name: string }
+  }
+
+  async deleteRecipe(recipeId: number) {
+    const result = await databaseClient.query(
+      "DELETE FROM recipe WHERE id = $1 RETURNING id",
+      [recipeId],
+    );
+
+    return result.rows[0];
+  }
+
+  async add(recipe: TypeRecipe, ingredientDetails: ingredientDetails[]) {
+    // On exécute une requête SQL pour insérer la recette dans recipe
+    try {
+      const result = await databaseClient.query<{ id: number }>(
+        `
+      INSERT INTO recipe (name, time_preparation, description, difficulty, picture, kcal, id_category, id_diet, step1, step2, step3, step4, step5, step6, step7)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      RETURNING id
+    `,
+        [
+          recipe.name,
+          recipe.time_preparation,
+          recipe.description,
+          recipe.difficulty,
+          recipe.picture,
+          recipe.kcal,
+          recipe.id_category,
+          recipe.id_diet,
+          recipe.step1,
+          recipe.step2 ?? null,
+          recipe.step3 ?? null,
+          recipe.step4 ?? null,
+          recipe.step5 ?? null,
+          recipe.step6 ?? null,
+          recipe.step7 ?? null,
+        ],
+      );
+
+      // On récupère l'ID de la recette qu'on vient de créer
+      const recipeId = result.rows[0].id;
+
+      for (const ingredient of ingredientDetails) {
+        await databaseClient.query(
+          // pour chaque ingrédient, on ajoute une ligne dans la table recipe_ingredient :
+          `
+        INSERT INTO recipe_ingredient (id_recipe, id_ingredient, quantity, unit)
+        VALUES ($1, $2, $3, $4)
+      `,
+          [recipeId, ingredient.id, ingredient.quantity, ingredient.unit],
+        );
+      }
+
+      return recipeId;
+    } catch (err) {
+      console.error("Erreur dans recipeRepository.add :", err);
+      throw err;
+    }
   }
 }
 

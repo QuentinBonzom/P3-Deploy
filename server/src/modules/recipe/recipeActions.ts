@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 
+import ingredientsRepository from "../ingredient/ingredientsRepository";
 // Import access to data
 import recipeRepository from "./recipeRepository";
 
@@ -153,6 +154,47 @@ const accueilCategory: RequestHandler = async (req, res, next) => {
   }
 };
 
+const listRecipesAdmin: RequestHandler = async (req, res, next) => {
+  try {
+    const recipes = await recipeRepository.listRecipes();
+
+    res.json(recipes); // renvoie un tableau de noms
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteRecipe: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number.parseInt(req.params.id);
+
+    const deleted = await recipeRepository.deleteRecipe(recipeId);
+
+    if (!deleted) {
+      res.status(404).json({ message: "Recette introuvable" });
+      return;
+    }
+
+    res.status(200).json({ message: "Recette supprimé avec succès" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const add: RequestHandler = async (req, res, next) => {
+  try {
+    const recipe = req.body.recipe;
+    const ingredientDetails = req.body.ingredient || [];
+
+    const newRecipeId = await recipeRepository.add(recipe, ingredientDetails);
+
+    res.status(201).json({ id: newRecipeId });
+  } catch (err) {
+    console.error("Erreur lors de l'ajout de la recette :", err);
+    next(err);
+  }
+};
+
 export default {
   browse,
   read,
@@ -163,4 +205,7 @@ export default {
   random,
   accueilCategory,
   time,
+  listRecipesAdmin,
+  deleteRecipe,
+  add,
 };

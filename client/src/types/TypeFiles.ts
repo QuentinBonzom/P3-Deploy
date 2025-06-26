@@ -16,11 +16,14 @@ export interface TypeRecipe {
   recipe_name: string;
   rate: number;
   diet_name: string;
+  id_category: number;
+  id_diet: number;
 }
 
 export interface TypeDiet {
   id: number;
   name: string;
+  "Sans Gluten": boolean;
 }
 
 export interface TypeCategory {
@@ -97,3 +100,37 @@ export interface Member {
   email: string;
   id: number;
 }
+
+export interface Recipe {
+  id: number;
+  name: string;
+}
+
+export interface ingredientDetails {
+  id: number;
+  quantity: number;
+  unit: string;
+}
+
+export type FormData = {
+  name: string;
+  description: string;
+  time_preparation: string;
+  difficulty: string;
+  kcal: string;
+  id_category: string;
+  id_diet: string;
+  step1?: string;
+  step2?: string;
+  step3?: string;
+  step4?: string;
+  step5?: string;
+  step6?: string;
+  step7?: string;
+};
+
+export type SelectedIngredient = {
+  id: number;
+  quantity: string;
+  unit: string;
+};
