@@ -176,20 +176,20 @@ const addComment: RequestHandler = async (req, res, next) => {
     const userId = Number(req.body.userId);
     const commentText = String(req.body.text);
     //verifier si le combo user/recipe existe deja
-    const existingCombo = await recipeRepository.checkComment(recipeId, userId);
+    const existingCombo = await recipeRepository.checkCombo(recipeId, userId);
     if (existingCombo) {
-      // If it exists, update the comment
+      // si le combo exist update comment
       await recipeRepository.updateComment(recipeId, userId, commentText);
       // Respond with a success message
       res.json({ message: "Comment updated successfully" });
       return;
     }
-    // If it doesn't exist, add a new comment
+    // sinon creer combo avec comment si les variables existes
     if (!recipeId || !userId || !commentText) {
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
-    // Add the comment
+    // creer combo et comment
     const comment = await recipeRepository.addComment(
       recipeId,
       userId,
@@ -197,6 +197,56 @@ const addComment: RequestHandler = async (req, res, next) => {
     );
     // Respond  in JSON format
     res.json(comment);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const addFavorite: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.body.recipeId);
+    const userId = Number(req.body.userId);
+
+    const existingCombo = await recipeRepository.checkCombo(recipeId, userId);
+    if (existingCombo) {
+      await recipeRepository.updateFavorite(recipeId, userId);
+      // Respond with a success message
+      res.json({ message: "favorite updated successfully" });
+      return;
+    }
+    // If it doesn't exist, add the favorite
+    const favorite = await recipeRepository.addFavorite(recipeId, userId);
+    // Respond  in JSON format
+    res.json(favorite);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const addRate: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.body.recipeId);
+    const userId = Number(req.body.userId);
+    const rate = Number(req.body.rate);
+    //verifier si le combo user/recipe existe deja
+    const existingCombo = await recipeRepository.checkCombo(recipeId, userId);
+    if (existingCombo) {
+      // si le combo exist update rate
+      await recipeRepository.updateRate(recipeId, userId, rate);
+      // Respond with a success message
+      res.json({ message: "Rate updated successfully" });
+      return;
+    }
+    // sinon creer combo avec rate si les variables existes
+    if (!recipeId || !userId || !rate) {
+      res.status(400).json({ error: "Missing required fields" });
+      return;
+    }
+    // creer combo et rate
+    const newRate = await recipeRepository.addRate(recipeId, userId, rate);
+    // Respond  in JSON format
+    res.json(newRate);
   } catch (err) {
     // Pass any errors to the error-handling middleware
     next(err);
@@ -215,4 +265,6 @@ export default {
   time,
   rate,
   addComment,
+  addFavorite,
+  addRate,
 };

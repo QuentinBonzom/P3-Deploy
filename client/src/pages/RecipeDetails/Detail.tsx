@@ -1,18 +1,21 @@
 import CommentRecipe from "@/components/CommentRecipe";
 import StepsRecipe from "@/components/StepsRecipe";
 import UstensilRecipe from "@/components/UstensilRecipe";
+import { useUser } from "@/context/UserContext";
 import type {
   TypeIngredient,
   TypeRecipe,
   TypeUstensil,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 interface CommentInterface {
   text: string;
   member: string;
 }
 
 function DetailsRecipe() {
+  const navigate = useNavigate();
   const recipeId = Number(localStorage.getItem("recipeId"));
   const [recipe, setRecipe] = useState<TypeRecipe | null>(null);
   const [ingredients, setIngredients] = useState<TypeIngredient[]>([]);
@@ -20,6 +23,8 @@ function DetailsRecipe() {
   const [numberPersons, setNumberPersons] = useState<number>(1);
   const [rate, setRate] = useState<number>(0);
   const [comments, setComments] = useState<CommentInterface[]>([]);
+  const { isConnected, idUserOnline } = useUser();
+  // const [userRate, setUserRate] = useState<number | null>(null);
 
   // Fetch the recipe details using the recipeId
   useEffect(() => {
@@ -70,6 +75,74 @@ function DetailsRecipe() {
     }
   }
 
+  //ajouter aux favoris
+  function handleAddFavorite(recipeId: number) {
+    if (!isConnected) {
+      alert("Vous devez vous connecter pour ajouter une recette aux favoris.");
+      navigate("/Compte");
+    } else {
+      fetch(`${import.meta.env.VITE_API_URL}/api/favorite/recipe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recipeId, userId: idUserOnline }),
+      }).then((response) => {
+        if (response.ok) {
+          alert("Recette ajoutée aux favoris");
+        } else {
+          alert("Erreur lors de l'ajout de la recette aux favoris");
+        }
+      });
+    }
+  }
+
+  //ajouter une note
+  function handleUserRate(rate: number) {
+    if (!isConnected) {
+      alert("Vous devez être connecté pour donner une note.");
+      navigate("/Compte");
+    } else {
+      fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipeId,
+          userId: idUserOnline,
+          rate: rate,
+        }),
+      }).then((response) => {
+        if (response.ok) {
+          alert("Note ajoutée avec succès");
+        } else {
+          alert("Erreur lors de l'ajout de la note");
+        }
+      });
+    }
+  }
+
+  function handleShopping(recipeId: number, numberPersons: number) {
+    if (!isConnected) {
+      alert(
+        "Vous devez être connecté pour ajouter des ingrédients à votre liste de courses.",
+      );
+      navigate("/Compte");
+    } else {
+      const currentList = JSON.parse(
+        localStorage.getItem("currentList") || "[]",
+      );
+      const thisRecipePersonns = {
+        recipeId: recipeId,
+        userId: idUserOnline,
+        numberPersons: numberPersons,
+      };
+      currentList.push(thisRecipePersonns);
+      localStorage.setItem("currentList", JSON.stringify(currentList));
+    }
+  }
+
   return (
     <>
       <img
@@ -98,7 +171,7 @@ function DetailsRecipe() {
             src="/torseIcone.png"
             alt="icone de torse"
           />
-          <div className="bg-white h-10 min-w-56 rounded-2xl border-2 border-secondary flex items-center justify-center m-auto">
+          <div className="bg-white h-10 min-w-56 rounded-2xl border-2 border-secondary flex items-center justify-center m-auto ">
             <button
               onClick={() => handleLess()}
               type="button"
@@ -126,14 +199,16 @@ function DetailsRecipe() {
         </article>
         <article className="flex">
           <h3 className="m-auto px-2">Ajouter aux favoris</h3>
-          <img
-            className="w-14 h-14 cursor-pointer"
-            src="/coeur.png"
-            alt="icone en coeur"
-          />
+          <button onClick={() => handleAddFavorite(recipeId)} type="button">
+            <img
+              className="w-14 h-14 cursor-pointer"
+              src="/coeur.png"
+              alt="icone en coeur"
+            />
+          </button>
         </article>
       </section>
-      <section className="flex">
+      <section className="flex mb-20">
         <section className="flex flex-col w-2/5">
           <article>
             <h3 className="m-4">Ingrédients</h3>
@@ -158,8 +233,9 @@ function DetailsRecipe() {
             ))}
           </article>
           <button
+            onClick={() => handleShopping(recipeId, numberPersons)}
             type="button"
-            className="bg-primary h-10 w-80 cursor-pointer rounded-full flex justify-between px-2 items-center m-auto my-8"
+            className="bg-primary h-10 w-80 cursor-pointer rounded-full flex justify-around px-2 items-center m-auto my-8"
           >
             Ajouter à ma liste de courses{" "}
             <img src="/caddy.png" alt="caddy" className="w-8 h-8" />
@@ -173,14 +249,53 @@ function DetailsRecipe() {
           <StepsRecipe recipe={recipe} />
         </section>
       </section>
-      <CommentRecipe comments={comments} />
-      <section className="flex items-center">
-        <img
-          className="h-20 w-20"
-          src="/cook-bonjour.png"
-          alt="logo qui donneune note"
-        />
-        <h3>Donnez votre avis</h3>
+      <section className="flex">
+        <CommentRecipe comments={comments} />
+        <section className="flex items-center m-auto">
+          <img
+            className="h-20 w-20"
+            src="/cook-bonjour.png"
+            alt="logo qui donneune note"
+          />
+          <h3>
+            Donnez votre avis
+            <button
+              onClick={() => handleUserRate(1)}
+              type="button"
+              className="cursor-pointer hover:text-2xl"
+            >
+              ⭐
+            </button>
+            <button
+              onClick={() => handleUserRate(2)}
+              type="button"
+              className="cursor-pointer hover:text-2xl"
+            >
+              ⭐
+            </button>
+            <button
+              onClick={() => handleUserRate(3)}
+              type="button"
+              className="cursor-pointer hover:text-2xl"
+            >
+              ⭐
+            </button>
+            <button
+              onClick={() => handleUserRate(4)}
+              type="button"
+              className="cursor-pointer hover:text-2xl"
+            >
+              ⭐
+            </button>
+            <button
+              onClick={() => handleUserRate(5)}
+              type="button"
+              className="cursor-pointer hover:text-2xl"
+            >
+              ⭐
+            </button>
+          </h3>
+        </section>
       </section>
     </>
   );

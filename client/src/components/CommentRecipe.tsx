@@ -49,12 +49,12 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
   }
 
   return (
-    <div className="m-4">
+    <div className="m-4 w-1/2">
       <h3>Commentaires</h3>
       <ul className="text-secondary">
         {comments.map((comment) => (
           <li
-            className="bg-primary/20 p-2 rounded w-1/2 my-4"
+            className="bg-primary/20 p-2 rounded  my-4"
             key={`${comment.text}-${comment.member}`}
           >
             {comment.member}: {comment.text}
@@ -63,7 +63,7 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
       </ul>
       <form
         onSubmit={(e) => handleSubmitComment(e)}
-        className="flex flex-col text-secondary w-1/2 items-end"
+        className="flex flex-col text-secondary  items-end"
       >
         <textarea
           onChange={(e) => setCommentText(e.target.value)}

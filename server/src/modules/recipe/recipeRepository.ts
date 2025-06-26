@@ -80,7 +80,7 @@ class recipeRepository {
   //   );
   //   return result.rowCount; // renvoie 1 si un enregistrement a bien été supprimé
   // }
-  async checkComment(recipeId: number, userId: number) {
+  async checkCombo(recipeId: number, userId: number) {
     const result = await databaseClient.query(
       `
         SELECT * FROM action
@@ -99,6 +99,30 @@ class recipeRepository {
         WHERE recipe_id = $2 AND user_id = $3
       `,
       [commentText, recipeId, userId],
+    );
+    return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
+  }
+
+  async updateFavorite(recipeId: number, userId: number) {
+    const result = await databaseClient.query(
+      `
+        UPDATE action
+        SET is_favorite = true
+        WHERE recipe_id = $1 AND user_id = $2
+      `,
+      [recipeId, userId],
+    );
+    return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
+  }
+
+  async updateRate(recipeId: number, userId: number, rate: number) {
+    const result = await databaseClient.query(
+      `
+        UPDATE action
+        SET rate = $1
+        WHERE recipe_id = $2 AND user_id = $3
+      `,
+      [rate, recipeId, userId],
     );
     return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
   }
@@ -257,6 +281,28 @@ class recipeRepository {
       VALUES ($1, $2, $3)      
     `,
       [recipeId, userId, comment],
+    );
+    return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+  }
+
+  async addFavorite(recipeId: number, userId: number) {
+    const result = await databaseClient.query(
+      `
+      INSERT INTO action (recipe_id, user_id, is_favorite)
+      VALUES ($1, $2, true)
+    `,
+      [recipeId, userId],
+    );
+    return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+  }
+
+  async addRate(recipeId: number, userId: number, rate: number) {
+    const result = await databaseClient.query(
+      `
+      INSERT INTO action (recipe_id, user_id, rate)
+      VALUES ($1, $2, $3)
+    `,
+      [recipeId, userId, rate],
     );
     return { recipeId, userId }; // Retourne les id clefs primaires de la table action
   }

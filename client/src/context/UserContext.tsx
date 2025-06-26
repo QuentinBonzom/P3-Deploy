@@ -39,8 +39,6 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 export function UserProvider({ children }: ContextInterface) {
   //Initialisation du State avec la conversion du LocalStorage en String.
   const [idUserOnline, setIdUserOnline] = useState<number | null>(null);
-  //   JSON.stringify(localStorage.getItem("token") || ""),
-  // );
   const [isConnected, setIsConnected] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
