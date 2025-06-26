@@ -49,7 +49,6 @@ function Recettes() {
         setRecipeToMap(data);
       });
   }, []);
-  console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
 
   // Charge toutes les recettes au premier rendu (ou si handleAll change)
   useEffect(() => {
@@ -227,7 +226,13 @@ function Recettes() {
         >
           {/* Boucle sur les recettes à afficher */}
           {recipeToMap.map((recipe) => (
-            <Link to="/Details" key={recipe.id}>
+            <Link
+              onClick={() =>
+                localStorage.setItem("recipeId", String(recipe.id))
+              }
+              to="/Details"
+              key={recipe.id}
+            >
               <article className="flex bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden max-h-60 group w-full">
                 {/* Colonne gauche : image et tags */}
                 <div className="flex flex-col items-center justify-between bg-primary/10 p-2 w-36">

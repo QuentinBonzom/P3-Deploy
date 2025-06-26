@@ -7,7 +7,8 @@ class ustensilRepository {
       /* sql */ `
         SELECT
           u.id AS ustensil_id,
-          u.name AS ustensil_name
+          u.name AS ustensil_name,
+          u.picture AS ustensil_picture
         FROM recipe_utensil ru
         JOIN utensil u ON u.id = ru.utensil_id
         WHERE ru.recipe_id = $1;
