@@ -65,9 +65,9 @@ h3 {
 }
 
 a {
-  /* color: var(--color-secondary); */
   font-weight: semi-bold;
 }
+
 
 @keyframes shake {
   0% {
@@ -123,3 +123,4 @@ a {
     @apply bg-background text-foreground;
   } */
 /* } */
+
