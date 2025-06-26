@@ -82,6 +82,10 @@ const deleteAccount: RequestHandler = async (req, res, next) => {
     }
 
     res.status(200).json({ message: "Compte supprimé avec succès" });
+  } catch (err) {
+    next(err);
+  }
+};
 
 //Permet de contrôler si l'ID est à bien associé au token
 const checkId: RequestHandler = async (req, res, next) => {
@@ -93,7 +97,6 @@ const checkId: RequestHandler = async (req, res, next) => {
     } else {
       res.json(user);
     }
-
   } catch (err) {
     next(err);
   }

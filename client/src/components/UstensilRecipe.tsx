@@ -11,7 +11,7 @@ function UstensilRecipe({ ustensil }: { ustensil: TypeUstensil[] | null }) {
             className="flex justify-between flex-col w-1/3 items-center my-6"
           >
             <img
-              className="w-14 h-14 bg-amber-600 rounded-full"
+              className="w-20 h-20 rounded-full"
               src={ustensil.ustensil_picture}
               alt={ustensil.ustensil_name}
             />

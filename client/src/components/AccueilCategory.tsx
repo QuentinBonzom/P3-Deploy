@@ -11,7 +11,6 @@ function AccueilCategory() {
       .then((response) => response.json())
       .then((data) => {
         setCategoryRecipe(data);
-        console.log(data);
       });
   }, []);
 
