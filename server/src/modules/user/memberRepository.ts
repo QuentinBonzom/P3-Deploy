@@ -19,7 +19,7 @@ class userRepository {
   async readAll() {
     const result = await databaseClient.query<TypeUser>(
       `
-            SELECT * FROM member`,
+      SELECT * FROM member`,
       [],
     );
     return result.rows;
@@ -55,11 +55,65 @@ class userRepository {
 
   async delete(memberId: number) {
     const result = await databaseClient.query(
-      "DELETE FROM member WHERE id = $1 RETURNING id, email",
+      "SELECT FROM member WHERE id = $1 RETURNING id, email",
       [memberId],
     );
 
     return result.rows[0];
+  }
+
+  async update(
+    memberId: number,
+    fields: { name?: string; email?: string; password?: string },
+  ) {
+    // Tableau qui va contenir les fragments de la requête SQL "SET"
+    const updates = [];
+    // Tableau qui va contenir les valeurs à passer à la requête paramétrée
+    const values = [];
+    // Commence à 1 car $1 est le premier paramètre
+    // dans la requête SQL, et on va ajouter les valeurs dans l'ordre
+    // où elles apparaissent dans la requête.
+    // On utilise un index pour construire les placeholders $1, $2, etc.
+    let idx = 1;
+    // On vérifie chaque champ et on ajoute les fragments de mise à jour (updates et values)
+    if (fields.name) {
+      updates.push(`name = $${idx++}`);
+      values.push(fields.name);
+    }
+    // Si le champ email est défini, on l'ajoute à la requête
+    if (fields.email) {
+      updates.push(`email = $${idx++}`);
+      values.push(fields.email);
+    }
+    // Si le champ password est défini, on l'ajoute à la requête
+    if (fields.password) {
+      updates.push(`password = $${idx++}`);
+      values.push(fields.password);
+    }
+    // Si aucun champ n'est défini, on ne fait rien : null est retourné.
+    //values.push permet de stocker les valeurs à passer à la requête paramétrée pour éviter les injections SQL.
+    if (!updates.length) return null;
+    values.push(memberId);
+    const result = await databaseClient.query(
+      // join les fragments de mise à jour avec des virgules.
+      //where clause pour mettre à jour uniquement le membre avec l'ID spécifié
+      //returning clause pour retourner l'ID, le nom et l'email du membre mis à jour
+      `UPDATE member SET ${updates.join(", ")} WHERE id = $${idx} RETURNING id, name, email`,
+      values,
+    );
+    return result.rows[0];
+  }
+
+  async favoriteList(user_id: number) {
+    const result = await databaseClient.query(
+      `SELECT recipe_id, is_favorite 
+      FROM action 
+      WHERE user_id=$1 
+      AND is_favorite=true`,
+      [user_id],
+    );
+
+    return result.rows;
   }
 }
 

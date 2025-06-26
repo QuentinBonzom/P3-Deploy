@@ -23,13 +23,19 @@ router.get("/api/accueil/category", recipeActions.accueilCategory);
 import memberActions from "./modules/user/memberActions";
 
 router.get("/api/member", security.checkToken, memberActions.checkId);
+router.patch("/api/member", security.checkToken, memberActions.editMember);
+router.get("/api/member/:id", security.checkToken, memberActions.readFavorite); // liste des recettes favorites d'un membre
+router.delete(
+  "/api/member/:id",
+  security.checkToken,
+  memberActions.deleteAccount,
+); //supression compte
 router.post("/api/signin", memberActions.add, memberActions.login); // le "Add" permet de rajouter le compte et l'action "login" de ce log directement avec un token.
 router.post("/api/login", memberActions.login); //l'action "login" permet de ce log directement avec un token si membre existant.  -----rajouter securité (middleware) ?-----
 // Method = ( post, get, patch (petit update), put(Gros update), delete)
 // Module Actions (on fait appel a la methode crée dans le module actions : login)
 // router.get("api/user/:id", userActions.read);
 // router.put("api/user/:id", userActions.editAccount); //mdp, email, nom
-router.delete("/api/member/:id", memberActions.deleteAccount); //supression compte
 // router.use("api/user/admin/:id", userActions.admin); //acces page admin
 // router.put("api/user/admin/:id", userActions.adminEdit); //  modifier tout
 // router.delete("api/user/admin:id", userActions.adminDelete); // suprimer tout
