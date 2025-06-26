@@ -52,9 +52,13 @@ function Recettes() {
   console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
 
   // Charge toutes les recettes au premier rendu (ou si handleAll change)
-  useEffect(() => {
-    handleAll();
-  }, [handleAll]);
+  // useEffect(() => {
+  //         const homeCategory = localStorage.getItem("selectedCategory")
+  //if (homeCategory) {
+  //setSelectedCategory
+  //}
+  //   handleAll();
+  // }, [handleAll]);
 
   // Si un mot-clé est présent dans le localStorage, effectue une recherche et le supprime du localStorage
   useEffect(() => {
@@ -68,6 +72,7 @@ function Recettes() {
 
   // Filtre les recettes par catégorie sélectionnée
   useEffect(() => {
+    const homeCategory = localStorage.getItem("selectedCategory");
     if (selectedCategory) {
       fetch(
         `${import.meta.env.VITE_API_URL}/api/recipe/category/${selectedCategory}`,
@@ -78,13 +83,17 @@ function Recettes() {
         });
     }
     // Si aucun filtre n'est sélectionné, recharge toutes les recettes
-    else if (!selectedRegime && !selectedDifficulte) {
+    else if (!selectedRegime && !selectedDifficulte && !homeCategory) {
       handleAll();
+    } else {
+      setSelectedCategory(homeCategory);
     }
   }, [selectedCategory, handleAll, selectedRegime, selectedDifficulte]);
 
   // Filtre les recettes par régime sélectionné
   useEffect(() => {
+    const homeCategory = localStorage.getItem("selectedCategory");
+
     if (selectedRegime) {
       fetch(`${import.meta.env.VITE_API_URL}/api/recipe/diet/${selectedRegime}`)
         .then((response) => response.json())
@@ -93,13 +102,17 @@ function Recettes() {
         });
     }
     // Si aucun filtre n'est sélectionné, recharge toutes les recettes
-    else if (!selectedCategory && !selectedDifficulte) {
+    else if (!selectedCategory && !selectedDifficulte && !homeCategory) {
       handleAll();
+    } else {
+      setSelectedCategory(homeCategory);
     }
   }, [selectedRegime, handleAll, selectedCategory, selectedDifficulte]);
 
   // Filtre les recettes par difficulté sélectionnée
   useEffect(() => {
+    const homeCategory = localStorage.getItem("selectedCategory");
+
     if (selectedDifficulte) {
       fetch(
         `${import.meta.env.VITE_API_URL}/api/recipe/difficulty/${selectedDifficulte}`,
@@ -110,8 +123,10 @@ function Recettes() {
         });
     }
     // Si aucun filtre n'est sélectionné, recharge toutes les recettes
-    else if (!selectedCategory && !selectedRegime) {
+    else if (!selectedCategory && !selectedRegime && !homeCategory) {
       handleAll();
+    } else {
+      setSelectedCategory(homeCategory);
     }
   }, [selectedDifficulte, handleAll, selectedCategory, selectedRegime]);
 
@@ -168,6 +183,7 @@ function Recettes() {
             setSelectedRegime(null);
             setSelectedDifficulte(null);
             handleAll();
+            localStorage.removeItem("selectedCategory");
           }}
         >
           Réinitialiser les filtres
@@ -227,7 +243,13 @@ function Recettes() {
         >
           {/* Boucle sur les recettes à afficher */}
           {recipeToMap.map((recipe) => (
-            <Link to="/Details" key={recipe.id}>
+            <Link
+              to="/Details"
+              key={recipe.id}
+              onClick={() =>
+                localStorage.setItem("recipeId", recipe.id.toString())
+              }
+            >
               <article className="flex bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden max-h-60 group w-full">
                 {/* Colonne gauche : image et tags */}
                 <div className="flex flex-col items-center justify-between bg-primary/10 p-2 w-36">

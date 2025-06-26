@@ -18,6 +18,9 @@ router.get("/api/recipe/diet/:id", recipeActions.diet);
 router.get("/api/recipe/time/:id", recipeActions.time);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
 router.get("/api/accueil/category", recipeActions.accueilCategory);
+router.get("/api/ingredients", ingredientActions.browse);
+router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
+router.get("/api/ingredients/by-type", ingredientActions.browseWithType);
 
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";

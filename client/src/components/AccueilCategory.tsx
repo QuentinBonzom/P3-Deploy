@@ -15,8 +15,8 @@ function AccueilCategory() {
       });
   }, []);
 
-  const handleCategoryChoosed = (id: number) => {
-    localStorage.setItem("categoryId", id.toString());
+  const handleCategoryChoosed = (categoryName: string) => {
+    localStorage.setItem("selectedCategory", categoryName);
     navigate("/Recettes");
   };
 
@@ -28,7 +28,7 @@ function AccueilCategory() {
           <button
             type="button"
             key={recipe.id}
-            onClick={() => handleCategoryChoosed(recipe.id)}
+            onClick={() => handleCategoryChoosed(recipe.name)}
             className="relative w-80 h-60 overflow-hidden rounded-xl shadow-md cursor-pointer "
           >
             {/* Image de fond floutée */}

@@ -153,6 +153,21 @@ const accueilCategory: RequestHandler = async (req, res, next) => {
   }
 };
 
+const byIngredients: RequestHandler = async (req, res, next) => {
+  try {
+    const ings = req.query.ings as string;
+    if (!ings) {
+      res.json([]);
+      return;
+    }
+    const ingredientsArray = ings.split(",").map(Number);
+    const recipies = await recipeRepository.byIngredients(ingredientsArray);
+    res.json(recipies);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   browse,
   read,
@@ -163,4 +178,5 @@ export default {
   random,
   accueilCategory,
   time,
+  byIngredients,
 };
