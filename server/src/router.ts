@@ -29,6 +29,10 @@ router.get("/api/accueil/category", recipeActions.accueilCategory);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
 router.post("/api/recipe", recipeActions.add);
+router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note et les commentaires d'une recette
+router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
+router.post("/api/favorite/recipe", recipeActions.addFavorite); //pour ajouter une recette aux favoris")
+router.post("/api/rate/recipe", recipeActions.addRate); //pour ajouter une note sur une recette
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";
 

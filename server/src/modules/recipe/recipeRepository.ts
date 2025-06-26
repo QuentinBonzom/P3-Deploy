@@ -81,6 +81,52 @@ class recipeRepository {
   //   );
   //   return result.rowCount; // renvoie 1 si un enregistrement a bien été supprimé
   // }
+  async checkCombo(recipeId: number, userId: number) {
+    const result = await databaseClient.query(
+      `
+        SELECT * FROM action
+        WHERE recipe_id = $1 AND user_id = $2
+      `,
+      [recipeId, userId],
+    );
+    return (result.rowCount ?? 0) > 0; // renvoie true si le combo existe
+  }
+
+  async updateComment(recipeId: number, userId: number, commentText: string) {
+    const result = await databaseClient.query(
+      `
+        UPDATE action
+        SET comment = $1
+        WHERE recipe_id = $2 AND user_id = $3
+      `,
+      [commentText, recipeId, userId],
+    );
+    return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
+  }
+
+  async updateFavorite(recipeId: number, userId: number) {
+    const result = await databaseClient.query(
+      `
+        UPDATE action
+        SET is_favorite = true
+        WHERE recipe_id = $1 AND user_id = $2
+      `,
+      [recipeId, userId],
+    );
+    return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
+  }
+
+  async updateRate(recipeId: number, userId: number, rate: number) {
+    const result = await databaseClient.query(
+      `
+        UPDATE action
+        SET rate = $1
+        WHERE recipe_id = $2 AND user_id = $3
+      `,
+      [rate, recipeId, userId],
+    );
+    return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
+  }
 
   async search(id: string) {
     const searchWord = `%${id}%`; // On utilise le caractère de pourcentage pour la recherche partielle
@@ -266,6 +312,66 @@ class recipeRepository {
       console.error("Erreur dans recipeRepository.add :", err);
       throw err;
     }
+
+  async note(id: number) {
+    const result = await databaseClient.query(
+      `
+      SELECT AVG(rate) as rate
+      FROM action
+      WHERE recipe_id = $1;
+    `,
+      [id],
+    );
+    return result.rows[0].rate;
+  }
+
+  async comment(id: number) {
+    const result = await databaseClient.query(
+      `
+      SELECT comment, member.name AS name
+      FROM action
+      JOIN member ON action.user_id = member.id
+      WHERE recipe_id = $1;
+    `,
+      [id],
+    );
+    return result.rows;
+  }
+
+  async addComment(recipeId: number, userId: number, comment: string) {
+    console.log({ recipeId, userId, comment });
+
+    const result = await databaseClient.query(
+      `
+      INSERT INTO action (recipe_id, user_id, comment)
+      VALUES ($1, $2, $3)      
+    `,
+      [recipeId, userId, comment],
+    );
+    return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+  }
+
+  async addFavorite(recipeId: number, userId: number) {
+    const result = await databaseClient.query(
+      `
+      INSERT INTO action (recipe_id, user_id, is_favorite)
+      VALUES ($1, $2, true)
+    `,
+      [recipeId, userId],
+    );
+    return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+  }
+
+  async addRate(recipeId: number, userId: number, rate: number) {
+    const result = await databaseClient.query(
+      `
+      INSERT INTO action (recipe_id, user_id, rate)
+      VALUES ($1, $2, $3)
+    `,
+      [recipeId, userId, rate],
+    );
+    return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+
   }
 }
 
