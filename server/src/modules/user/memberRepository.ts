@@ -55,7 +55,7 @@ class userRepository {
 
   async delete(memberId: number) {
     const result = await databaseClient.query(
-      "SELECT FROM member WHERE id = $1 RETURNING id, email",
+      "DELETE FROM member WHERE id = $1 RETURNING id, email",
       [memberId],
     );
 

@@ -312,6 +312,7 @@ class recipeRepository {
       console.error("Erreur dans recipeRepository.add :", err);
       throw err;
     }
+  }
 
   async byIngredients(ingredients: number[]) {
     if (!ingredients.length) return [];
@@ -392,7 +393,6 @@ class recipeRepository {
       [recipeId, userId, rate],
     );
     return { recipeId, userId }; // Retourne les id clefs primaires de la table action
-
   }
 }
 

@@ -34,7 +34,6 @@ interface UserContextValue {
   handleUpdateMember: (e: React.FormEvent<HTMLFormElement>) => void;
 
   idUserOnline: number | null;
-
 }
 
 // creation du context
@@ -117,7 +116,7 @@ export function UserProvider({ children }: ContextInterface) {
   async function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(user);
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signin`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -170,7 +169,7 @@ export function UserProvider({ children }: ContextInterface) {
       }
       const response = await res.json();
       setUser((prev) => ({ ...prev, ...response, password: "" }));
-      alert("Profil mis à jour ! 🎉");
+      alert("Profil mis à jour !");
     } catch (err) {
       alert("Erreur réseau");
     }
@@ -180,10 +179,11 @@ export function UserProvider({ children }: ContextInterface) {
     if (!window.confirm("Voulez-vous vraiment supprimer votre compte ?"))
       return;
     const token = localStorage.getItem("token");
+
     if (!token) return;
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/member/${user.id}`,
+        `${import.meta.env.VITE_API_URL}/api/member/${idUserOnline}`,
         {
           method: "DELETE",
           headers: { Authorization: `${token}` },
@@ -223,7 +223,6 @@ export function UserProvider({ children }: ContextInterface) {
         handleDelete,
         handleUpdateMember,
         idUserOnline,
-
       }}
     >
       {children}

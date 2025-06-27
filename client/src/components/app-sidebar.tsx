@@ -1,3 +1,4 @@
+import MemberManage from "@/components/Admin/Member.tsx";
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,6 +19,7 @@ import EditMemberForm from "@/pages/Account/Edit_Member_Form";
 import FavoriteMemberList from "@/pages/Account/FavoriteMemberList";
 import { ChevronRight } from "lucide-react";
 import { type ComponentType, useState } from "react";
+import CreateRecipe from "./Admin/Add_Recipe.tsx";
 
 //Import des section (components)
 
@@ -51,12 +53,10 @@ const Data: SectionType[] = [
   {
     title: "Admin",
     items: [
-      // { title: "Gestion Recettes",
-      //   Component: RecipeAdmin,
-      //   isActive: false },
-      // { title: "Gestion Comptes",
-      //    Component: AccountAdmin,
-      //    isActive: false },
+      { title: "Gestion Recettes", Component: CreateRecipe, isActive: false },
+
+      { title: "Gestion Comptes", Component: MemberManage, isActive: false },
+
       // { title: "Gestion des Commentaires",
       //   Component: RatedList,
       //    isActive: false },

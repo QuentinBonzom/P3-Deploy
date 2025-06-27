@@ -243,19 +243,11 @@ function Recettes() {
           {/* Boucle sur les recettes à afficher */}
           {recipeToMap.map((recipe) => (
             <Link
-<<<<<<< US_BONUS
               to="/Details"
               key={recipe.id}
               onClick={() =>
                 localStorage.setItem("recipeId", recipe.id.toString())
               }
-=======
-              onClick={() =>
-                localStorage.setItem("recipeId", String(recipe.id))
-              }
-              to="/Details"
-              key={recipe.id}
->>>>>>> dev
             >
               <article className="flex bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden max-h-60 group w-full">
                 {/* Colonne gauche : image et tags */}

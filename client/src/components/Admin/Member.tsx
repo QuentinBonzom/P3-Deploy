@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 
 function memberManage() {
   const [memberMap, setMemberMap] = useState<Member[]>([]);
+
   const handleDelete = async (memberId: number) => {
+    const token = localStorage.getItem("token");
     try {
       // Envoie d'une requête à l'adresse du serveur en utilisant la méthode "DELETE" pour supprimer un membre
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/member/${memberId}`,
         {
           method: "DELETE",
+          headers: { Authorization: `${token}` },
         },
       );
 
@@ -25,11 +28,45 @@ function memberManage() {
   };
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/member`)
-      .then((response) => response.json())
-      .then((data) => {
-        setMemberMap(data);
-      });
+    const fetchMembers = async () => {
+      const token = localStorage.getItem("token");
+      console.log("Token utilisé :", token);
+
+      if (!token) {
+        console.warn("Aucun token trouvé !");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/admin/member`,
+          {
+            headers: {
+              Authorization: `${token}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Réponse brute :", errorText);
+          throw new Error("Échec de la récupération des membres");
+        }
+
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setMemberMap(data);
+        } else {
+          console.error("Données inattendues :", data);
+        }
+      } catch (error) {
+        console.error("Erreur de récupération :", error);
+      }
+    };
+
+    fetchMembers();
   }, []);
 
   return (
