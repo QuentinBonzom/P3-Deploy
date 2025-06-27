@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 
+import ingredientsRepository from "../ingredient/ingredientsRepository";
 // Import access to data
 import recipeRepository from "./recipeRepository";
 
@@ -151,7 +152,15 @@ const accueilCategory: RequestHandler = async (req, res, next) => {
   }
 };
 
-<<<<<<< US_BONUS
+
+const listRecipesAdmin: RequestHandler = async (req, res, next) => {
+  try {
+    const recipes = await recipeRepository.listRecipes();
+
+    res.json(recipes); // renvoie un tableau de noms
+  } catch (err) {
+
+
 const byIngredients: RequestHandler = async (req, res, next) => {
   try {
     const ings = req.query.ings as string;
@@ -163,7 +172,7 @@ const byIngredients: RequestHandler = async (req, res, next) => {
     const recipies = await recipeRepository.byIngredients(ingredientsArray);
     res.json(recipies);
   } catch (err) {
-=======
+
 const rate: RequestHandler = async (req, res, next) => {
   try {
     const recipeId = Number(req.params.id);
@@ -179,9 +188,25 @@ const rate: RequestHandler = async (req, res, next) => {
     });
   } catch (err) {
     // Pass any errors to the error-handling middleware
+
     next(err);
   }
 };
+
+
+const deleteRecipe: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number.parseInt(req.params.id);
+
+    const deleted = await recipeRepository.deleteRecipe(recipeId);
+
+    if (!deleted) {
+      res.status(404).json({ message: "Recette introuvable" });
+      return;
+    }
+
+    res.status(200).json({ message: "Recette supprimé avec succès" });
+  } catch (err) {
 
 const addComment: RequestHandler = async (req, res, next) => {
   try {
@@ -212,9 +237,22 @@ const addComment: RequestHandler = async (req, res, next) => {
     res.json(comment);
   } catch (err) {
     // Pass any errors to the error-handling middleware
+
     next(err);
   }
 };
+
+
+const add: RequestHandler = async (req, res, next) => {
+  try {
+    const recipe = req.body.recipe;
+    const ingredientDetails = req.body.ingredient || [];
+
+    const newRecipeId = await recipeRepository.add(recipe, ingredientDetails);
+
+    res.status(201).json({ id: newRecipeId });
+  } catch (err) {
+    console.error("Erreur lors de l'ajout de la recette :", err);
 
 const addFavorite: RequestHandler = async (req, res, next) => {
   try {
@@ -262,7 +300,7 @@ const addRate: RequestHandler = async (req, res, next) => {
     res.json(newRate);
   } catch (err) {
     // Pass any errors to the error-handling middleware
->>>>>>> dev
+
     next(err);
   }
 };
@@ -277,12 +315,11 @@ export default {
   random,
   accueilCategory,
   time,
-<<<<<<< US_BONUS
+  deleteRecipe,
+  add,
   byIngredients,
-=======
   rate,
   addComment,
   addFavorite,
   addRate,
->>>>>>> dev
 };

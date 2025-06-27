@@ -7,6 +7,14 @@ const router = express.Router();
 /* ************************************************************************* */
 
 // Define recipe-related routes
+import dietActions from "./modules/diet/dietActions";
+
+router.get("/api/diet", dietActions.browse);
+
+import categoryActions from "./modules/category/categoryActions";
+
+router.get("/api/category", categoryActions.browse);
+
 import recipeActions from "./modules/recipe/recipeActions";
 
 router.get("/api/recipe/random", recipeActions.random);
@@ -18,6 +26,9 @@ router.get("/api/recipe/diet/:id", recipeActions.diet);
 router.get("/api/recipe/time/:id", recipeActions.time);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
 router.get("/api/accueil/category", recipeActions.accueilCategory);
+router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
+router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
+router.post("/api/recipe", recipeActions.add);
 
 router.get("/api/ingredients", ingredientActions.browse);
 router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
