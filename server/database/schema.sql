@@ -75,14 +75,14 @@ CREATE TABLE public.unity (
   value character varying NOT NULL,
   CONSTRAINT unity_pkey PRIMARY KEY (id)
 );
-CREATE TABLE public.user (
+CREATE TABLE public.member (
   id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
-  name character varying NOT NULL UNIQUE,
-  email character varying NOT NULL UNIQUE,
+  name character varying NOT NULL ,
+  email character varying NOT NULL,
   role_id integer NOT NULL,
   password text NOT NULL CHECK (length(password) <= 50),
   admin boolean,
-  CONSTRAINT user_pkey PRIMARY KEY (id)
+  CONSTRAINT member_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.utensil (
   name character varying NOT NULL,
