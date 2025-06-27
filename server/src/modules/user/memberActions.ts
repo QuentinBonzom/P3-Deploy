@@ -92,7 +92,7 @@ const deleteAccount: RequestHandler = async (req, res, next) => {
   }
 };
 
-//Securité Permettant de contrôler si l'ID est à bien associé au token
+//Securité Permettant de contrôler si l'ID est bien associé au token
 const checkId: RequestHandler = async (req, res, next) => {
   try {
     const user = await memberRepository.read(Number(req.userId));

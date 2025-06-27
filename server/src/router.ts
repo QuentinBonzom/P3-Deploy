@@ -41,15 +41,16 @@ router.post("/api/rate/recipe", recipeActions.addRate); //pour ajouter une note 
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";
 
-router.get("/api/member", security.checkToken, memberActions.checkId);
-router.patch("/api/member", security.checkToken, memberActions.editMember);
+router.get("/api/admin/member", security.checkToken, memberActions.browse);
+router.get("/api/member", security.checkToken, memberActions.checkId); // token Check
+router.patch("/api/member", security.checkToken, memberActions.editMember); // modification du profile membre
 router.get("/api/member/:id", security.checkToken, memberActions.readFavorite); // liste des recettes favorites d'un membre
 router.delete(
   "/api/member/:id",
   security.checkToken,
   memberActions.deleteAccount,
 ); //supression compte
-router.post("/api/signin", memberActions.add, memberActions.login); // le "Add" permet de rajouter le compte et l'action "login" de ce log directement avec un token.
+router.post("/api/signup", memberActions.add, memberActions.login); // le "Add" permet de rajouter le compte et l'action "login" de ce log directement avec un token.
 router.post("/api/login", memberActions.login); //l'action "login" permet de ce log directement avec un token si membre existant.  -----rajouter securité (middleware) ?-----
 // Method = ( post, get, patch (petit update), put(Gros update), delete)
 // Module Actions (on fait appel a la methode crée dans le module actions : login)

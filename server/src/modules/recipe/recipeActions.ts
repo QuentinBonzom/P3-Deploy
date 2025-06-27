@@ -152,14 +152,15 @@ const accueilCategory: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 const listRecipesAdmin: RequestHandler = async (req, res, next) => {
   try {
     const recipes = await recipeRepository.listRecipes();
 
     res.json(recipes); // renvoie un tableau de noms
   } catch (err) {
-
+    next(err);
+  }
+};
 
 const byIngredients: RequestHandler = async (req, res, next) => {
   try {
@@ -172,6 +173,9 @@ const byIngredients: RequestHandler = async (req, res, next) => {
     const recipies = await recipeRepository.byIngredients(ingredientsArray);
     res.json(recipies);
   } catch (err) {
+    next(err);
+  }
+};
 
 const rate: RequestHandler = async (req, res, next) => {
   try {
@@ -193,7 +197,6 @@ const rate: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 const deleteRecipe: RequestHandler = async (req, res, next) => {
   try {
     const recipeId = Number.parseInt(req.params.id);
@@ -207,6 +210,9 @@ const deleteRecipe: RequestHandler = async (req, res, next) => {
 
     res.status(200).json({ message: "Recette supprimé avec succès" });
   } catch (err) {
+    next(err);
+  }
+};
 
 const addComment: RequestHandler = async (req, res, next) => {
   try {
@@ -242,7 +248,6 @@ const addComment: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 const add: RequestHandler = async (req, res, next) => {
   try {
     const recipe = req.body.recipe;
@@ -253,6 +258,9 @@ const add: RequestHandler = async (req, res, next) => {
     res.status(201).json({ id: newRecipeId });
   } catch (err) {
     console.error("Erreur lors de l'ajout de la recette :", err);
+    next(err);
+  }
+};
 
 const addFavorite: RequestHandler = async (req, res, next) => {
   try {
@@ -322,4 +330,5 @@ export default {
   addComment,
   addFavorite,
   addRate,
+  listRecipesAdmin,
 };
