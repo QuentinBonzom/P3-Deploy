@@ -29,21 +29,32 @@ router.get("/api/accueil/category", recipeActions.accueilCategory);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
 router.post("/api/recipe", recipeActions.add);
+
+router.get("/api/ingredients", ingredientActions.browse);
+router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
+router.get("/api/ingredients/by-type", ingredientActions.browseWithType);
 router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note et les commentaires d'une recette
 router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
 router.post("/api/favorite/recipe", recipeActions.addFavorite); //pour ajouter une recette aux favoris")
 router.post("/api/rate/recipe", recipeActions.addRate); //pour ajouter une note sur une recette
+
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";
 
 router.get("/api/member", security.checkToken, memberActions.checkId);
+router.patch("/api/member", security.checkToken, memberActions.editMember);
+router.get("/api/member/:id", security.checkToken, memberActions.readFavorite); // liste des recettes favorites d'un membre
+router.delete(
+  "/api/member/:id",
+  security.checkToken,
+  memberActions.deleteAccount,
+); //supression compte
 router.post("/api/signin", memberActions.add, memberActions.login); // le "Add" permet de rajouter le compte et l'action "login" de ce log directement avec un token.
 router.post("/api/login", memberActions.login); //l'action "login" permet de ce log directement avec un token si membre existant.  -----rajouter securité (middleware) ?-----
 // Method = ( post, get, patch (petit update), put(Gros update), delete)
 // Module Actions (on fait appel a la methode crée dans le module actions : login)
 // router.get("api/user/:id", userActions.read);
 // router.put("api/user/:id", userActions.editAccount); //mdp, email, nom
-router.delete("/api/member/:id", memberActions.deleteAccount); //supression compte
 // router.use("api/user/admin/:id", userActions.admin); //acces page admin
 // router.put("api/user/admin/:id", userActions.adminEdit); //  modifier tout
 // router.delete("api/user/admin:id", userActions.adminDelete); // suprimer tout

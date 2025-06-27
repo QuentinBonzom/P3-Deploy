@@ -313,6 +313,27 @@ class recipeRepository {
       throw err;
     }
 
+  async byIngredients(ingredients: number[]) {
+    if (!ingredients.length) return [];
+
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+    SELECT r.id, r.picture, r.description, r.name, d.name AS diet_name, r.difficulty, r.time_preparation, r.kcal, AVG(a.rate) as rate
+    FROM recipe r
+    JOIN recip_ingredient ri ON r.id = ri.recipe_id
+    JOIN ingredient i ON ri.ingredient_id = i.id
+    LEFT JOIN action a ON r.id = a.recipe_id
+    JOIN diet d On r.id_diet = d.id
+    WHERE i.id = ANY($1)
+    GROUP BY r.id, d.name
+    HAVING COUNT(DISTINCT i.id) = $2
+    ORDER BY r.id;
+    `,
+      [ingredients, ingredients.length],
+    );
+    return result.rows;
+  }
+
   async note(id: number) {
     const result = await databaseClient.query(
       `

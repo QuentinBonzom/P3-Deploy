@@ -72,22 +72,27 @@ const login: RequestHandler = async (req, res, next) => {
 
 const deleteAccount: RequestHandler = async (req, res, next) => {
   try {
-    const memberId = Number.parseInt(req.params.id);
-
+    // On récupère l'ID du membre à supprimer depuis les paramètres de la requête ou depuis le token
+    const memberId = req.params.id ? Number(req.params.id) : Number(req.userId);
+    // Si l'ID est dans les paramètres, on le prend, sinon on prend l'ID du token
+    // On vérifie si l'utilisateur a le droit de supprimer le compte
+    // Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
+    if (req.params.id && memberId !== Number(req.userId)) {
+      res.status(403).json({ message: "Action interdite" });
+      return;
+    }
     const deleted = await memberRepository.delete(memberId);
-
     if (!deleted) {
       res.status(404).json({ message: "Utilisateur introuvable" });
       return;
     }
-
     res.status(200).json({ message: "Compte supprimé avec succès" });
   } catch (err) {
     next(err);
   }
 };
 
-//Permet de contrôler si l'ID est à bien associé au token
+//Securité Permettant de contrôler si l'ID est à bien associé au token
 const checkId: RequestHandler = async (req, res, next) => {
   try {
     const user = await memberRepository.read(Number(req.userId));
@@ -102,4 +107,47 @@ const checkId: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse, read, add, login, checkId, deleteAccount };
+const editMember: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.userId); // On prend l'ID du token
+    const { name, email, password } = req.body;
+    //  On vérifie si l'utilisateur a le droit de modifier le compte
+    //  Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
+    const updated = await memberRepository.update(memberId, {
+      name,
+      email,
+      password: password || undefined,
+    });
+    if (!updated) res.status(404).json({ message: "Utilisateur introuvable" });
+    res.json(updated);
+    return;
+  } catch (err) {
+    next(err);
+  }
+};
+
+const readFavorite: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.params.id);
+    const favorites = await memberRepository.favoriteList(memberId);
+
+    if (favorites == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(favorites);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default {
+  browse,
+  read,
+  add,
+  login,
+  checkId,
+  deleteAccount,
+  editMember,
+  readFavorite,
+};

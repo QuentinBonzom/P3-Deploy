@@ -160,6 +160,19 @@ const listRecipesAdmin: RequestHandler = async (req, res, next) => {
     res.json(recipes); // renvoie un tableau de noms
   } catch (err) {
 
+
+const byIngredients: RequestHandler = async (req, res, next) => {
+  try {
+    const ings = req.query.ings as string;
+    if (!ings) {
+      res.json([]);
+      return;
+    }
+    const ingredientsArray = ings.split(",").map(Number);
+    const recipies = await recipeRepository.byIngredients(ingredientsArray);
+    res.json(recipies);
+  } catch (err) {
+
 const rate: RequestHandler = async (req, res, next) => {
   try {
     const recipeId = Number(req.params.id);
@@ -302,9 +315,9 @@ export default {
   random,
   accueilCategory,
   time,
-  listRecipesAdmin,
   deleteRecipe,
   add,
+  byIngredients,
   rate,
   addComment,
   addFavorite,

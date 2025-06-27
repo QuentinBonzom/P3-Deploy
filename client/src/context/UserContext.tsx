@@ -29,7 +29,12 @@ interface UserContextValue {
   handleSubmitSignUp: (e: React.FormEvent<HTMLFormElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDisconnect: () => void;
+
+  handleDelete: () => void;
+  handleUpdateMember: (e: React.FormEvent<HTMLFormElement>) => void;
+
   idUserOnline: number | null;
+
 }
 
 // creation du context
@@ -141,6 +146,63 @@ export function UserProvider({ children }: ContextInterface) {
     // window.location.reload();
   }
 
+  async function handleUpdateMember(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Non connecté !");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/member`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          password: user.password || undefined, // don't send empty string
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        console.error(err);
+        return alert("Erreur lors de la mise à jour du profil.");
+      }
+      const response = await res.json();
+      setUser((prev) => ({ ...prev, ...response, password: "" }));
+      alert("Profil mis à jour ! 🎉");
+    } catch (err) {
+      alert("Erreur réseau");
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm("Voulez-vous vraiment supprimer votre compte ?"))
+      return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/member/${user.id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `${token}` },
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json();
+        console.error(err);
+        return alert("Erreur lors de la suppression du compte.");
+      }
+      alert("Compte supprimé !");
+      localStorage.removeItem("token");
+      setIsConnected(false);
+      // Optionally redirect
+      // navigate("/login");
+    } catch (err) {
+      alert("Erreur réseau");
+    }
+  }
   // console.log(isConnected);
   //return provider avec tout les UseState/ logique / fetch Applicable sur les composants ou App.tsx consommant le context
   return (
@@ -158,7 +220,10 @@ export function UserProvider({ children }: ContextInterface) {
         handleChange,
         user,
         setUser,
+        handleDelete,
+        handleUpdateMember,
         idUserOnline,
+
       }}
     >
       {children}
