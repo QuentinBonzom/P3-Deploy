@@ -151,6 +151,19 @@ const accueilCategory: RequestHandler = async (req, res, next) => {
   }
 };
 
+<<<<<<< US_BONUS
+const byIngredients: RequestHandler = async (req, res, next) => {
+  try {
+    const ings = req.query.ings as string;
+    if (!ings) {
+      res.json([]);
+      return;
+    }
+    const ingredientsArray = ings.split(",").map(Number);
+    const recipies = await recipeRepository.byIngredients(ingredientsArray);
+    res.json(recipies);
+  } catch (err) {
+=======
 const rate: RequestHandler = async (req, res, next) => {
   try {
     const recipeId = Number(req.params.id);
@@ -249,6 +262,7 @@ const addRate: RequestHandler = async (req, res, next) => {
     res.json(newRate);
   } catch (err) {
     // Pass any errors to the error-handling middleware
+>>>>>>> dev
     next(err);
   }
 };
@@ -263,8 +277,12 @@ export default {
   random,
   accueilCategory,
   time,
+<<<<<<< US_BONUS
+  byIngredients,
+=======
   rate,
   addComment,
   addFavorite,
   addRate,
+>>>>>>> dev
 };

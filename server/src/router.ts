@@ -18,10 +18,15 @@ router.get("/api/recipe/diet/:id", recipeActions.diet);
 router.get("/api/recipe/time/:id", recipeActions.time);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
 router.get("/api/accueil/category", recipeActions.accueilCategory);
+
+router.get("/api/ingredients", ingredientActions.browse);
+router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
+router.get("/api/ingredients/by-type", ingredientActions.browseWithType);
 router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note et les commentaires d'une recette
 router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
 router.post("/api/favorite/recipe", recipeActions.addFavorite); //pour ajouter une recette aux favoris")
 router.post("/api/rate/recipe", recipeActions.addRate); //pour ajouter une note sur une recette
+
 // Define member-related routes
 import memberActions from "./modules/user/memberActions";
 

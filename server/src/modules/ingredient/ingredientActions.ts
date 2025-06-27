@@ -36,4 +36,13 @@ const recipeIngredient: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse, recipeIngredient };
+const browseWithType: RequestHandler = async (req, res, next) => {
+  try {
+    const ingredients = await ingredientsRepository.readAllWithType();
+    res.json(ingredients);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default { browse, browseWithType, recipeIngredient };
