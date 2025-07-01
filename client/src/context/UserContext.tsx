@@ -20,20 +20,20 @@ interface UserContextValue {
   email: string;
   password: string;
   user: TypeUser;
+  isAdmin: boolean;
+  idUserOnline: number | null;
   // setUserOnline: React.Dispatch<React.SetStateAction<string>>; // Commented out or remove if not used elsewhere
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   setUser: React.Dispatch<React.SetStateAction<TypeUser>>;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleSubmitSignUp: (e: React.FormEvent<HTMLFormElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDisconnect: () => void;
-
-  handleDelete: () => void;
+  handleDeleteSelfAccount: () => void;
   handleUpdateMember: (e: React.FormEvent<HTMLFormElement>) => void;
-
-  idUserOnline: number | null;
 }
 
 // creation du context
@@ -52,6 +52,7 @@ export function UserProvider({ children }: ContextInterface) {
     email: "",
     password: "",
   });
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // Verification du Token --------------------------------------
   useEffect(() => {
@@ -78,6 +79,7 @@ export function UserProvider({ children }: ContextInterface) {
           if (data.message !== " Unauthorized") {
             setIsConnected(true);
             setIdUserOnline(data.id);
+            setIsAdmin(data.admin);
           } else {
             setIsConnected(false);
             setIdUserOnline(null);
@@ -86,6 +88,7 @@ export function UserProvider({ children }: ContextInterface) {
     }
   }, []);
 
+  console.log(isAdmin);
   // Creation du Token -----------------------------------------
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -100,9 +103,11 @@ export function UserProvider({ children }: ContextInterface) {
 
     if (response.ok) {
       const data = await response.json();
-      //console.log(data);
+      // console.log(data);
       localStorage.setItem("token", data.token); // stocké en string
       setIsConnected(true);
+      setIsAdmin(data.admin);
+      // console.log("isAdmin", data.admin);
       setIdUserOnline(data.userId);
       navigate("/Compte");
     } else {
@@ -127,6 +132,7 @@ export function UserProvider({ children }: ContextInterface) {
       const data = await response.json();
       localStorage.setItem("token", data.token);
       setIsConnected(true);
+      setIdUserOnline(data.userId);
       navigate("/Compte");
     }
   }
@@ -175,7 +181,7 @@ export function UserProvider({ children }: ContextInterface) {
     }
   }
 
-  async function handleDelete() {
+  async function handleDeleteSelfAccount() {
     if (!window.confirm("Voulez-vous vraiment supprimer votre compte ?"))
       return;
     const token = localStorage.getItem("token");
@@ -220,9 +226,11 @@ export function UserProvider({ children }: ContextInterface) {
         handleChange,
         user,
         setUser,
-        handleDelete,
+        handleDeleteSelfAccount,
         handleUpdateMember,
         idUserOnline,
+        isAdmin,
+        setIsAdmin,
       }}
     >
       {children}

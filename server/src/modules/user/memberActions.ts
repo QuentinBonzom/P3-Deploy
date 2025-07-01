@@ -59,9 +59,13 @@ const login: RequestHandler = async (req, res, next) => {
     const user =
       req.user ||
       (await memberRepository.login(req.body.email, req.body.password));
+    console.log("infoUser", user);
     if (user) {
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
-      res.status(201).json({ token, userId: user.id });
+      const token = jwt.sign(
+        { id: user.id, isAdmin: user.admin },
+        process.env.JWT_SECRET as string,
+      );
+      res.status(201).json({ token, userId: user.id, isAdmin: user.admin });
     } else {
       res.status(401).send("membre inconnu");
     }
@@ -82,6 +86,35 @@ const deleteAccount: RequestHandler = async (req, res, next) => {
       return;
     }
     const deleted = await memberRepository.delete(memberId);
+    if (!deleted) {
+      res.status(404).json({ message: "Utilisateur introuvable" });
+      return;
+    }
+    res.status(200).json({ message: "Compte supprimé avec succès" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteMemberAsAdmin: RequestHandler = async (req, res, next) => {
+  try {
+    // On récupère l'ID du membre à supprimer depuis les paramètres de la requête
+    const MemberId = req.query.idToDelete;
+    console.log("requete", req);
+    const adminId = Number(req.params.id);
+    console.log("adminId", adminId);
+    // Si l'ID est dans les paramètres, on le prend, sinon on prend l'ID du token
+    // On vérifie si l'utilisateur a le droit de supprimer le compte
+    // Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
+    if (!adminId) {
+      res.status(403).json({ message: "Action interdite" });
+      return;
+    }
+    // if (!MemberId || isNaN(Number(MemberId))) {
+    //   res.status(400).json({ message: "idToDelete invalide" });
+    //   return;
+    // }
+    const deleted = await memberRepository.delete(Number(MemberId));
     if (!deleted) {
       res.status(404).json({ message: "Utilisateur introuvable" });
       return;
@@ -126,7 +159,22 @@ const editMember: RequestHandler = async (req, res, next) => {
   }
 };
 
-const readFavorite: RequestHandler = async (req, res, next) => {
+const favorite: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.params.id);
+    const favorites = await memberRepository.favoriteList(memberId);
+
+    if (favorites == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(favorites);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+const rate: RequestHandler = async (req, res, next) => {
   try {
     const memberId = Number(req.params.id);
     const favorites = await memberRepository.favoriteList(memberId);
@@ -148,6 +196,8 @@ export default {
   login,
   checkId,
   deleteAccount,
+  deleteMemberAsAdmin,
   editMember,
-  readFavorite,
+  favorite,
+  rate,
 };

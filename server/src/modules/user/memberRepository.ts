@@ -44,7 +44,7 @@ class userRepository {
   // Async quand tu le sais tu l'attend avec Await
   async login(email: string, password: string) {
     const result = await databaseClient.query(
-      `SELECT id, email, password FROM member
+      `SELECT id, email, admin, password FROM member
         WHERE email = $1
         AND password = $2`,
       [email, password],
@@ -106,10 +106,35 @@ class userRepository {
 
   async favoriteList(user_id: number) {
     const result = await databaseClient.query(
-      `SELECT recipe_id, is_favorite 
+      `SELECT DISTINCT ON (r.id) r.name, r.picture, a.is_favorite 
+      FROM recipe r
+      JOIN action a ON r.id = a.recipe_id
+      WHERE user_id=$1 
+      AND a.is_favorite=true`,
+      [user_id],
+    );
+
+    return result.rows;
+  }
+
+  async rated(user_id: number) {
+    const result = await databaseClient.query(
+      `SELECT recipe_id, rate
       FROM action 
       WHERE user_id=$1 
-      AND is_favorite=true`,
+      AND rate`,
+      [user_id],
+    );
+
+    return result.rows;
+  }
+
+  async comments(user_id: number) {
+    const result = await databaseClient.query(
+      `SELECT recipe_id, a.comment
+      FROM action a
+      WHERE user_id=$1 
+      AND comment`,
       [user_id],
     );
 

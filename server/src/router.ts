@@ -1,5 +1,6 @@
 import express from "express";
 import security from "./modules/middleware/security";
+import securityAdmin from "./modules/middleware/securityAdmin";
 const router = express.Router();
 
 /* ************************************************************************* */
@@ -44,7 +45,15 @@ import memberActions from "./modules/user/memberActions";
 router.get("/api/admin/member", security.checkToken, memberActions.browse);
 router.get("/api/member", security.checkToken, memberActions.checkId); // token Check
 router.patch("/api/member", security.checkToken, memberActions.editMember); // modification du profile membre
-router.get("/api/member/:id", security.checkToken, memberActions.readFavorite); // liste des recettes favorites d'un membre
+router.get("/api/member/:id", security.checkToken, memberActions.favorite); // liste des recettes favorites d'un membre
+// router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
+// router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre
+
+router.delete(
+  "/api/admin/:id",
+  securityAdmin.checkTokenAdmin,
+  memberActions.deleteMemberAsAdmin,
+);
 router.delete(
   "/api/member/:id",
   security.checkToken,
