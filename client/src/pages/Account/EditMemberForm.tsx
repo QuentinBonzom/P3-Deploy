@@ -1,7 +1,8 @@
 import { useUser } from "@/context/UserContext";
 
 function EditMemberForm() {
-  const { user, handleChange, handleUpdateMember, handleDelete } = useUser();
+  const { user, handleChange, handleUpdateMember, handleDeleteSelfAccount } =
+    useUser();
 
   return (
     <>
@@ -60,7 +61,7 @@ function EditMemberForm() {
       </form>
       <button
         type="button"
-        onClick={handleDelete}
+        onClick={handleDeleteSelfAccount}
         className="p-2 rounded-xl bg-red-600 text-white ml-4 cursor-pointer"
       >
         Supprimer mon compte

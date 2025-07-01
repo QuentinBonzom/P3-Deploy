@@ -15,7 +15,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import EditMemberForm from "@/pages/Account/Edit_Member_Form";
+import { useUser } from "@/context/UserContext.tsx";
+import EditMemberForm from "@/pages/Account/EditMemberForm.tsx";
 import FavoriteMemberList from "@/pages/Account/FavoriteMemberList";
 import { ChevronRight } from "lucide-react";
 import { type ComponentType, useState } from "react";
@@ -25,6 +26,7 @@ import CreateRecipe from "./Admin/Add_Recipe.tsx";
 
 interface SectionType {
   title: string;
+  isAdmin: boolean;
   items: {
     title: string;
     Component: ComponentType;
@@ -36,6 +38,7 @@ interface SectionType {
 const Data: SectionType[] = [
   {
     title: "Membre",
+    isAdmin: false,
     items: [
       { title: "Favoris", Component: FavoriteMemberList, isActive: false },
 
@@ -52,6 +55,7 @@ const Data: SectionType[] = [
   },
   {
     title: "Admin",
+    isAdmin: true,
     items: [
       { title: "Gestion Recettes", Component: CreateRecipe, isActive: false },
 
@@ -69,17 +73,21 @@ export interface AppSidebarProps {
 }
 
 export function AppSidebar({ onSelect, ...props }: AppSidebarProps) {
+  const { isAdmin, isConnected } = useUser();
   // apparition du composant actif dans le sidebar
   const [activeItem, setActiveItem] = useState("");
-  // apparition du composant actif du contenu du sidebar
-  // const [ActiveComponent ,setActiveComponent]=useState<ComponentType | null>(null)
+
+  const sections = Data.filter(
+    (section) =>
+      isConnected &&
+      (section.title === "Membre" || (section.title === "Admin" && isAdmin)),
+  );
 
   return (
     <Sidebar {...props}>
       <SidebarHeader className="bg-primary">Gestion</SidebarHeader>
       <SidebarContent className="bg-primary text-white gap-0">
-        {/* creation des sections dynamique du sidebar  */}
-        {Data.map((section) => (
+        {sections.map((section) => (
           <Collapsible
             key={section.title}
             // title={section.title}

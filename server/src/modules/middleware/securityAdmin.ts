@@ -1,16 +1,14 @@
 import type { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 
-// Define the shape of your JWT payload
 interface JWTPayload {
-  id: number;
+  AdminId: number;
 }
 
-const checkToken: RequestHandler = (req, res, next) => {
-  //variable token qui est une requete du headers et controle le token coté client.
+const checkTokenAdmin: RequestHandler = (req, res, next) => {
   const token = req.headers.authorization;
-  //console.log(token);
-
+  //fetch client /api/admin/:id?idToDelete=${idToDelete}
+  const idToDelete = req.query.idToDelete;
   if (!token) {
     res.status(401).send({ message: "Unauthorized" });
     return;
@@ -22,13 +20,12 @@ const checkToken: RequestHandler = (req, res, next) => {
       res.status(401).send({ message: "Unauthorized" });
       return;
     }
+    const { AdminId } = decoded as JWTPayload;
 
-    // On extrait l'ID utilisateur (decoded.id) et on le stocke dans la requête (req.userId) pour un usage ultérieur
-    const { id } = decoded as JWTPayload;
-    req.userId = id;
-    console.log("Token Membre fonctionnel");
+    req.userId = AdminId;
+    console.log("Token Admin fonctionnel");
     next();
   });
 };
 
-export default { checkToken };
+export default { checkTokenAdmin };

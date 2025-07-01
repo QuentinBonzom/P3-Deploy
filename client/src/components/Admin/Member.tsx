@@ -1,7 +1,9 @@
+import { useUser } from "@/context/UserContext";
 import type { Member } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
 
 function memberManage() {
+  const { idUserOnline } = useUser();
   const [memberMap, setMemberMap] = useState<Member[]>([]);
 
   const handleDelete = async (memberId: number) => {
@@ -9,7 +11,8 @@ function memberManage() {
     try {
       // Envoie d'une requête à l'adresse du serveur en utilisant la méthode "DELETE" pour supprimer un membre
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/member/${memberId}`,
+        //api/admin/:id?=key=value
+        `${import.meta.env.VITE_API_URL}/api/admin/${idUserOnline}?idToDelete=${memberId}`,
         {
           method: "DELETE",
           headers: { Authorization: `${token}` },
