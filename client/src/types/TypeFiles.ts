@@ -101,6 +101,8 @@ export interface Member {
   name: string;
   email: string;
   id: number;
+  admin: boolean;
+  inscription: string;
 }
 
 export interface Recipe {

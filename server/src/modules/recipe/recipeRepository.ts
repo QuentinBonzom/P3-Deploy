@@ -3,7 +3,7 @@ import type {
   TypeRecipe,
   ingredientDetails,
 } from "../../../../client/src/types/TypeFiles";
-import databaseClient from "../../../database/client"; // On suppose que c’est un client pg déjà configuré
+import databaseClient from "../../../database/client";
 
 class recipeRepository {
   //   // Création (C de CRUD)
@@ -22,7 +22,7 @@ class recipeRepository {
   //     return result.rows[0].id;
   //   }
 
-  // Lecture d’un seul élément (R de CRUD)
+  // Lecture d'un seul élément (R de CRUD)
   async read(id: number) {
     const result = await databaseClient.query<TypeRecipe>(
       /* sql */ `
@@ -56,7 +56,7 @@ class recipeRepository {
     return result.rows;
   }
 
-  // // (U de CRUD) -- Exemple de squelette pour la mise à jour, si tu veux t’entraîner :
+  // // (U de CRUD) -- Exemple de squelette pour la mise à jour, si tu veux t'entraîner :
   // async update(item: Item) {
   //   const result = await databaseClient.query(
   //     `
@@ -399,6 +399,47 @@ class recipeRepository {
       [recipeId, userId, rate],
     );
     return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+  }
+
+  // Lecture filtrée selon plusieurs critères
+  async readFiltered(category?: string, diet?: string, difficulty?: string) {
+    // Construction dynamique de la clause WHERE
+    const whereClauses: string[] = [];
+    const params: string[] = [];
+    let paramIndex = 1;
+
+    if (category) {
+      whereClauses.push(`c.name ILIKE $${paramIndex++}`);
+      params.push(category);
+    }
+    if (diet) {
+      whereClauses.push(`d.name ILIKE $${paramIndex++}`);
+      params.push(`%${diet}%`);
+    }
+    if (difficulty) {
+      whereClauses.push(`r.difficulty ILIKE $${paramIndex++}`);
+      params.push(difficulty);
+    }
+
+    const where =
+      whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
+
+    const result = await databaseClient.query<TypeRecipe>(
+      `
+      SELECT DISTINCT ON (r.id) r.id, r.picture, r.name AS recipe_name, d.name AS diet_name, r.difficulty, r.description, r.time_preparation, r.kcal, AVG(a.rate) as rate
+      FROM recipe r
+      JOIN recip_ingredient ri ON r.id = ri.recipe_id
+      JOIN ingredient i ON ri.ingredient_id = i.id
+      LEFT JOIN action a ON r.id = a.recipe_id
+      JOIN diet d ON r.id_diet = d.id
+      LEFT JOIN category c ON r.id_category = c.id
+      ${where}
+      GROUP BY r.id, d.name
+      ORDER BY r.id;
+      `,
+      params,
+    );
+    return result.rows;
   }
 }
 

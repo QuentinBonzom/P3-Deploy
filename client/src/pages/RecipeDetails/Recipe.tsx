@@ -1,5 +1,6 @@
 import type { TypeRecipe } from "@/types/TypeFiles";
 import { useCallback, useEffect, useState } from "react";
+import { TiDeleteOutline } from "react-icons/ti";
 import { Link } from "react-router";
 import FiltresRecipe from "../../components/FiltresRecipe";
 
@@ -13,7 +14,9 @@ function Recettes() {
   );
 
   // States pour les filtres sélectionnés
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    localStorage.getItem("selectedCategory") || null,
+  );
   const [selectedRegime, setSelectedRegime] = useState<string | null>(null);
   const [selectedDifficulte, setSelectedDifficulte] = useState<string | null>(
     null,
@@ -50,15 +53,6 @@ function Recettes() {
       });
   }, []);
 
-  // Charge toutes les recettes au premier rendu (ou si handleAll change)
-  // useEffect(() => {
-  //         const homeCategory = localStorage.getItem("selectedCategory")
-  //if (homeCategory) {
-  //setSelectedCategory
-  //}
-  //   handleAll();
-  // }, [handleAll]);
-
   // Si un mot-clé est présent dans le localStorage, effectue une recherche et le supprime du localStorage
   useEffect(() => {
     const storedSearchWord = localStorage.getItem("searchWord");
@@ -69,65 +63,41 @@ function Recettes() {
     }
   }, [handleSearch]);
 
-  // Filtre les recettes par catégorie sélectionnée
+  // useEffect unique pour gérer la combinaison de plusieurs filtres
+  useEffect(() => {
+    // Si aucun filtre n'est sélectionné, on affiche tout
+    if (!selectedCategory && !selectedRegime && !selectedDifficulte) {
+      handleAll();
+      return;
+    }
+
+    // useEffect modifie pour cumuler les filtres
+    const params = new URLSearchParams();
+    if (selectedCategory) params.append("category", selectedCategory);
+    if (selectedRegime) params.append("diet", selectedRegime);
+    if (selectedDifficulte) params.append("difficulty", selectedDifficulte);
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/recipe?${params.toString()}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setRecipeToMap(data);
+      });
+  }, [selectedCategory, selectedRegime, selectedDifficulte, handleAll]);
+
+  // useEffect pour gérer la sélection de catégorie depuis la page d'accueil
   useEffect(() => {
     const homeCategory = localStorage.getItem("selectedCategory");
-    if (selectedCategory) {
-      fetch(
-        `${import.meta.env.VITE_API_URL}/api/recipe/category/${selectedCategory}`,
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setRecipeToMap(data);
-        });
-    }
-    // Si aucun filtre n'est sélectionné, recharge toutes les recettes
-    else if (!selectedRegime && !selectedDifficulte && !homeCategory) {
-      handleAll();
-    } else {
+    if (homeCategory) {
       setSelectedCategory(homeCategory);
+      localStorage.removeItem("selectedCategory"); // Optionnel : pour éviter de réappliquer à chaque navigation
     }
-  }, [selectedCategory, handleAll, selectedRegime, selectedDifficulte]);
+  }, []);
 
-  // Filtre les recettes par régime sélectionné
   useEffect(() => {
-    const homeCategory = localStorage.getItem("selectedCategory");
-
-    if (selectedRegime) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/recipe/diet/${selectedRegime}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setRecipeToMap(data);
-        });
+    if (localStorage.getItem("selectedCategory")) {
+      localStorage.removeItem("selectedCategory");
     }
-    // Si aucun filtre n'est sélectionné, recharge toutes les recettes
-    else if (!selectedCategory && !selectedDifficulte && !homeCategory) {
-      handleAll();
-    } else {
-      setSelectedCategory(homeCategory);
-    }
-  }, [selectedRegime, handleAll, selectedCategory, selectedDifficulte]);
-
-  // Filtre les recettes par difficulté sélectionnée
-  useEffect(() => {
-    const homeCategory = localStorage.getItem("selectedCategory");
-
-    if (selectedDifficulte) {
-      fetch(
-        `${import.meta.env.VITE_API_URL}/api/recipe/difficulty/${selectedDifficulte}`,
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setRecipeToMap(data);
-        });
-    }
-    // Si aucun filtre n'est sélectionné, recharge toutes les recettes
-    else if (!selectedCategory && !selectedRegime && !homeCategory) {
-      handleAll();
-    } else {
-      setSelectedCategory(homeCategory);
-    }
-  }, [selectedDifficulte, handleAll, selectedCategory, selectedRegime]);
+  }, []);
 
   return (
     <section className="p-5 max-w-screen-xl mx-auto">
@@ -188,6 +158,51 @@ function Recettes() {
           Réinitialiser les filtres
         </button>
       </section>
+
+      {/* Indicateur des filtres sélectionnés */}
+      {(selectedCategory || selectedRegime || selectedDifficulte) && (
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
+          {selectedCategory && (
+            <span className="bg-primary/20 text-primary border border-primary rounded-full px-4 py-1 text-sm font-semibold flex items-center gap-2">
+              Catégorie : {selectedCategory}
+              <button
+                type="button"
+                className="ml-1 text-primary hover:text-red-600 text-xl focus:outline-none"
+                aria-label="Retirer le filtre catégorie"
+                onClick={() => setSelectedCategory(null)}
+              >
+                <TiDeleteOutline />
+              </button>
+            </span>
+          )}
+          {selectedRegime && (
+            <span className="bg-green-100 text-green-800 border border-green-300 rounded-full px-4 py-1 text-sm font-semibold flex items-center gap-2">
+              Régime : {selectedRegime}
+              <button
+                type="button"
+                className="ml-1 text-green-800 hover:text-red-600 text-xl focus:outline-none"
+                aria-label="Retirer le filtre régime"
+                onClick={() => setSelectedRegime(null)}
+              >
+                <TiDeleteOutline />
+              </button>
+            </span>
+          )}
+          {selectedDifficulte && (
+            <span className="bg-blue-100 text-blue-700 border border-blue-300 rounded-full px-4 py-1 text-sm font-semibold flex items-center gap-2">
+              Difficulté : {selectedDifficulte}
+              <button
+                type="button"
+                className="ml-1 text-blue-700 hover:text-red-600 text-xl focus:outline-none"
+                aria-label="Retirer le filtre difficulté"
+                onClick={() => setSelectedDifficulte(null)}
+              >
+                <TiDeleteOutline />
+              </button>
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Filtres mobile */}
       <section className="md:hidden pb-3 text-secondary text-center">

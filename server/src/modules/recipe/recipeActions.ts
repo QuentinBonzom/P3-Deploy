@@ -7,13 +7,20 @@ import recipeRepository from "./recipeRepository";
 // The B of BREAD - Browse (Read All) operation
 const browse: RequestHandler = async (req, res, next) => {
   try {
-    // Fetch all items
-    const recipies = await recipeRepository.readAll();
-
-    // Respond with the items in JSON format
+    // Récupération des paramètres de requête pour le filtrage combiné
+    const { category, diet, difficulty } = req.query;
+    let recipies: unknown[];
+    if (category || diet || difficulty) {
+      recipies = await recipeRepository.readFiltered(
+        category as string | undefined,
+        diet as string | undefined,
+        difficulty as string | undefined,
+      );
+    } else {
+      recipies = await recipeRepository.readAll();
+    }
     res.json(recipies);
   } catch (err) {
-    // Pass any errors to the error-handling middleware
     next(err);
   }
 };
