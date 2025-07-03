@@ -1,16 +1,18 @@
 import { useUser } from "@/context/UserContext";
-import { useState } from "react";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import useToggle from "@/hooks/useToggle";
+import { useRef } from "react";
 import { Link } from "react-router";
 
 function NavBar_Mobile() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { handleDisconnect, isConnected } = useUser();
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const { isConnected } = useUser();
+  const { toggleMenu, isOpen, setIsOpen } = useToggle();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeMenu = () => setIsOpen(false);
+  useClickOutside(menuRef, closeMenu);
 
   return (
-    <div>
+    <div aria-expanded={isOpen} ref={menuRef}>
       <section className="absolute top-5 right-5 ">
         <button
           type="button"
@@ -81,7 +83,7 @@ function NavBar_Mobile() {
             </Link>
 
             <span className="block border-t border-[#dd682d] my-3" />
-
+            {/* Refactoriser */}
             {!isConnected ? (
               <Link
                 to="/Compte"
@@ -92,14 +94,13 @@ function NavBar_Mobile() {
               </Link>
             ) : (
               <Link
-                to="/"
+                to="/Compte"
                 className="mr-8 mt-2 block text-secondary"
                 onClick={() => {
-                  handleDisconnect();
                   setIsOpen(false);
                 }}
               >
-                Déconnexion
+                Mon Compte
               </Link>
             )}
           </div>

@@ -14,15 +14,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useUser } from "@/context/UserContext.tsx";
 import EditMemberForm from "@/pages/Account/EditMemberForm.tsx";
 import FavoriteMemberList from "@/pages/Account/FavoriteMemberList";
 import { ChevronRight } from "lucide-react";
-import { type ComponentType, useState } from "react";
+import type { ComponentType } from "react";
+import { FaPowerOff } from "react-icons/fa6";
+import { Link } from "react-router";
 import CreateRecipe from "./Admin/Add_Recipe.tsx";
-
-//Import des section (components)
 
 interface SectionType {
   title: string;
@@ -30,7 +31,6 @@ interface SectionType {
   items: {
     title: string;
     Component: ComponentType;
-    isActive: boolean;
   }[];
 }
 
@@ -40,16 +40,17 @@ const Data: SectionType[] = [
     title: "Membre",
     isAdmin: false,
     items: [
-      { title: "Favoris", Component: FavoriteMemberList, isActive: false },
+      { title: "Favoris", Component: FavoriteMemberList },
 
       // { title: "Noté",
-      //   Component: RatedList,
-      //   isActive: false },
+      //   Component: RatedList},
+
+      // { title: "Noté",
+      //   Component: RatedList},
 
       {
         title: "Modifier mon compte",
         Component: EditMemberForm,
-        isActive: false,
       },
     ],
   },
@@ -57,13 +58,12 @@ const Data: SectionType[] = [
     title: "Admin",
     isAdmin: true,
     items: [
-      { title: "Gestion Recettes", Component: CreateRecipe, isActive: false },
+      { title: "Gestion Recettes", Component: CreateRecipe },
 
-      { title: "Gestion Comptes", Component: MemberManage, isActive: false },
+      { title: "Gestion Comptes", Component: MemberManage },
 
       // { title: "Gestion des Commentaires",
-      //   Component: RatedList,
-      //    isActive: false },
+      //   Component: Comentary},
     ],
   },
 ];
@@ -73,10 +73,9 @@ export interface AppSidebarProps {
 }
 
 export function AppSidebar({ onSelect, ...props }: AppSidebarProps) {
-  const { isAdmin, isConnected } = useUser();
-  // apparition du composant actif dans le sidebar
-  const [activeItem, setActiveItem] = useState("");
-
+  const { setOpenMobile } = useSidebar();
+  const { isAdmin, isConnected, handleDisconnect } = useUser();
+  // apparition de membre ou Admin tout depends du role du user (db)
   const sections = Data.filter(
     (section) =>
       isConnected &&
@@ -85,15 +84,21 @@ export function AppSidebar({ onSelect, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader className="bg-primary">Gestion</SidebarHeader>
+      <SidebarHeader className="bg-primary flex flex-row justify-between">
+        Gestion{" "}
+        <Link
+          to="/"
+          className="absolute top-3 right-3 text-secondary text-center cursor-pointer md:hidden"
+          onClick={() => {
+            handleDisconnect();
+          }}
+        >
+          <FaPowerOff />
+        </Link>
+      </SidebarHeader>
       <SidebarContent className="bg-primary text-white gap-0">
         {sections.map((section) => (
-          <Collapsible
-            key={section.title}
-            // title={section.title}
-            defaultOpen
-            className="group/collapsible "
-          >
+          <Collapsible key={section.title} className="group/collapsible ">
             <SidebarGroup>
               <SidebarGroupLabel
                 asChild
@@ -111,10 +116,9 @@ export function AppSidebar({ onSelect, ...props }: AppSidebarProps) {
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
-                          isActive={activeItem === item.title}
                           onClick={() => {
-                            setActiveItem(item.title);
                             onSelect(item.title, item.Component);
+                            setOpenMobile(false);
                           }}
                         >
                           <p className="cursor-pointer">{item.title}</p>
