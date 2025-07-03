@@ -104,18 +104,6 @@ class recipeRepository {
     return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
   }
 
-  async updateFavorite(recipeId: number, userId: number) {
-    const result = await databaseClient.query(
-      `
-        UPDATE action
-        SET is_favorite = true
-        WHERE recipe_id = $1 AND user_id = $2
-      `,
-      [recipeId, userId],
-    );
-    return result.rowCount; // renvoie 1 si un enregistrement a bien été mis à jour
-  }
-
   async updateRate(recipeId: number, userId: number, rate: number) {
     const result = await databaseClient.query(
       `
@@ -373,15 +361,18 @@ class recipeRepository {
     return { recipeId, userId }; // Retourne les id clefs primaires de la table action
   }
 
-  async addFavorite(recipeId: number, userId: number) {
+  async updateFavorite(recipeId: number, userId: number, is_favorite: boolean) {
     const result = await databaseClient.query(
       `
-      INSERT INTO action (recipe_id, user_id, is_favorite)
-      VALUES ($1, $2, true)
+    INSERT INTO action (recipe_id, user_id, is_favorite)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (recipe_id, user_id)
+    DO UPDATE SET is_favorite = EXCLUDED.is_favorite
+    RETURNING *;
     `,
-      [recipeId, userId],
+      [recipeId, userId, is_favorite],
     );
-    return { recipeId, userId }; // Retourne les id clefs primaires de la table action
+    return result.rows[0]; // returns the affected row
   }
 
   async addRate(recipeId: number, userId: number, rate: number) {
