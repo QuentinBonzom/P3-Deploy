@@ -140,6 +140,16 @@ class userRepository {
 
     return result.rows;
   }
+
+  async updateAdminStatus(memberId: number, admin: boolean) {
+    const result = await databaseClient.query(
+      `UPDATE member
+     SET admin = $1 WHERE id = $2
+      RETURNING id, name, email, admin`,
+      [admin, memberId],
+    );
+    return result.rows[0];
+  }
 }
 
 export default new userRepository();
