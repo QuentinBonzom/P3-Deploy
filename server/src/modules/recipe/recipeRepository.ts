@@ -283,15 +283,30 @@ class recipeRepository {
 
       // On récupère l'ID de la recette qu'on vient de créer
       const recipeId = result.rows[0].id;
-
+      // On boucle sur tous les ingrédients (objet qui contient ses données (id, quantité, unité, etc.) reçus dans ingredientDetails
       for (const ingredient of ingredientDetails) {
+        // Convertir en nombre et vérifier
+        const quantity = Number(ingredient.quantity);
+        //On récupère l’identifiant de l’unité associée à cet ingrédient. Le ?? signifie "si ingredient.unity_id est défini, on le prend, sinon on prend ingredient.unity
+        const unityId = Number(ingredient.unity_id ?? ingredient.unity);
+
+        if (Number.isNaN(quantity)) {
+          throw new Error(
+            `Quantité invalide pour l'ingrédient id=${ingredient.id}`,
+          );
+        }
+        if (Number.isNaN(unityId)) {
+          throw new Error(
+            `unity_id invalide pour l'ingrédient id=${ingredient.id}`,
+          );
+        }
+
         await databaseClient.query(
-          // pour chaque ingrédient, on ajoute une ligne dans la table recipe_ingredient :
           `
-        INSERT INTO recipe_ingredient (id_recipe, id_ingredient, quantity, unit)
-        VALUES ($1, $2, $3, $4)
-      `,
-          [recipeId, ingredient.id, ingredient.quantity, ingredient.unit],
+    INSERT INTO recip_ingredient (ingredient_id, recipe_id, quantity, unity_id)
+    VALUES ($1, $2, $3, $4)
+    `,
+          [ingredient.id, recipeId, quantity, unityId],
         );
       }
 

@@ -18,7 +18,11 @@ import ustensilActions from "./modules/ustensil/ustensilActions";
 router.use("/api/member", security.checkToken); // middleware pour les routes membres
 router.use("/api/admin", securityAdmin.checkTokenAdmin); // middleware pour les routes admin
 
-// route publique ---------------------
+import unityActions from "./modules/unity/unityActions";
+
+router.get("/api/unity", unityActions.browse);
+
+import categoryActions from "./modules/category/categoryActions";
 
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
