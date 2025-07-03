@@ -7,7 +7,13 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 import {
   Tooltip,
@@ -178,6 +184,7 @@ function Sidebar({
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
+          aria-description="sidebar"
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
@@ -189,7 +196,13 @@ function Sidebar({
           }
           side={side}
         >
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <VisuallyHidden>
+            <SheetDescription>Navigation latérale mobile</SheetDescription>
+          </VisuallyHidden>
+          <SheetTitle className="flex h-full w-full flex-col">
+            {children}
+          </SheetTitle>
+          {/* <div className="flex h-full w-full flex-col">{children}</div> */}
         </SheetContent>
       </Sheet>
     );

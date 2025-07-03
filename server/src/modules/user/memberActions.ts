@@ -159,7 +159,7 @@ const editMember: RequestHandler = async (req, res, next) => {
   }
 };
 
-const favorite: RequestHandler = async (req, res, next) => {
+const readFavorite: RequestHandler = async (req, res, next) => {
   try {
     const memberId = Number(req.params.id);
     const favorites = await memberRepository.favoriteList(memberId);
@@ -220,7 +220,7 @@ export default {
   deleteAccount,
   deleteMemberAsAdmin,
   editMember,
-  favorite,
+  readFavorite,
   rate,
   UpdateAdminStatus,
 };
