@@ -262,21 +262,18 @@ const add: RequestHandler = async (req, res, next) => {
   }
 };
 
-const addFavorite: RequestHandler = async (req, res, next) => {
+// permet de rajouter ou enlever une recette des favoris
+const updateFavorite: RequestHandler = async (req, res, next) => {
   try {
     const recipeId = Number(req.body.recipeId);
     const userId = Number(req.body.userId);
+    const is_favorite = Boolean(req.body.is_favorite);
 
-    const existingCombo = await recipeRepository.checkCombo(recipeId, userId);
-    if (existingCombo) {
-      await recipeRepository.updateFavorite(recipeId, userId);
-      // Respond with a success message
-      res.json({ message: "favorite updated successfully" });
-      return;
-    }
-    // If it doesn't exist, add the favorite
-    const favorite = await recipeRepository.addFavorite(recipeId, userId);
-    // Respond  in JSON format
+    const favorite = await recipeRepository.updateFavorite(
+      recipeId,
+      userId,
+      is_favorite,
+    );
     res.json(favorite);
   } catch (err) {
     next(err);
@@ -328,7 +325,7 @@ export default {
   byIngredients,
   rate,
   addComment,
-  addFavorite,
+  updateFavorite,
   addRate,
   listRecipesAdmin,
 };
