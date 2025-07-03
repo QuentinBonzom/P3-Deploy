@@ -251,8 +251,7 @@ const addComment: RequestHandler = async (req, res, next) => {
 const add: RequestHandler = async (req, res, next) => {
   try {
     const recipe = req.body.recipe;
-    const ingredientDetails = req.body.ingredient || [];
-
+    const ingredientDetails = req.body.ingredients || [];
     const newRecipeId = await recipeRepository.add(recipe, ingredientDetails);
 
     res.status(201).json({ id: newRecipeId });

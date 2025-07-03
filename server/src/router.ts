@@ -12,6 +12,10 @@ import dietActions from "./modules/diet/dietActions";
 
 router.get("/api/diet", dietActions.browse);
 
+import unityActions from "./modules/unity/unityActions";
+
+router.get("/api/unity", unityActions.browse);
+
 import categoryActions from "./modules/category/categoryActions";
 
 router.get("/api/category", categoryActions.browse);
