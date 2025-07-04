@@ -113,8 +113,13 @@ export function UserProvider({ children }: ContextInterface) {
       setIsAdmin(data.admin);
       // console.log("isAdmin", data.admin);
       setIdUserOnline(data.userId);
+
       setUserOnline(data);
       navigate("/Compte");
+
+      // navigate("/Compte");
+      window.location.reload();
+
     } else {
       setIsConnected(false);
       setIdUserOnline(null);

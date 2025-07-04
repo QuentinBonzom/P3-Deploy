@@ -159,7 +159,7 @@ const editMember: RequestHandler = async (req, res, next) => {
   }
 };
 
-const favorite: RequestHandler = async (req, res, next) => {
+const readFavorite: RequestHandler = async (req, res, next) => {
   try {
     const memberId = Number(req.params.id);
     const favorites = await memberRepository.favoriteList(memberId);
@@ -189,6 +189,28 @@ const rate: RequestHandler = async (req, res, next) => {
   }
 };
 
+const UpdateAdminStatus: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.params.id);
+    const { admin } = req.body;
+    if (typeof admin !== "boolean") {
+      res.status(400).json({
+        message: "Le champ 'admin' est requis et doit être un booléen.",
+      });
+      return;
+    }
+
+    const updated = await memberRepository.updateAdminStatus(memberId, admin);
+    if (!updated) {
+      res.status(404).json({ message: "Utilisateur introuvable" });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   browse,
   read,
@@ -198,6 +220,7 @@ export default {
   deleteAccount,
   deleteMemberAsAdmin,
   editMember,
-  favorite,
+  readFavorite,
   rate,
+  UpdateAdminStatus,
 };

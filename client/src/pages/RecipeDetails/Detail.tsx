@@ -2,6 +2,9 @@ import CommentRecipe from "@/components/CommentRecipe";
 import StepsRecipe from "@/components/StepsRecipe";
 import UstensilRecipe from "@/components/UstensilRecipe";
 import { useUser } from "@/context/UserContext";
+import { useHandleFavorite } from "@/hooks/useHandleFavorite";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+
 import type {
   TypeIngredient,
   TypeRecipe,
@@ -9,14 +12,16 @@ import type {
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+
 interface CommentInterface {
   text: string;
   member: string;
 }
 
 function DetailsRecipe() {
-  const navigate = useNavigate();
   const recipeId = Number(localStorage.getItem("recipeId"));
+  const { isFavorite, toggleFavorite } = useHandleFavorite(recipeId, false);
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState<TypeRecipe | null>(null);
   const [ingredients, setIngredients] = useState<TypeIngredient[]>([]);
   const [ustensils, setUstensils] = useState<TypeUstensil[]>([]);
@@ -72,28 +77,6 @@ function DetailsRecipe() {
       setNumberPersons(numberPersons - 1);
     } else {
       setNumberPersons(1);
-    }
-  }
-
-  //ajouter aux favoris
-  function handleAddFavorite(recipeId: number) {
-    if (!isConnected) {
-      alert("Vous devez vous connecter pour ajouter une recette aux favoris.");
-      navigate("/Compte");
-    } else {
-      fetch(`${import.meta.env.VITE_API_URL}/api/favorite/recipe`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ recipeId, userId: idUserOnline }),
-      }).then((response) => {
-        if (response.ok) {
-          alert("Recette ajoutée aux favoris");
-        } else {
-          alert("Erreur lors de l'ajout de la recette aux favoris");
-        }
-      });
     }
   }
 
@@ -199,12 +182,8 @@ function DetailsRecipe() {
         </article>
         <article className="flex">
           <h3 className="m-auto px-2">Ajouter aux favoris</h3>
-          <button onClick={() => handleAddFavorite(recipeId)} type="button">
-            <img
-              className="w-14 h-14 cursor-pointer"
-              src="/coeur.png"
-              alt="icone en coeur"
-            />
+          <button onClick={toggleFavorite} type="button">
+            {isFavorite ? <FaHeart /> : <FaRegHeart />}
           </button>
         </article>
       </section>

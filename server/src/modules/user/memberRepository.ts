@@ -1,7 +1,7 @@
 import type { TypeUser } from "../../../../client/src/types/TypeFiles";
 import databaseClient from "../../../database/client";
 
-const TABLE_NAME = "member";
+// const TABLE_NAME = "member";
 
 class userRepository {
   async read(id: number) {
@@ -106,10 +106,11 @@ class userRepository {
 
   async favoriteList(user_id: number) {
     const result = await databaseClient.query(
-      `SELECT DISTINCT ON (r.id) r.name, r.picture, a.is_favorite 
+      `SELECT r.id AS recipe_id, r.name, r.picture, r.difficulty, d.name AS diet_name, a.is_favorite
       FROM recipe r
       JOIN action a ON r.id = a.recipe_id
-      WHERE user_id=$1 
+      JOIN diet d ON r.id_diet = d.id
+      WHERE a.user_id=$1 
       AND a.is_favorite=true`,
       [user_id],
     );
@@ -139,6 +140,16 @@ class userRepository {
     );
 
     return result.rows;
+  }
+
+  async updateAdminStatus(memberId: number, admin: boolean) {
+    const result = await databaseClient.query(
+      `UPDATE member
+     SET admin = $1 WHERE id = $2
+      RETURNING id, name, email, admin`,
+      [admin, memberId],
+    );
+    return result.rows[0];
   }
 }
 

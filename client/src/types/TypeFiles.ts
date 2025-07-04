@@ -55,6 +55,8 @@ export interface TypeIngredient {
 export interface TypeUnity {
   id: number;
   value: number;
+  name: string;
+  unity_id: number;
 }
 
 export interface TypeAction {
@@ -102,6 +104,8 @@ export interface Member {
   name: string;
   email: string;
   id: number;
+  admin: boolean;
+  inscription: string;
 }
 
 export interface Recipe {
@@ -112,7 +116,8 @@ export interface Recipe {
 export interface ingredientDetails {
   id: number;
   quantity: number;
-  unit: string;
+  unity: number;
+  unity_id: number;
 }
 
 export type FormData = {
@@ -135,5 +140,6 @@ export type FormData = {
 export type SelectedIngredient = {
   id: number;
   quantity: string;
-  unit: string;
+  unity_id: number;
+  value: string;
 };
