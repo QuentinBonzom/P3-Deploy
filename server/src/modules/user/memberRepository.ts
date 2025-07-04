@@ -1,8 +1,6 @@
 import type { TypeUser } from "../../../../client/src/types/TypeFiles";
 import databaseClient from "../../../database/client";
 
-// const TABLE_NAME = "member";
-
 class userRepository {
   async read(id: number) {
     const result = await databaseClient.query<TypeUser>(
@@ -118,24 +116,25 @@ class userRepository {
     return result.rows;
   }
 
-  async rated(user_id: number) {
+  async commentedList(user_id: number) {
     const result = await databaseClient.query(
-      `SELECT recipe_id, rate
-      FROM action 
+      `SELECT r.id AS recipe_id, r.name, r.picture, a.comment
+      FROM recipe r
+      JOIN action a ON r.id = a.recipe_id
       WHERE user_id=$1 
-      AND rate`,
+      AND a.comment IS NOT NULL
+      AND a.comment <> ''`,
       [user_id],
     );
 
     return result.rows;
   }
 
-  async comments(user_id: number) {
+  async profileMember(user_id: number) {
     const result = await databaseClient.query(
-      `SELECT recipe_id, a.comment
-      FROM action a
-      WHERE user_id=$1 
-      AND comment`,
+      `SELECT *
+      FROM member
+      WHERE id=$1`,
       [user_id],
     );
 
@@ -152,5 +151,17 @@ class userRepository {
     return result.rows[0];
   }
 }
+
+// async rated(user_id: number) {
+//   const result = await databaseClient.query(
+//     `SELECT recipe_id, rate
+//     FROM action
+//     WHERE user_id=$1
+//     AND rate`,
+//     [user_id],
+//   );
+
+//   return result.rows;
+// }
 
 export default new userRepository();

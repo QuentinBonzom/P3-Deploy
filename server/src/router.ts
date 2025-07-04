@@ -74,22 +74,16 @@ router.post("/api/login", memberActions.login); //l'action "login" permet de ce 
 
 router.get("/api/member", memberActions.checkId); // token Check
 router.patch("/api/member", memberActions.editMember); // modification du profile membre
-router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes favorites d'un membre
-router.delete(
-  "/api/member/:id",
-  security.checkToken,
-  memberActions.deleteAccount,
-); //supression compte
+router.get("/api/member/:id/profile", memberActions.readMemberProfile); // pour afficher le profile d'un membre
+router.get("/api/member/:id/favorite", memberActions.readFavorite); // liste des recettes favorites d'un membre
+router.get("/api/member/:id/comments", memberActions.readCommented); //pour afficher les commentaires d'une recette
+router.delete("/api/member/:id", memberActions.deleteAccount); //supression compte
 
 //Zone Admin ----------------------
 
 router.get("/api/admin/member", memberActions.browse);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
-router.delete(
-  "/api/admin/:id",
-  securityAdmin.checkTokenAdmin,
-  memberActions.deleteMemberAsAdmin,
-);
+router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
 
 // router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
 // router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre

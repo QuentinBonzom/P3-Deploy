@@ -174,10 +174,10 @@ const readFavorite: RequestHandler = async (req, res, next) => {
   }
 };
 
-const rate: RequestHandler = async (req, res, next) => {
+const readCommented: RequestHandler = async (req, res, next) => {
   try {
     const memberId = Number(req.params.id);
-    const favorites = await memberRepository.favoriteList(memberId);
+    const favorites = await memberRepository.commentedList(memberId);
 
     if (favorites == null) {
       res.sendStatus(404);
@@ -188,6 +188,35 @@ const rate: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+const readMemberProfile: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.params.id);
+    const favorites = await memberRepository.profileMember(memberId);
+
+    if (favorites == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(favorites);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+// const rate: RequestHandler = async (req, res, next) => {
+//   try {
+//     const memberId = Number(req.params.id);
+//     const favorites = await memberRepository.favoriteList(memberId);
+
+//     if (favorites == null) {
+//       res.sendStatus(404);
+//     } else {
+//       res.json(favorites);
+//     }
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 const UpdateAdminStatus: RequestHandler = async (req, res, next) => {
   try {
@@ -221,6 +250,10 @@ export default {
   deleteMemberAsAdmin,
   editMember,
   readFavorite,
+  // rate,
+  readCommented,
+  readMemberProfile,
   rate,
   UpdateAdminStatus,
+
 };
