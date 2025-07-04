@@ -1,4 +1,5 @@
 export interface TypeRecipe {
+  numberPersons: number;
   id: number;
   name: string;
   time_preparation: number;
@@ -36,9 +37,11 @@ export interface TypeUser {
   name: string;
   email: string;
   password: string;
+  admin?: boolean;
 }
 
 export interface TypeIngredient {
+  numberPersons: number;
   ingredient_id: number;
   unit_name: string;
   ingredient_picture: string;

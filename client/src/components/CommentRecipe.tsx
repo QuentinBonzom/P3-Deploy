@@ -11,7 +11,7 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
   const navigate = useNavigate();
   const [commentText, setCommentText] = useState<string>("");
   const { isConnected, idUserOnline } = useUser();
-  console.log(idUserOnline);
+  //console.log(idUserOnline);
 
   function handleSubmitComment(e: React.FormEvent<HTMLFormElement>) {
     // Prevent default form submission

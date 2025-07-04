@@ -84,4 +84,11 @@ router.get("/api/ustensil/recipe/:id", ustensilActions.recipeUstensil); //tout l
 
 /* ************************************************************************* */
 
+// Define list-related routes
+import listActions from "./modules/list/listActions";
+
+router.post("/api/list/:id", security.checkToken, listActions.addList); //ajouter une liste
+
+router.get("/api/list/:id", security.checkToken, listActions.memberList); //recuperer les listes d'un membre
+
 export default router;

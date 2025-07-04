@@ -22,6 +22,7 @@ interface UserContextValue {
   user: TypeUser;
   isAdmin: boolean;
   idUserOnline: number | null;
+  userOnline?: TypeUser; // Optional, can be undefined
   // setUserOnline: React.Dispatch<React.SetStateAction<string>>; // Commented out or remove if not used elsewhere
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -53,6 +54,7 @@ export function UserProvider({ children }: ContextInterface) {
     password: "",
   });
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [userOnline, setUserOnline] = useState<TypeUser>();
 
   // Verification du Token --------------------------------------
   useEffect(() => {
@@ -77,18 +79,20 @@ export function UserProvider({ children }: ContextInterface) {
         .then((data) => {
           //console.log(data);
           if (data.message !== " Unauthorized") {
+            setUserOnline(data);
             setIsConnected(true);
             setIdUserOnline(data.id);
             setIsAdmin(data.admin);
           } else {
             setIsConnected(false);
             setIdUserOnline(null);
+            setUserOnline(undefined);
           }
         });
     }
   }, []);
 
-  console.log(isAdmin);
+  // console.log(isAdmin);
   // Creation du Token -----------------------------------------
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -109,10 +113,12 @@ export function UserProvider({ children }: ContextInterface) {
       setIsAdmin(data.admin);
       // console.log("isAdmin", data.admin);
       setIdUserOnline(data.userId);
+      setUserOnline(data);
       navigate("/Compte");
     } else {
       setIsConnected(false);
       setIdUserOnline(null);
+      setUserOnline(undefined);
       navigate("/Compte");
       alert("Compte inconnu");
     }
@@ -133,6 +139,7 @@ export function UserProvider({ children }: ContextInterface) {
       localStorage.setItem("token", data.token);
       setIsConnected(true);
       setIdUserOnline(data.userId);
+      setUserOnline(data);
       navigate("/Compte");
     }
   }
@@ -148,6 +155,9 @@ export function UserProvider({ children }: ContextInterface) {
   function handleDisconnect() {
     localStorage.removeItem("token");
     setIsConnected(false);
+    setIdUserOnline(null);
+    setUserOnline(undefined);
+    localStorage.removeItem("currentList");
     // window.location.reload();
   }
 
@@ -231,6 +241,7 @@ export function UserProvider({ children }: ContextInterface) {
         idUserOnline,
         isAdmin,
         setIsAdmin,
+        userOnline,
       }}
     >
       {children}
