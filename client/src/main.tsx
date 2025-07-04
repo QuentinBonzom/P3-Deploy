@@ -7,7 +7,6 @@ import { RouterProvider, createBrowserRouter } from "react-router";
 
 // Import the main app component
 import App from "./App";
-
 import About from "./pages/About/About.tsx";
 import Account from "./pages/Account/Account.tsx";
 import Admin from "./pages/Admin/Admin.tsx";
