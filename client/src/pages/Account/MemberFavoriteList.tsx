@@ -11,17 +11,20 @@ interface Favorite {
   diet_name: string;
 }
 
-function FavoriteMemberList() {
+function MemberFavoriteList() {
   const { idUserOnline } = useUser();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/member/${idUserOnline}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${localStorage.getItem("token") || ""}`,
+    fetch(
+      `${import.meta.env.VITE_API_URL}/api/member/${idUserOnline}/favorite`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("token") || ""}`,
+        },
       },
-    })
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
@@ -51,7 +54,7 @@ function FavoriteMemberList() {
     })
       .then((res) => res.json())
       .then(() => {
-        // Update local state to reflect the change
+        // Toggle
         setFavorites((prev) =>
           prev.map((fav) =>
             fav.recipe_id === recipeId
@@ -104,4 +107,4 @@ function FavoriteMemberList() {
   );
 }
 
-export default FavoriteMemberList;
+export default MemberFavoriteList;

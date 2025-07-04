@@ -18,7 +18,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@/context/UserContext.tsx";
 import EditMemberForm from "@/pages/Account/EditMemberForm.tsx";
-import FavoriteMemberList from "@/pages/Account/FavoriteMemberList";
+import MemberAccountPage from "@/pages/Account/MemberAccountPage.tsx";
+import MemberCommentedList from "@/pages/Account/MemberCommentedList.tsx";
+import MemberFavoriteList from "@/pages/Account/MemberFavoriteList.tsx";
 import { ChevronRight } from "lucide-react";
 import type { ComponentType } from "react";
 import { FaPowerOff } from "react-icons/fa6";
@@ -40,18 +42,15 @@ const Data: SectionType[] = [
     title: "Membre",
     isAdmin: false,
     items: [
-      { title: "Favoris", Component: FavoriteMemberList },
+      { title: "Mon compte", Component: MemberAccountPage },
 
-      // { title: "Noté",
-      //   Component: RatedList},
+      { title: "Favoris", Component: MemberFavoriteList },
 
-      // { title: "Noté",
-      //   Component: RatedList},
+      { title: "Mes commentaires", Component: MemberCommentedList },
 
-      {
-        title: "Modifier mon compte",
-        Component: EditMemberForm,
-      },
+      // { title: "Mes Listes", Component: RatedList},
+
+      { title: "Paramètres", Component: EditMemberForm },
     ],
   },
   {
@@ -63,7 +62,16 @@ const Data: SectionType[] = [
       { title: "Gestion Comptes", Component: MemberManage },
 
       // { title: "Gestion des Commentaires",
-      //   Component: Comentary},
+      //   Component:AdminCommentaryManagement},
+
+      // { title: "Gestion des Catégories",
+      //   Component: AdminCategoriesManagement},
+
+      // { title: "Gestion des régimes",
+      //   Component: AdminDietManagement},
+
+      // { title: "Statistiques",
+      //   Component: Stats},
     ],
   },
 ];

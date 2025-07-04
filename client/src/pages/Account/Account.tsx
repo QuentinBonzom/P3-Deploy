@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@/context/UserContext";
 import { type ComponentType, useState } from "react";
+import MemberAccountPage from "./MemberAccountPage";
 
 function Account() {
   const { isConnected, handleDisconnect } = useUser();
@@ -48,7 +49,7 @@ function Account() {
               </header>
 
               <main className="p-6">
-                {ActiveComponent ? <ActiveComponent /> : ""}
+                {ActiveComponent ? <ActiveComponent /> : <MemberAccountPage />}
               </main>
             </SidebarInset>
           </SidebarProvider>
