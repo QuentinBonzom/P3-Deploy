@@ -22,7 +22,7 @@ function About() {
           au service du goût et de la praticité.
         </p>
         <img
-          className="flex items-center rounded-md"
+          className="flex items-center rounded-md w-96"
           src="./about.jpg"
           alt="about"
         />

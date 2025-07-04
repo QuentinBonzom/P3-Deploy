@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { TiDeleteOutline } from "react-icons/ti";
 import RecipeCard from "../../components/RecipeCard";
 
 function Mixer() {
@@ -85,52 +86,64 @@ function Mixer() {
           <h2 className="text-lg font-bold text-[#2d1c0b] mb-2 px-2">
             Ingrédients
           </h2>
-          {Object.entries(grouped).map(([type, ings]) => (
-            <div key={type} className="mb-1">
-              <button
-                type="button"
-                className={`w-full flex justify-between items-center text-left font-bold px-2 py-2 rounded transition-colors border-b border-[#2d1c0b]/20 ${
-                  openType === type
-                    ? "bg-[#f3d7b7] text-[#2d1c0b]"
-                    : "text-[#2d1c0b] hover:bg-[#f3d7b7]"
-                }`}
-                onClick={() => setOpenType(openType === type ? null : type)}
-              >
-                <span>{type}</span>
-                <span className="text-base">
-                  {openType === type ? <FiChevronUp /> : <FiChevronDown />}
-                </span>
-              </button>
-              {openType === type && (
-                <ul className="max-h-40 overflow-y-auto mt-1 pr-1 scrollbar-thin scrollbar-thumb-[#e0c9a6] scrollbar-track-[#f9e7cf]">
-                  {ings.map((ing) => (
-                    <li
-                      key={ing.ingredient_id}
-                      className="flex items-center py-1 px-2"
-                    >
-                      <input
-                        type="checkbox"
-                        className="accent-[#b98a4a] w-4 h-4 mr-2 rounded border border-[#b98a4a] focus:ring-2 focus:ring-[#b98a4a]"
-                        checked={selected.includes(ing.ingredient_name)}
-                        onChange={() => toggleIngredient(ing.ingredient_name)}
-                        id={`ing-${ing.ingredient_id}`}
-                      />
-                      <label
-                        htmlFor={`ing-${ing.ingredient_id}`}
-                        className={`cursor-pointer select-none transition-colors text-[15px] ${
-                          selected.includes(ing.ingredient_name)
-                            ? "text-[#b98a4a] font-semibold"
-                            : "text-[#2d1c0b]"
-                        }`}
+          {Object.entries(grouped).map(([type, ings]) => {
+            const checkedCount = ings.filter((ing) =>
+              selected.includes(ing.ingredient_name),
+            ).length;
+            return (
+              <div key={type} className="mb-1">
+                <button
+                  type="button"
+                  className={`w-full flex justify-between items-center text-left font-bold px-2 py-2 rounded transition-colors border-b border-[#2d1c0b]/20 ${
+                    openType === type
+                      ? "bg-[#f3d7b7] text-[#2d1c0b]"
+                      : "text-[#2d1c0b] hover:bg-[#f3d7b7]"
+                  }`}
+                  onClick={() => setOpenType(openType === type ? null : type)}
+                >
+                  <span>{type}</span>
+                  <span className="flex items-center gap-2">
+                    {checkedCount > 0 && (
+                      <span className="inline-flex items-center justify-center bg-primary text-white pl-0.5 pt-0.5  text-sm font-semibold rounded-full w-5 h-5">
+                        {checkedCount}
+                      </span>
+                    )}
+                    <span className="text-base">
+                      {openType === type ? <FiChevronUp /> : <FiChevronDown />}
+                    </span>
+                  </span>
+                </button>
+                {openType === type && (
+                  <ul className="max-h-40 overflow-y-auto mt-1 pr-1 scrollbar-thin scrollbar-thumb-[#e0c9a6] scrollbar-track-[#f9e7cf]">
+                    {ings.map((ing) => (
+                      <li
+                        key={ing.ingredient_id}
+                        className="flex items-center py-1 px-2"
                       >
-                        {ing.ingredient_name}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+                        <input
+                          type="checkbox"
+                          className="accent-[#b98a4a] w-4 h-4 mr-2 rounded border border-[#b98a4a] focus:ring-2 focus:ring-[#b98a4a]"
+                          checked={selected.includes(ing.ingredient_name)}
+                          onChange={() => toggleIngredient(ing.ingredient_name)}
+                          id={`ing-${ing.ingredient_id}`}
+                        />
+                        <label
+                          htmlFor={`ing-${ing.ingredient_id}`}
+                          className={`cursor-pointer select-none transition-colors text-[15px] ${
+                            selected.includes(ing.ingredient_name)
+                              ? "text-[#b98a4a] font-semibold"
+                              : "text-[#2d1c0b]"
+                          }`}
+                        >
+                          {ing.ingredient_name}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* mixeur animée */}
@@ -154,6 +167,26 @@ function Mixer() {
           </div>
         </div>
       </div>
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-2 justify-center mb-4 mt-2">
+          {selected.map((name) => (
+            <span
+              key={name}
+              className="bg-[#ffe2b8] text-secondary border border-[#b98a4a] rounded-full px-3 py-1 text-sm font-semibold flex items-center gap-2"
+            >
+              {name}
+              <button
+                type="button"
+                className="ml-1 text-secondary text-xl hover:text-red-600 focus:outline-none"
+                aria-label={`Retirer ${name}`}
+                onClick={() => toggleIngredient(name)}
+              >
+                <TiDeleteOutline />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
       {/* Recettes dessous */}
       <div className="w-full my-16 flex gap-4 overflow-x-scroll px-6 justify-center">
         {recipes.length === 0 && <p>Aucune recette</p>}

@@ -4,6 +4,7 @@ import type {
   TypeCategory,
   TypeDiet,
   TypeIngredient,
+  TypeUnity,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
 
@@ -31,6 +32,8 @@ function CreateRecipe() {
   >([]);
   const [categories, setCategories] = useState<TypeCategory[]>([]);
   const [diets, setDiets] = useState<TypeDiet[]>([]);
+  const [unity, setUnity] = useState<TypeUnity[]>([]);
+  const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/ingredient`)
@@ -47,8 +50,13 @@ function CreateRecipe() {
       .then((res) => res.json())
       .then((data) => setDiets(data))
       .catch(() => {});
-  }, []);
 
+    fetch(`${import.meta.env.VITE_API_URL}/api/unity`)
+      .then((res) => res.json())
+      .then((data) => setUnity(data))
+      .catch(() => {});
+  }, []);
+  console.log(unity);
   //Gère les changements dans les champs du formulaire (input, textearea, select)
   const handleChange = (
     e: React.ChangeEvent<
@@ -66,7 +74,7 @@ function CreateRecipe() {
       //fonction de mise à jour du state : prev représente l'ancienne valeur du state selectedIngredients, c’est-à-dire un tableau d’objets ingrédients déjà sélectionnés et ...prev: c’est la destructuration de ce tableau. Les ... (spread operator) servent à copier tous les éléments déjà présents dans prev dans un nouveau tableau.
       setSelectedIngredients((prev) => [
         ...prev,
-        { id, quantity: "", unit: "" },
+        { id, quantity: "", unity_id: 0, value: "" },
       ]);
     } else {
       setSelectedIngredients((prev) => prev.filter((item) => item.id !== id));
@@ -75,12 +83,25 @@ function CreateRecipe() {
 
   const handleIngredientDetailChange = (
     id: number,
-    field: "quantity" | "unit",
+    field: "quantity" | "unity",
     value: string,
   ) => {
     setSelectedIngredients((prev) =>
-      // Le spread permet de copier toutes les propriétés existantes (id, quantity, unit).
-      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
+      prev.map((item) => {
+        if (item.id !== id) return item;
+
+        if (field === "quantity") {
+          return { ...item, quantity: value };
+        }
+
+        return {
+          ...item,
+          unity_id: Number.parseInt(value),
+          value: String(
+            unity.find((u) => u.id === Number.parseInt(value))?.value || "",
+          ),
+        };
+      }),
     );
   };
 
@@ -103,68 +124,102 @@ function CreateRecipe() {
       }),
     });
 
-    const result = await response.json();
+    await response.json();
     alert("Recette enregistrée !");
-    console.log(result);
+
+    // Réinitialisation du formulaire
+    setFormData({
+      name: "",
+      description: "",
+      time_preparation: "",
+      difficulty: "",
+      kcal: "",
+      id_category: "",
+      id_diet: "",
+      step1: "",
+      step2: "",
+      step3: "",
+      step4: "",
+      step5: "",
+      step6: "",
+      step7: "",
+    });
+    setSelectedIngredients([]);
   };
 
   return (
-    <div className="bg-primary/20 text-secondary rounded-xl m-4 p-5">
-      <h2 className="mb-5">Ajouter une nouvelle recette :</h2>
+    <div className="bg-primary/20 text-secondary rounded-xl m-2 p-4 lg:mx-50 lg:my-10 md:mx-10 md:my-10">
+      <h2 className="mb-10 text-center">Ajouter une nouvelle recette :</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="name">
-            Nom de la recette *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="name"
+          >
+            <i className="bi bi-pencil-square" /> Nom de la recette *
           </label>
           <input
-            className="border-0 border-b border-primary p-3"
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             type="text"
             id="name"
             name="name"
             required
             onChange={handleChange}
+            value={formData.name}
           />
         </div>
 
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="time_preparation">
-            Temps de préparation (en min) *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="time_preparation"
+          >
+            <i className="bi bi-stopwatch" /> Temps de préparation* (en min)
           </label>
-          <input
-            className="mt-4 border-1 rounded-md border-b border-primary p-3"
-            type="number"
+          <textarea
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             id="time_preparation"
             name="time_preparation"
             required
             onChange={handleChange}
+            value={formData.time_preparation}
           />
         </div>
 
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="description">
-            Description *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="description"
+          >
+            <i className="bi bi-book" /> Description *
           </label>
           <textarea
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             id="description"
             name="description"
             required
             onChange={handleChange}
+            value={formData.description}
           />
         </div>
 
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="difficulty">
-            Difficulté *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="difficulty"
+          >
+            <i className="bi bi-bar-chart-steps" /> Difficulté *
           </label>
           <select
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             id="difficulty"
             name="difficulty"
             required
             onChange={handleChange}
-            defaultValue=""
+            value={formData.difficulty}
           >
             <option value="" disabled>
-              --Choisir--
+              Choisir
             </option>
             <option value="Facile">Facile</option>
             <option value="Moyenne">Moyenne</option>
@@ -173,31 +228,39 @@ function CreateRecipe() {
         </div>
 
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="kcal">
-            Calories *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="kcal"
+          >
+            <i className="bi bi-cup-straw" /> Calories *
           </label>
-          <input
-            type="number"
+          <textarea
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             id="kcal"
             name="kcal"
             required
             onChange={handleChange}
+            value={formData.kcal}
           />
         </div>
 
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="id_category">
-            Catégorie *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="id_category"
+          >
+            <i className="bi bi-tag" /> Catégorie *
           </label>
           <select
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             id="id_category"
             name="id_category"
             required
             onChange={handleChange}
-            defaultValue=""
+            value={formData.id_category}
           >
             <option value="" disabled>
-              --Choisir--
+              Choisir
             </option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
@@ -208,18 +271,22 @@ function CreateRecipe() {
         </div>
 
         <div className="mb-10">
-          <label className="pr-4 font-bold" htmlFor="id_diet">
-            Régime *
+          <label
+            className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            htmlFor="id_diet"
+          >
+            <i className="bi bi-egg-fried" /> Régime *
           </label>
           <select
+            className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
             id="id_diet"
             name="id_diet"
             required
             onChange={handleChange}
-            defaultValue=""
+            value={formData.id_diet}
           >
             <option value="" disabled>
-              --Choisir--
+              Choisir
             </option>
             {diets.map((diet) => (
               <option key={diet.id} value={diet.id}>
@@ -232,72 +299,113 @@ function CreateRecipe() {
         {[...Array(7)].map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
           <div className="mb-10" key={i}>
-            <label className="pr-4 font-bold" htmlFor={`step${i + 1}`}>
-              Étape {i + 1}
+            <label
+              className="block pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+              htmlFor={`step${i + 1}`}
+            >
+              <i className="bi bi-check-lg" /> Étape {i + 1}
               {i === 0 ? " *" : ""}
             </label>
             <textarea
+              className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
               id={`step${i + 1}`}
               name={`step${i + 1}`}
               required={i === 0}
               onChange={handleChange}
+              value={formData[`step${i + 1}` as keyof FormData]}
             />
           </div>
         ))}
 
-        {/* fieldset est une balise HTML qui sert à regrouper logiquement plusieurs éléments de formulaire : inputs, selects... */}
         <fieldset className="mb-10">
-          <legend className="pr-4 font-bold mb-5">Ingrédients *</legend>
-          {ingredients.map((ingredient) => {
-            const selected = selectedIngredients.find(
-              (item) => item.id === ingredient.id,
-            );
-            return (
-              <div key={ingredient.id}>
-                <input
-                  className="mb-4"
-                  type="checkbox"
-                  id={`ingredient-${ingredient.id}`}
-                  onChange={(e) =>
-                    handleIngredientCheck(ingredient.id, e.target.checked)
-                  }
-                />
-                <label className="pl-3" htmlFor={`ingredient-${ingredient.id}`}>
-                  {ingredient.name}
-                </label>
+          <legend
+            className="pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            onClick={() => setIsIngredientsOpen(!isIngredientsOpen)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setIsIngredientsOpen((open) => !open);
+              }
+            }}
+          >
+            <i className="bi bi-mouse2" /> Ingrédients *
+            <span className="ml-2">
+              {isIngredientsOpen ? (
+                <i className="bi bi-caret-up-fill" />
+              ) : (
+                <i className="bi bi-caret-down-fill" />
+              )}
+            </span>
+          </legend>
 
-                {selected && (
-                  <>
-                    <input
-                      type="number"
-                      placeholder="Quantité"
-                      value={selected.quantity}
-                      onChange={(e) =>
-                        handleIngredientDetailChange(
-                          ingredient.id,
-                          "quantity",
-                          e.target.value,
-                        )
-                      }
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Unité (ex: g, c.à.s.)"
-                      value={selected.unit}
-                      onChange={(e) =>
-                        handleIngredientDetailChange(
-                          ingredient.id,
-                          "unit",
-                          e.target.value,
-                        )
-                      }
-                    />
-                  </>
-                )}
-              </div>
-            );
-          })}
+          {isIngredientsOpen &&
+            ingredients.map((ingredient) => {
+              const selected = selectedIngredients.find(
+                (item) => item.id === ingredient.id,
+              );
+              return (
+                <div key={ingredient.id} className="mb-4">
+                  <input
+                    type="checkbox"
+                    id={`ingredient-${ingredient.id}`}
+                    onChange={(e) =>
+                      handleIngredientCheck(ingredient.id, e.target.checked)
+                    }
+                    checked={selectedIngredients.some(
+                      (item) => item.id === ingredient.id,
+                    )}
+                  />
+                  <label
+                    className="pl-3"
+                    htmlFor={`ingredient-${ingredient.id}`}
+                  >
+                    {ingredient.name}
+                  </label>
+
+                  {selected && (
+                    <div className="mt-2 flex flex-col gap-2 items-center font-">
+                      <input
+                        type="number"
+                        placeholder="Quantité"
+                        value={selected.quantity}
+                        onChange={(e) =>
+                          handleIngredientDetailChange(
+                            ingredient.id,
+                            "quantity",
+                            e.target.value,
+                          )
+                        }
+                        required
+                        className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
+                      />
+                      <select
+                        id={`unity-${ingredient.id}`}
+                        name={"`unity-${ingredient.id}`"}
+                        required
+                        value={selected.unity_id || ""}
+                        onChange={(e) =>
+                          handleIngredientDetailChange(
+                            ingredient.id,
+                            "unity",
+                            e.target.value,
+                          )
+                        }
+                        className="mt-3 w-full border-1 rounded-xl border-primary/50 bg-[#fde9cc] p-3"
+                      >
+                        <option value="" disabled>
+                          Choisir une unité de mesure
+                        </option>
+                        {unity.map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
         </fieldset>
 
         <section className="flex justify-center md:justify-start lg:justify-start">
