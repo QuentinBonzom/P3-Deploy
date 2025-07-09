@@ -253,7 +253,5 @@ export default {
   // rate,
   readCommented,
   readMemberProfile,
-  rate,
   UpdateAdminStatus,
-
 };
