@@ -5,7 +5,9 @@ const router = express.Router();
 import categoryActions from "./modules/category/categoryActions";
 import dietActions from "./modules/diet/dietActions";
 import ingredientActions from "./modules/ingredient/ingredientActions";
+import listActions from "./modules/list/listActions";
 import recipeActions from "./modules/recipe/recipeActions";
+import unityActions from "./modules/unity/unityActions";
 import memberActions from "./modules/user/memberActions";
 import ustensilActions from "./modules/ustensil/ustensilActions";
 
@@ -18,10 +20,8 @@ import ustensilActions from "./modules/ustensil/ustensilActions";
 router.use("/api/member", security.checkToken); // middleware pour les routes membres
 router.use("/api/admin", securityAdmin.checkTokenAdmin); // middleware pour les routes admin
 
-import unityActions from "./modules/unity/unityActions";
 
 router.get("/api/unity", unityActions.browse);
-
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
 router.get("/api/recipe/random", recipeActions.random);
@@ -40,10 +40,10 @@ router.get("/api/ingredient", ingredientActions.browse);
 router.get("/api/ingredients", ingredientActions.browse);
 router.get("/api/ingredients/by-type", ingredientActions.browseWithType);
 router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
+router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
+router.post("/api/recipe", recipeActions.add);
 router.get("/api/ingredient/recipe/:id", ingredientActions.recipeIngredient); //tout les ingrediends, quantité et unite pour une recette(id)
 router.get("/api/ustensil/recipe/:id", ustensilActions.recipeUstensil); //tout les ustensiles pour une recette(id)
-router.post("/api/ustensil", ustensilActions.addUstensils);
-router.get("/api/ustensil", ustensilActions.getAllUstensils);
 
 //rate + comment + favorite
 
@@ -52,18 +52,6 @@ router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note 
 router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
 router.post("/api/favorite/recipe", recipeActions.updateFavorite); //pour ajouter une recette aux favoris")
 
-// CRUD pour modifier recipe
-
-router.get("/api/admin/member", security.checkToken, memberActions.browse);
-router.get("/api/member", security.checkToken, memberActions.checkId); // token Check
-router.patch("/api/member", security.checkToken, memberActions.editMember); // modification du profile membre
-router.get("/api/member/:id", security.checkToken, memberActions.readFavorite); // liste des recettes favorites d'un membre
-router.patch("/api/member/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
-// router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre
-// router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
-
-router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
-router.post("/api/recipe", recipeActions.add);
 
 //Authentification
 
@@ -77,34 +65,23 @@ router.patch("/api/member", memberActions.editMember); // modification du profil
 router.get("/api/member/:id/profile", memberActions.readMemberProfile); // pour afficher le profile d'un membre
 router.get("/api/member/:id/favorite", memberActions.readFavorite); // liste des recettes favorites d'un membre
 router.get("/api/member/:id/comments", memberActions.readCommented); //pour afficher les commentaires d'une recette
+router.get("/api/member/:id/registeredlist", memberActions.readRegisteredList);
+router.post("/api/member/:id/list", listActions.addList); //ajouter une liste
 router.delete("/api/member/:id", memberActions.deleteAccount); //supression compte
+router.get("/api/member", memberActions.checkId); // token Check
+router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes favorites d'un membre
+
+
 
 //Zone Admin ----------------------
 
 router.get("/api/admin/member", memberActions.browse);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
-
-// router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
-// router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre
-
-// Method = ( post, get, patch (petit update), put(Gros update), delete)
-
-// Module Actions (on fait appel a la methode crée dans le module actions : login)
-// router.get("api/user/:id", userActions.read);
-// router.put("api/user/:id", userActions.editAccount); //mdp, email, nom
-// router.use("api/user/admin/:id", userActions.admin); //acces page admin
-// router.put("api/user/admin/:id", userActions.adminEdit); //  modifier tout
-// router.delete("api/user/admin:id", userActions.adminDelete); // suprimer tout
-// router.post("api/user/admin:id", userActions.adminCreate); // Ajouter recettes
+router.patch("/api/admin/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
 
 /* ************************************************************************* */
 
 // Define list-related routes
-import listActions from "./modules/list/listActions";
-
-router.post("/api/list/:id", security.checkToken, listActions.addList); //ajouter une liste
-
-router.get("/api/list/:id", security.checkToken, listActions.memberList); //recuperer les listes d'un membre
 
 export default router;

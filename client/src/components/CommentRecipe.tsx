@@ -11,7 +11,6 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
   const navigate = useNavigate();
   const [commentText, setCommentText] = useState<string>("");
   const { isConnected, idUserOnline } = useUser();
-  //console.log(idUserOnline);
 
   function handleSubmitComment(e: React.FormEvent<HTMLFormElement>) {
     // Prevent default form submission
@@ -40,6 +39,7 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
       }).then((response) => {
         if (response.ok) {
           alert("Commentaire ajouté avec succès");
+          window.location.reload();
         } else {
           // Handle error
           alert("Erreur lors de l'ajout du commentaire");
@@ -49,21 +49,23 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
   }
 
   return (
-    <div className="m-4 w-1/2">
-      <h3>Commentaires</h3>
+    <section className="w-full mx-4">
+      <h4 className="text-xl text-secondary text-center">Commentaires</h4>
       <ul className="text-secondary">
-        {comments.map((comment) => (
-          <li
-            className="bg-primary/20 p-2 rounded  my-4"
-            key={`${comment.text}-${comment.member}`}
-          >
-            {comment.member}: {comment.text}
-          </li>
-        ))}
+        {comments
+          .filter((comment) => comment.text)
+          .map((comment) => (
+            <li
+              className="bg-primary/20 p-2 rounded  my-4"
+              key={`${comment.member}-${comment.text}`}
+            >
+              {`${comment.member}: ${comment.text}`}
+            </li>
+          ))}
       </ul>
       <form
         onSubmit={(e) => handleSubmitComment(e)}
-        className="flex flex-col text-secondary  items-end"
+        className="flex flex-col text-secondary "
       >
         <textarea
           onChange={(e) => setCommentText(e.target.value)}
@@ -74,6 +76,7 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
           placeholder="Ajouter un commentaire..."
           rows={3}
         />
+
         <button
           type="submit"
           className="mt-2 bg-primary text-white px-4 py-2 rounded-full w-28 cursor-pointer "
@@ -81,7 +84,7 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
           Envoyer
         </button>
       </form>
-    </div>
+    </section>
   );
 }
 

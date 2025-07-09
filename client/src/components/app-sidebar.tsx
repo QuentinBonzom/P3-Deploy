@@ -21,6 +21,7 @@ import EditMemberForm from "@/pages/Account/EditMemberForm.tsx";
 import MemberAccountPage from "@/pages/Account/MemberAccountPage.tsx";
 import MemberCommentedList from "@/pages/Account/MemberCommentedList.tsx";
 import MemberFavoriteList from "@/pages/Account/MemberFavoriteList.tsx";
+import MemberRegisteredList from "@/pages/Account/MemberRegisteredList.tsx";
 import { ChevronRight } from "lucide-react";
 import type { ComponentType } from "react";
 import { FaPowerOff } from "react-icons/fa6";
@@ -48,7 +49,7 @@ const Data: SectionType[] = [
 
       { title: "Mes commentaires", Component: MemberCommentedList },
 
-      // { title: "Mes Listes", Component: RatedList},
+      { title: "Mes Listes", Component: MemberRegisteredList },
 
       { title: "Paramètres", Component: EditMemberForm },
     ],
@@ -110,7 +111,7 @@ export function AppSidebar({ onSelect, ...props }: AppSidebarProps) {
             <SidebarGroup>
               <SidebarGroupLabel
                 asChild
-                className="bg-secondary group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                className="my-6 bg-secondary group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
               >
                 <CollapsibleTrigger>
                   {section.title}{" "}
