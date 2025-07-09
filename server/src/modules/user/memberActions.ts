@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import type { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import memberRepository from "./memberRepository";
@@ -38,14 +39,23 @@ const add: RequestHandler = async (req, res, next) => {
       email: req.body.email,
       password: req.body.password,
     };
-    const insertId = await memberRepository.create(newMember);
+
+    const passHash = bcrypt.hashSync(newMember.password, 8);
+    console.log(passHash);
+
+    const hashMember = {
+      name: newMember.name,
+      email: newMember.email,
+      password: passHash,
+    };
+    const insertId = await memberRepository.create(hashMember);
 
     /*je creer une nouvelle variable (ID de la table member qui s'auto-incrémente) donc elle crée un nouvel utilisateur dans la BD et récupére
      directement les infos et continuer en temps que membre VIA le next(). */
 
     const memberSignUp = await memberRepository.read(insertId);
-    // console.log("newComer ", memberSignUp);
-    req.user = memberSignUp; // Attach user to req
+
+    req.user = memberSignUp; // Lien SignUp vers la connection Login
     next(); // on bascule sur la prochaine etape.
   } catch (err) {
     next(err);
@@ -56,18 +66,28 @@ const add: RequestHandler = async (req, res, next) => {
 
 const login: RequestHandler = async (req, res, next) => {
   try {
-    const user =
-      req.user ||
-      (await memberRepository.login(req.body.email, req.body.password));
-    console.log("infoUser", user);
+    //req.user pour se connecter directement après inscription
+    const user = req.user || (await memberRepository.login(req.body.email));
+    //console.log("user", user);
     if (user) {
+      const isPasswordValid = bcrypt.compareSync(
+        req.body.password,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        res.status(401).send("mot de passe incorrect");
+        return;
+      }
+
       const token = jwt.sign(
         { id: user.id, isAdmin: user.admin },
         process.env.JWT_SECRET as string,
       );
+
       res.status(201).json({ token, userId: user.id, isAdmin: user.admin });
     } else {
-      res.status(401).send("membre inconnu");
+      res.status(401).send("Email ou mot de passe incorrect");
     }
   } catch (err) {
     next(err);

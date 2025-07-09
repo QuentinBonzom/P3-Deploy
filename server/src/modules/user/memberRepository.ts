@@ -40,12 +40,11 @@ class userRepository {
   }
 
   // Async quand tu le sais tu l'attend avec Await
-  async login(email: string, password: string) {
+  async login(email: string) {
     const result = await databaseClient.query(
       `SELECT id, email, admin, password FROM member
-        WHERE email = $1
-        AND password = $2`,
-      [email, password],
+        WHERE email = $1`,
+      [email],
     );
     //retourn la ligne crée
     return result.rows[0];
@@ -171,7 +170,7 @@ class userRepository {
   async updateAdminStatus(memberId: number, admin: boolean) {
     const result = await databaseClient.query(
       `UPDATE member
-     SET admin = $1 WHERE id = $2
+      SET admin = $1 WHERE id = $2
       RETURNING id, name, email, admin`,
       [admin, memberId],
     );

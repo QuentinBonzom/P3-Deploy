@@ -1,5 +1,5 @@
 import { useUser } from "@/context/UserContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { TypeIngredient, TypeRecipe } from "@/types/TypeFiles";
 
@@ -107,41 +107,111 @@ function List() {
       }
     }
   }
-  //console.log("recette:", recipe, "ingredients:", ingredients);
+  const printSectionRef = useRef<HTMLDivElement>(null);
+
+  function handlePrint() {
+    const printContents = printSectionRef.current?.innerHTML;
+    if (!printContents) return;
+
+    const printWindow = window.open("", "", "width=800,height=600");
+    if (printWindow) {
+      printWindow.document.body.innerHTML = `
+      <html>
+        <head>
+          <title>Liste de courses</title>
+          <style>
+          title{
+          font-size:60px;}
+
+            body{
+              
+              h3{
+              font-size:12px;
+              }
+           }
+            .ligne{ 
+            margin:0 50px 0 50px;
+                       
+            display:flex;
+            flex-direction:row;
+            justify-content:space-between;
+            }
+       
+            img {
+              display:none;
+            }
+            
+          </style>
+        </head>
+        <body>
+          ${printContents}
+        </body>
+      </html>
+    `;
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }
+  }
 
   return (
     <>
-      <h1>Mes courses</h1>
+      <h1 className="text-center my-6">Mes courses</h1>
       <section className="text-secondary">
-        <h2>Liste en cours</h2>
+        <h2 className="pl-4 my-4">Liste en cours</h2>
+
         {currentList.length > 0 ? (
           <>
-            <section className="flex">
-              <section>
+            <section className="flex flex-col lg:flex-row lg:justify-center">
+              <section className="flex flex-wrap gap-6 justify-center my-6 lg:flex-col lg:w-1/4 ">
                 {recipe.map((item) => (
-                  <article key={item.id}>
+                  <article
+                    className="flex flex-col items-center bg-[#f9e7cf] shadow-lg rounded-2xl p-2 border-2 border-[#e6d9be]  w-44 lg:w-60"
+                    key={item.id}
+                  >
                     <img
-                      className="w-40 h-40"
+                      className="w-30 h-30 lg:w-40 lg:h-40 "
                       src={item.picture}
                       alt={item.name}
                     />
-                    <h3>
+                    <h4 className="text-secondary text-xs font-bold lg:text-lg">
                       {item.name}
-                      <br />
+                    </h4>
+                    <h4 className="text-secondary text-xs font-bold lg:text-lg">
+                      {" "}
                       pour {item.numberPersons} personnes
-                    </h3>
+                    </h4>
                   </article>
                 ))}
               </section>
-              <section>
+              <section
+                ref={printSectionRef}
+                className="bg-primary/20 mx-4 rounded-2xl shadow-2xl lg:w-150 relative"
+              >
+                <button
+                  onClick={() => handlePrint()}
+                  type="button"
+                  className="bg-white rounded-full w-20 h-20  flex items-center justify-center  absolute -bottom-4 -right-4 cursor-pointer "
+                >
+                  <img
+                    className=" w-14 h-14"
+                    src="./printer.png"
+                    alt="imprimer"
+                  />
+                </button>
+
                 {ingredients.map((item) => (
-                  <article key={item.ingredient_id}>
+                  <article
+                    className="flex flex-row items-center gap-6 m-4"
+                    key={item.ingredient_id}
+                  >
                     <img
-                      className="w-20 h-20"
+                      className="w-14 h-14 bg-white rounded-full m-2"
                       src={item.ingredient_picture}
                       alt={item.ingredient_name}
                     />
-                    <div>
+                    <div className="ligne">
                       <h3>{item.ingredient_name}</h3>
                       <div>
                         {item.ingredient_quantity * item.numberPersons}{" "}
@@ -152,7 +222,7 @@ function List() {
                 ))}
               </section>
             </section>
-            <section>
+            <section className="flex flex-row justify-center items-center my-8">
               <button
                 onClick={() => {
                   localStorage.removeItem("currentList");

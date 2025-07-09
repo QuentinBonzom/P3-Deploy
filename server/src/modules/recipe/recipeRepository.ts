@@ -253,7 +253,11 @@ class recipeRepository {
     return result.rows[0];
   }
 
-  async add(recipe: TypeRecipe, ingredientDetails: ingredientDetails[]) {
+  async add(
+    recipe: TypeRecipe,
+    ingredientDetails: ingredientDetails[],
+    ustensilIds: number[],
+  ) {
     // On exécute une requête SQL pour insérer la recette dans recipe
     try {
       const result = await databaseClient.query<{ id: number }>(
@@ -310,7 +314,22 @@ class recipeRepository {
         );
       }
 
-      return recipeId;
+      for (const ustensilId of ustensilIds) {
+        const parsedUstensilId = Number(ustensilId);
+        if (Number.isNaN(parsedUstensilId)) {
+          throw new Error(`ustensil_id invalide : ${ustensilId}`);
+        }
+
+        await databaseClient.query(
+          `
+    INSERT INTO recipe_utensil (recipe_id, utensil_id)
+    VALUES ($1, $2)
+    `,
+          [recipeId, parsedUstensilId],
+        );
+      }
+
+      return "";
     } catch (err) {
       console.error("Erreur dans recipeRepository.add :", err);
       throw err;

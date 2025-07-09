@@ -259,7 +259,12 @@ const add: RequestHandler = async (req, res, next) => {
   try {
     const recipe = req.body.recipe;
     const ingredientDetails = req.body.ingredients || [];
-    const newRecipeId = await recipeRepository.add(recipe, ingredientDetails);
+    const ustensilIds = req.body.ustensils || [];
+    const newRecipeId = await recipeRepository.add(
+      recipe,
+      ingredientDetails,
+      ustensilIds,
+    );
 
     res.status(201).json({ id: newRecipeId });
   } catch (err) {
