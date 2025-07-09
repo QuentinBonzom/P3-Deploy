@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import type { TypeUstensil } from "../../../../client/src/types/TypeFiles";
 
 // Import access to data
 import ustensilRepository from "./ustensilRepository";
@@ -22,4 +23,33 @@ const recipeUstensil: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { recipeUstensil };
+const addUstensils: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.params.id);
+    const ustensilIds = req.body.ustensils || [];
+
+    if (Number.isNaN(recipeId)) {
+      res.status(400).json({ error: "ID de recette invalide" });
+      return;
+    }
+
+    await ustensilRepository.addUstensils(recipeId, ustensilIds);
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("Erreur lors de l’ajout des ustensiles à la recette :", err);
+    next(err);
+  }
+};
+
+const getAllUstensils: RequestHandler = async (req, res, next) => {
+  try {
+    const ustensils = await ustensilRepository.getAllUstensils();
+    res.status(200).json(ustensils);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des ustensiles :", err);
+    next(err);
+  }
+};
+
+export default { recipeUstensil, addUstensils, getAllUstensils };
