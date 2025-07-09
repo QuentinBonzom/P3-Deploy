@@ -42,6 +42,8 @@ router.get("/api/ingredients/by-type", ingredientActions.browseWithType);
 router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
 router.get("/api/ingredient/recipe/:id", ingredientActions.recipeIngredient); //tout les ingrediends, quantité et unite pour une recette(id)
 router.get("/api/ustensil/recipe/:id", ustensilActions.recipeUstensil); //tout les ustensiles pour une recette(id)
+router.post("/api/ustensil", ustensilActions.addUstensils);
+router.get("/api/ustensil", ustensilActions.getAllUstensils);
 
 //rate + comment + favorite
 

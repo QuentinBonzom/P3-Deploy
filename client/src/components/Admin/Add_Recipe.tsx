@@ -5,6 +5,7 @@ import type {
   TypeDiet,
   TypeIngredient,
   TypeUnity,
+  TypeUstensil,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
 
@@ -34,6 +35,11 @@ function CreateRecipe() {
   const [diets, setDiets] = useState<TypeDiet[]>([]);
   const [unity, setUnity] = useState<TypeUnity[]>([]);
   const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
+  const [ustensils, setUstensils] = useState<TypeUstensil[]>([]);
+  const [selectedUstensils, setSelectedUstensils] = useState<TypeUstensil[]>(
+    [],
+  );
+  const [isUstensilsOpen, setIsUstensilsOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/ingredient`)
@@ -55,8 +61,12 @@ function CreateRecipe() {
       .then((res) => res.json())
       .then((data) => setUnity(data))
       .catch(() => {});
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/ustensil`)
+      .then((res) => res.json())
+      .then((data) => setUstensils(data))
+      .catch(() => {});
   }, []);
-  console.log(unity);
   //Gère les changements dans les champs du formulaire (input, textearea, select)
   const handleChange = (
     e: React.ChangeEvent<
@@ -106,7 +116,6 @@ function CreateRecipe() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    //empeche le chargement de la page
     e.preventDefault();
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recipe`, {
@@ -121,13 +130,23 @@ function CreateRecipe() {
           id_diet: Number.parseInt(formData.id_diet),
         },
         ingredients: selectedIngredients,
+        ustensils: selectedUstensils.map((u) => u.id), // envoie uniquement les IDs
       }),
     });
 
-    await response.json();
-    alert("Recette enregistrée !");
+    const data = await response.json();
+    const recipeId = data?.id;
 
-    // Réinitialisation du formulaire
+    // Ajout des ustensiles liés à la recette
+    if (recipeId && selectedUstensils.length > 0) {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/ustensil/${recipeId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ustensils: selectedUstensils }),
+      });
+    }
+
+    alert("Recette enregistrée !");
     setFormData({
       name: "",
       description: "",
@@ -145,6 +164,7 @@ function CreateRecipe() {
       step7: "",
     });
     setSelectedIngredients([]);
+    setSelectedUstensils([]);
   };
 
   return (
@@ -403,6 +423,55 @@ function CreateRecipe() {
                       </select>
                     </div>
                   )}
+                </div>
+              );
+            })}
+        </fieldset>
+        <fieldset className="mb-10">
+          <legend
+            className="pr-4 font-bold mb-2 cursor-pointer select-none border-0 border-b-2 border-primary w-full"
+            onClick={() => setIsUstensilsOpen(!isUstensilsOpen)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setIsUstensilsOpen((open) => !open);
+              }
+            }}
+          >
+            <i className="bi bi-tools" /> Ustensiles *
+            <span className="ml-2">
+              {isUstensilsOpen ? (
+                <i className="bi bi-caret-up-fill" />
+              ) : (
+                <i className="bi bi-caret-down-fill" />
+              )}
+            </span>
+          </legend>
+
+          {isUstensilsOpen &&
+            ustensils.map((ustensil) => {
+              const selected = selectedUstensils.find(
+                (u) => u.id === ustensil.id,
+              );
+              return (
+                <div key={ustensil.id} className="mb-4">
+                  <input
+                    type="checkbox"
+                    id={`ustensil-${ustensil.id}`}
+                    checked={!!selected}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedUstensils((prev) => [...prev, ustensil]);
+                      } else {
+                        setSelectedUstensils((prev) =>
+                          prev.filter((u) => u.id !== ustensil.id),
+                        );
+                      }
+                    }}
+                  />
+                  <label className="pl-3" htmlFor={`ustensil-${ustensil.id}`}>
+                    {ustensil.name}
+                  </label>
                 </div>
               );
             })}

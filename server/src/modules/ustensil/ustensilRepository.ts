@@ -18,6 +18,31 @@ class ustensilRepository {
     //on renvoi une ligne par ustensile
     return result.rows;
   }
+
+  async getAllUstensils(): Promise<TypeUstensil[]> {
+    const { rows } = await databaseClient.query(
+      "SELECT * FROM utensil ORDER BY name",
+    );
+    return rows;
+  }
+
+  async addUstensils(recipeId: number, ustensilIds: number[]): Promise<void> {
+    for (const ustensilId of ustensilIds) {
+      const parsedId = Number(ustensilId);
+      if (Number.isNaN(parsedId)) {
+        throw new Error(`utensil_id invalide : ${ustensilId}`);
+      }
+
+      await databaseClient.query(
+        `
+      INSERT INTO recipe_utensil (recipe_id, utensil_id)
+      VALUES ($1, $2)
+      ON CONFLICT DO NOTHING
+      `,
+        [recipeId, parsedId],
+      );
+    }
+  }
 }
 
 export default new ustensilRepository();
