@@ -5,7 +5,9 @@ const router = express.Router();
 import categoryActions from "./modules/category/categoryActions";
 import dietActions from "./modules/diet/dietActions";
 import ingredientActions from "./modules/ingredient/ingredientActions";
+import listActions from "./modules/list/listActions";
 import recipeActions from "./modules/recipe/recipeActions";
+import unityActions from "./modules/unity/unityActions";
 import memberActions from "./modules/user/memberActions";
 import ustensilActions from "./modules/ustensil/ustensilActions";
 
@@ -18,12 +20,7 @@ import ustensilActions from "./modules/ustensil/ustensilActions";
 router.use("/api/member", security.checkToken); // middleware pour les routes membres
 router.use("/api/admin", securityAdmin.checkTokenAdmin); // middleware pour les routes admin
 
-import unityActions from "./modules/unity/unityActions";
-
 router.get("/api/unity", unityActions.browse);
-
-import categoryActions from "./modules/category/categoryActions";
-
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
 router.get("/api/recipe/random", recipeActions.random);
@@ -54,11 +51,10 @@ router.post("/api/favorite/recipe", recipeActions.updateFavorite); //pour ajoute
 
 // CRUD pour modifier recipe
 
-router.get("/api/admin/member", security.checkToken, memberActions.browse);
-router.get("/api/member", security.checkToken, memberActions.checkId); // token Check
-router.patch("/api/member", security.checkToken, memberActions.editMember); // modification du profile membre
-router.get("/api/member/:id", security.checkToken, memberActions.favorite); // liste des recettes favorites d'un membre
-router.patch("/api/member/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
+router.get("/api/admin/member", memberActions.browse);
+router.get("/api/member", memberActions.checkId); // token Check
+router.patch("/api/member", memberActions.editMember); // modification du profile membre
+router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes favorites d'un membre
 // router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre
 // router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
 
@@ -77,13 +73,16 @@ router.patch("/api/member", memberActions.editMember); // modification du profil
 router.get("/api/member/:id/profile", memberActions.readMemberProfile); // pour afficher le profile d'un membre
 router.get("/api/member/:id/favorite", memberActions.readFavorite); // liste des recettes favorites d'un membre
 router.get("/api/member/:id/comments", memberActions.readCommented); //pour afficher les commentaires d'une recette
+router.get("/api/member/:id/registeredlist", memberActions.readRegisteredList);
+router.post("/api/member/:id/list", listActions.addList); //ajouter une liste
 router.delete("/api/member/:id", memberActions.deleteAccount); //supression compte
+// router.get("/api/membre/:id/list", listActions.memberList); //recuperer les listes d'un membre
 
 //Zone Admin ----------------------
-
 router.get("/api/admin/member", memberActions.browse);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
+router.patch("/api/admin/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
 
 // router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
 // router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre
@@ -101,10 +100,5 @@ router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
 /* ************************************************************************* */
 
 // Define list-related routes
-import listActions from "./modules/list/listActions";
-
-router.post("/api/list/:id", security.checkToken, listActions.addList); //ajouter une liste
-
-router.get("/api/list/:id", security.checkToken, listActions.memberList); //recuperer les listes d'un membre
 
 export default router;

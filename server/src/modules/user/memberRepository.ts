@@ -130,6 +130,33 @@ class userRepository {
     return result.rows;
   }
 
+  async registeredList(user_id: number) {
+    const result = await databaseClient.query(
+      `
+    SELECT
+      l.id AS list_id,
+      l.date_creation AS date_creation,
+      lr.recipe_id AS recipe_id,
+      r.name AS name,
+      r.picture AS picture,
+      lr.number_people AS number_persons,
+      (
+        SELECT json_agg(json_build_object('name', i.name, 'quantity', ri.quantity))
+        FROM recip_ingredient ri
+        JOIN ingredient i ON i.id = ri.ingredient_id
+        WHERE ri.recipe_id = r.id
+      ) AS ingredients
+    FROM list l
+    JOIN list_recipe lr ON lr.list_id = l.id
+    JOIN recipe r ON r.id = lr.recipe_id
+    WHERE l.user_id = $1
+    ORDER BY l.date_creation
+    `,
+      [user_id],
+    );
+    return result.rows;
+  }
+
   async profileMember(user_id: number) {
     const result = await databaseClient.query(
       `SELECT *

@@ -142,10 +142,8 @@ const checkId: RequestHandler = async (req, res, next) => {
 
 const editMember: RequestHandler = async (req, res, next) => {
   try {
-    const memberId = Number(req.userId); // On prend l'ID du token
+    const memberId = Number(req.userId);
     const { name, email, password } = req.body;
-    //  On vérifie si l'utilisateur a le droit de modifier le compte
-    //  Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
     const updated = await memberRepository.update(memberId, {
       name,
       email,
@@ -203,20 +201,21 @@ const readMemberProfile: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
-// const rate: RequestHandler = async (req, res, next) => {
-//   try {
-//     const memberId = Number(req.params.id);
-//     const favorites = await memberRepository.favoriteList(memberId);
 
-//     if (favorites == null) {
-//       res.sendStatus(404);
-//     } else {
-//       res.json(favorites);
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+const readRegisteredList: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.params.id);
+    const registered = await memberRepository.registeredList(memberId);
+
+    if (registered == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(registered);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
 
 const UpdateAdminStatus: RequestHandler = async (req, res, next) => {
   try {
@@ -250,10 +249,8 @@ export default {
   deleteMemberAsAdmin,
   editMember,
   readFavorite,
-  // rate,
+  readRegisteredList,
   readCommented,
   readMemberProfile,
-  rate,
   UpdateAdminStatus,
-
 };
