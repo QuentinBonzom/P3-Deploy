@@ -26,7 +26,6 @@ const checkToken: RequestHandler = (req, res, next) => {
     // On extrait l'ID utilisateur (decoded.id) et on le stocke dans la requête (req.userId) pour un usage ultérieur
     const { id } = decoded as JWTPayload;
     req.userId = id;
-    console.log("Token Membre fonctionnel");
     next();
   });
 };

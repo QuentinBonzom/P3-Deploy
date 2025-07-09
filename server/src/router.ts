@@ -22,8 +22,6 @@ import unityActions from "./modules/unity/unityActions";
 
 router.get("/api/unity", unityActions.browse);
 
-import categoryActions from "./modules/category/categoryActions";
-
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
 router.get("/api/recipe/random", recipeActions.random);
@@ -57,7 +55,7 @@ router.post("/api/favorite/recipe", recipeActions.updateFavorite); //pour ajoute
 router.get("/api/admin/member", security.checkToken, memberActions.browse);
 router.get("/api/member", security.checkToken, memberActions.checkId); // token Check
 router.patch("/api/member", security.checkToken, memberActions.editMember); // modification du profile membre
-router.get("/api/member/:id", security.checkToken, memberActions.favorite); // liste des recettes favorites d'un membre
+router.get("/api/member/:id", security.checkToken, memberActions.readFavorite); // liste des recettes favorites d'un membre
 router.patch("/api/member/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
 // router.get("/api/member/:id", security.checkToken, memberActions.comments); // liste des commentaires d'un membre
 // router.get("/api/member/:id", security.checkToken, memberActions.rated); // liste des recettes notées d'un membre
