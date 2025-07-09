@@ -1,11 +1,18 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 function Footer() {
+  const location = useLocation();
+  function handleEggs() {
+    if (location.pathname === "/Mixer") {
+      document.body.style.cursor = 'url("/pointer-bonjour.png"), auto';
+    }
+  }
   return (
     <>
       <section className="border-t-2 border-primary flex flex-col md:flex-row justify-between items-center md:items-start px-4 md:px-8 xl:px-16">
         <div className="order-1 md:order-2 flex justify-center py-4 w-full md:w-1/3">
           <img
+            onDoubleClick={() => handleEggs()}
             className="max-w-[30%] md:max-w-[30%] xl:max-w-[30%]"
             src="/cook-bonjour.png"
             alt="bonjour"
