@@ -71,6 +71,8 @@ export interface TypeUstensil {
   ustensil_name: string;
   id: number;
   name: string;
+  recipeUstensil(id: number): Promise<TypeUstensil[]>;
+  addUstensils(recipeId: number, ustensilIds: number[]): Promise<void>;
 }
 
 export interface TypeList {
