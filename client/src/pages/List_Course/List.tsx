@@ -1,5 +1,5 @@
 import { useUser } from "@/context/UserContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { TypeIngredient, TypeRecipe } from "@/types/TypeFiles";
 
@@ -107,7 +107,53 @@ function List() {
       }
     }
   }
-  //console.log("recette:", recipe, "ingredients:", ingredients);
+  const printSectionRef = useRef<HTMLDivElement>(null);
+
+  function handlePrint() {
+    const printContents = printSectionRef.current?.innerHTML;
+    if (!printContents) return;
+
+    const printWindow = window.open("", "", "width=800,height=600");
+    if (printWindow) {
+      printWindow.document.body.innerHTML = `
+      <html>
+        <head>
+          <title>Liste de courses</title>
+          <style>
+          title{
+          font-size:60px;}
+
+            body{
+              
+              h3{
+              font-size:12px;
+              }
+           }
+            .ligne{ 
+            margin:0 50px 0 50px;
+                       
+            display:flex;
+            flex-direction:row;
+            justify-content:space-between;
+            }
+       
+            img {
+              display:none;
+            }
+            
+          </style>
+        </head>
+        <body>
+          ${printContents}
+        </body>
+      </html>
+    `;
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }
+  }
 
   return (
     <>
@@ -139,14 +185,21 @@ function List() {
                   </article>
                 ))}
               </section>
-              <section className="bg-primary/20 mx-4 rounded-2xl shadow-2xl lg:w-150 relative">
-                <div className="bg-white rounded-full w-20 h-20  flex items-center justify-center  absolute -bottom-4 -right-4 cursor-pointer ">
+              <section
+                ref={printSectionRef}
+                className="bg-primary/20 mx-4 rounded-2xl shadow-2xl lg:w-150 relative"
+              >
+                <button
+                  onClick={() => handlePrint()}
+                  type="button"
+                  className="bg-white rounded-full w-20 h-20  flex items-center justify-center  absolute -bottom-4 -right-4 cursor-pointer "
+                >
                   <img
                     className=" w-14 h-14"
                     src="./printer.png"
                     alt="imprimer"
                   />
-                </div>
+                </button>
 
                 {ingredients.map((item) => (
                   <article
@@ -158,7 +211,7 @@ function List() {
                       src={item.ingredient_picture}
                       alt={item.ingredient_name}
                     />
-                    <div>
+                    <div className="ligne">
                       <h3>{item.ingredient_name}</h3>
                       <div>
                         {item.ingredient_quantity * item.numberPersons}{" "}

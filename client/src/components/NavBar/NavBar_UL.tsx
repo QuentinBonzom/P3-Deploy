@@ -12,7 +12,11 @@ function NavBar_UL() {
       </li>
       <span className="text-[var(--color-primary)]">|</span>
       <li className="relative group text-secondary">
-        <Link to="/Courses">Mes courses</Link>
+        {isConnected ? (
+          <Link to="/Courses">Mes courses</Link>
+        ) : (
+          <Link to="/Compte">Mes courses</Link>
+        )}
       </li>
       <span className="text-[var(--color-primary)]">|</span>
       <li className="relative group text-secondary">
