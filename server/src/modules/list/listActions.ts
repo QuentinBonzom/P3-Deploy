@@ -27,14 +27,5 @@ const addList: RequestHandler = async (req, res, next) => {
   }
 };
 
-// const memberList: RequestHandler = async (req, res, next) => {
-//   try {
-//     const userId = Number(req.params.id);
-//     const lists = await listRepository.memberList(userId);
-//     res.json(lists);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
 
 export default { addList };
