@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
+import { useNavigate } from "react-router";
 import RecipeCard from "../../components/RecipeCard";
 
 function Mixer() {
+  const navigate = useNavigate();
   type Ingredient = {
     ingredient_id: number;
     ingredient_name: string;
@@ -77,6 +79,11 @@ function Mixer() {
         .finally(() => setMixing(false));
     }, 2200);
   };
+
+  function handleRecipeId(recipeId: number) {
+    localStorage.setItem("recipeId", recipeId.toString());
+    navigate("/Details");
+  }
 
   return (
     <div className="flex flex-col items-center mx-4">
@@ -191,7 +198,11 @@ function Mixer() {
       <div className="w-full my-16 flex gap-4 overflow-x-scroll px-6 justify-center">
         {recipes.length === 0 && <p>Aucune recette</p>}
         {recipes.map((r) => (
-          <RecipeCard key={r.id} recipe={r} />
+          <RecipeCard
+            onClick={() => handleRecipeId(r.id)}
+            key={r.id}
+            recipe={r}
+          />
         ))}
       </div>
     </div>

@@ -10,8 +10,17 @@ type Recipe = {
   rate?: number;
 };
 
-const RecipeCard = ({ recipe }: { recipe: Recipe }) => (
-  <div className="bg-[#f9e7cf] shadow-lg rounded-2xl p-4 border-2 border-[#e6d9be] flex flex-col items-center min-w-[260px] max-w-xs">
+interface RecipeCardProps {
+  recipe: Recipe;
+  onClick?: () => void;
+}
+
+const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => (
+  <button
+    onClick={onClick}
+    type="button"
+    className="bg-[#f9e7cf] shadow-lg rounded-2xl p-4 border-2 border-[#e6d9be] flex flex-col items-center min-w-[260px] max-w-xs"
+  >
     <h4 className="font-bold text-lg text-secondary mb-2 text-center">
       {recipe.name}
     </h4>
@@ -53,7 +62,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => (
         </span>
       )}
     </div>
-  </div>
+  </button>
 );
 
 export default RecipeCard;
