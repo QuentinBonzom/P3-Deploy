@@ -85,7 +85,7 @@ function List() {
     if (currentList.length > 0 && isConnected) {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/list/${userOnline?.id}`,
+        `${import.meta.env.VITE_API_URL}/api/member/${userOnline?.id}/list`,
         {
           method: "POST",
           headers: {
