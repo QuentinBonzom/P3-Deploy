@@ -1,22 +1,17 @@
+import Edit_Recipe from "@/components/Admin/Edit_Recipe";
 import CommentRecipe from "@/components/CommentRecipe";
 import StepsRecipe from "@/components/StepsRecipe";
 import UstensilRecipe from "@/components/UstensilRecipe";
 import { useUser } from "@/context/UserContext";
 import { useHandleFavorite } from "@/hooks/useHandleFavorite";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-
 import type {
   TypeIngredient,
   TypeRecipe,
   TypeUstensil,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useNavigate } from "react-router";
-
-interface CommentInterface {
-  text: string;
-  member: string;
-}
 
 function DetailsRecipe() {
   const recipeId = Number(localStorage.getItem("recipeId"));
@@ -27,9 +22,11 @@ function DetailsRecipe() {
   const [ustensils, setUstensils] = useState<TypeUstensil[]>([]);
   const [numberPersons, setNumberPersons] = useState<number>(1);
   const [rate, setRate] = useState<number>(0);
-  const [comments, setComments] = useState<CommentInterface[]>([]);
-  const { isConnected, idUserOnline } = useUser();
-  // const [userRate, setUserRate] = useState<number | null>(null);
+  const [comments, setComments] = useState<{ text: string; member: string }[]>(
+    [],
+  );
+  const { isConnected, idUserOnline, isAdmin } = useUser();
+  const [showEdit, setShowEdit] = useState(false);
 
   // Fetch the recipe details using the recipeId
   useEffect(() => {
@@ -38,40 +35,24 @@ function DetailsRecipe() {
       .then((data) => {
         setRecipe(data);
       });
-    //Fetch the ingredients for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         setIngredients(data);
       });
-    //Fetch the ustensils for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ustensil/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         setUstensils(data);
       });
-    //fetch rate and comments
     fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         setRate(data.rate);
         setComments(data.comments);
-        // console.log(data.rate);
-        // console.log(data.comments);
       });
   }, [recipeId]);
 
-  const renderStars = (rate: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rate) {
-        stars.push(<span key={i}>⭐</span>);
-      }
-    }
-    return stars;
-  };
-
-  //diminuer le nbr de personnes avec limite basse a 1
   function handleLess() {
     if (numberPersons > 1) {
       setNumberPersons(numberPersons - 1);
@@ -80,7 +61,6 @@ function DetailsRecipe() {
     }
   }
 
-  //ajouter une note
   function handleUserRate(rate: number) {
     if (!isConnected) {
       alert("Vous devez être connecté pour donner une note.");
@@ -126,8 +106,61 @@ function DetailsRecipe() {
     }
   }
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
+
+  const renderStars = (rate: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rate) {
+        stars.push(<span key={i}>⭐</span>);
+      }
+    }
+    return stars;
+  };
+
   return (
     <>
+      {/* Bouton d'édition visible seulement pour l'admin */}
+      {isAdmin && (
+        <div className="flex justify-end m-4">
+          <button
+            className="bg-primary text-white px-4 py-2 rounded"
+            onClick={() => setShowEdit((v) => !v)}
+            type="button"
+          >
+            {showEdit ? "Annuler la modification" : "Modifier la recette"}
+          </button>
+        </div>
+      )}
+      {/* Formulaire d'édition */}
+      {showEdit && (
+        <Edit_Recipe
+          recipe={recipe}
+          ingredients={ingredients}
+          ustensils={ustensils}
+          onClose={() => setShowEdit(false)}
+          onUpdate={() => {
+            // Recharge la recette et ses ingrédients/ustensiles
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/recipe/detail/${recipeId}`,
+            )
+              .then((response) => response.json())
+              .then((data) => setRecipe(data));
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${recipeId}`,
+            )
+              .then((response) => response.json())
+              .then((data) => setIngredients(data));
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/ustensil/recipe/${recipeId}`,
+            )
+              .then((response) => response.json())
+              .then((data) => setUstensils(data));
+          }}
+        />
+      )}
       <img
         className="h-72 absolute top-20 left-1/2 transform -translate-x-1/2 z-1"
         src={recipe?.picture}

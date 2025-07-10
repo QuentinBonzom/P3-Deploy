@@ -39,7 +39,7 @@ export default function FiltresRecipe({
         {label}
       </button>
       {open && (
-        <div className="absolute left-0 top-full mt-2 min-w-[180px] bg-white border border-amber-100 rounded-xl shadow-lg z-10">
+        <div className="absolute left-0 top-full mt-2 min-w-[180px] bg-white border border-amber-100 rounded-xl shadow-2xl z-50">
           {options.length === 0 ? (
             <div className="px-4 py-2 text-gray-400">Aucune option</div>
           ) : (

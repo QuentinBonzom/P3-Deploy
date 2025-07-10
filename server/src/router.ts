@@ -64,6 +64,11 @@ router.patch("/api/member/:id", memberActions.UpdateAdminStatus); // Change le s
 
 router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
 router.post("/api/recipe", recipeActions.add);
+router.patch(
+  "/api/recipe/:id",
+  securityAdmin.checkTokenAdmin,
+  recipeActions.update,
+);
 
 //Authentification
 
