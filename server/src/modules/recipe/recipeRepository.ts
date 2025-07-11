@@ -420,9 +420,7 @@ class recipeRepository {
     return { recipeId, userId }; // Retourne les id clefs primaires de la table action
   }
 
-  // Lecture filtrée selon plusieurs critères
   async readFiltered(category?: string, diet?: string, difficulty?: string) {
-    // Construction dynamique de la clause WHERE
     const whereClauses: string[] = [];
     const params: string[] = [];
     let paramIndex = 1;
@@ -459,6 +457,77 @@ class recipeRepository {
       params,
     );
     return result.rows;
+  }
+
+  async update(
+    recipeId: number,
+    data: Partial<TypeRecipe> & {
+      ingredients?: ingredientDetails[];
+      ustensils?: number[];
+    },
+  ) {
+    const result = await databaseClient.query(
+      `
+        UPDATE recipe
+        SET name = $1,
+            description = $2,
+            time_preparation = $3,
+            difficulty = $4,
+            kcal = $5,
+            step1 = $6,
+            step2 = $7,
+            step3 = $8,
+            step4 = $9,
+            step5 = $10,
+            step6 = $11,
+            step7 = $12
+        WHERE id = $13
+        RETURNING *
+      `,
+      [
+        data.name,
+        data.description,
+        data.time_preparation,
+        data.difficulty,
+        data.kcal,
+        data.step1,
+        data.step2,
+        data.step3,
+        data.step4,
+        data.step5,
+        data.step6,
+        data.step7,
+        recipeId,
+      ],
+    );
+    // --- Mise à jour des ingrédients ---
+    if (Array.isArray(data.ingredients)) {
+      await databaseClient.query(
+        "DELETE FROM recip_ingredient WHERE recipe_id = $1",
+        [recipeId],
+      );
+      // nouveaux ingrédients
+      for (const ingredient of data.ingredients) {
+        await databaseClient.query(
+          "INSERT INTO recip_ingredient (ingredient_id, recipe_id, quantity, unity_id) VALUES ($1, $2, $3, $4)",
+          [ingredient.id, recipeId, ingredient.quantity, ingredient.unity_id],
+        );
+      }
+    }
+    // --- Mise à jour des ustensiles ---
+    if (Array.isArray(data.ustensils)) {
+      await databaseClient.query(
+        "DELETE FROM recipe_utensil WHERE recipe_id = $1",
+        [recipeId],
+      );
+      for (const ustensilId of data.ustensils) {
+        await databaseClient.query(
+          "INSERT INTO recipe_utensil (recipe_id, utensil_id) VALUES ($1, $2)",
+          [recipeId, ustensilId],
+        );
+      }
+    }
+    return result.rows[0];
   }
 }
 
