@@ -321,6 +321,22 @@ const addRate: RequestHandler = async (req, res, next) => {
   }
 };
 
+// --- MISE À JOUR d'une recette ---
+const update: RequestHandler = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.params.id);
+    const data = req.body;
+    const updated = await recipeRepository.update(recipeId, data);
+    if (!updated) {
+      res.status(404).json({ message: "Recette introuvable" });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   browse,
   read,
@@ -339,4 +355,5 @@ export default {
   updateFavorite,
   addRate,
   listRecipesAdmin,
+  update,
 };

@@ -187,13 +187,49 @@ function Mixer() {
           ))}
         </div>
       )}
-      {/* Recettes dessous */}
-      <div className="w-full my-16 flex gap-4 overflow-x-scroll px-6 justify-center">
-        {recipes.length === 0 && <p>Aucune recette</p>}
-        {recipes.map((r) => (
-          <RecipeCard key={r.id} recipe={r} />
-        ))}
+
+      {/* Affichage recettes */}
+
+      <div className="w-full my-10">
+        {/* Carrousel mobile */}
+        <div className="block sm:hidden overflow-x-auto pb-4">
+          <div
+            className="flex gap-6"
+            style={{
+              scrollSnapType: "x mandatory",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {recipes.length === 0 ? (
+              <p className="text-center w-full">Aucune recette</p>
+            ) : (
+              recipes.map((recipe) => (
+                <div
+                  key={recipe.id}
+                  className="snap-center flex-shrink-0"
+                  style={{
+                    minWidth: "340px",
+                    maxWidth: "340px",
+                  }}
+                >
+                  <RecipeCard recipe={recipe} />
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+        {/* Grille tablette/desktop */}
+        <div className="hidden sm:grid gap-6 justify-center sm:grid-cols-2 lg:grid-cols-3 px-4">
+          {recipes.length === 0 ? (
+            <p className="col-span-full text-center">Aucune recette</p>
+          ) : (
+            recipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))
+          )}
+        </div>
       </div>
+      {/* Fin de la section recettes */}
     </div>
   );
 }

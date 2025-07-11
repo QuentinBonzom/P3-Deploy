@@ -73,8 +73,10 @@ router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes
 router.get("/api/admin/member", memberActions.browse);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
+router.patch("/api/admin/recipe/:id", recipeActions.update,);
 router.patch("/api/admin/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
 router.post("/api/admin/recipe", recipeActions.add); //TODO check for issue linked to Ustensil
+
 
 /* ************************************************************************* */
 

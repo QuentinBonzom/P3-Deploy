@@ -1,3 +1,4 @@
+import RecipeCard from "@/components/RecipeCard";
 import type { TypeRecipe } from "@/types/TypeFiles";
 import { useCallback, useEffect, useState } from "react";
 import { TiDeleteOutline } from "react-icons/ti";
@@ -23,6 +24,14 @@ function Recettes() {
   );
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  // Pagination : 9 recettes par page, 3x3 grid
+  const RECIPES_PER_PAGE = 9;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(recipeToMap.length / RECIPES_PER_PAGE);
+  const startIdx = (page - 1) * RECIPES_PER_PAGE;
+  const endIdx = startIdx + RECIPES_PER_PAGE;
+  const recipesPage = recipeToMap.slice(startIdx, endIdx);
+
   // Fonction pour effectuer une recherche par mot-clé
   const handleSearch = useCallback(() => {
     setRecipeToMap([]); // Vide les recettes pendant le chargement
@@ -32,17 +41,6 @@ function Recettes() {
         setRecipeToMap(data); // Met à jour les recettes avec le résultat de la recherche
       });
   }, [searchWord]);
-
-  // Fonction utilitaire pour afficher les étoiles de notation
-  const renderStars = (rate: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rate) {
-        stars.push(<span key={i}>⭐</span>);
-      }
-    }
-    return stars;
-  };
 
   // Fonction pour charger toutes les recettes (sans filtre)
   const handleAll = useCallback(() => {
@@ -249,85 +247,57 @@ function Recettes() {
 
       {/* Affichage des cartes de recettes */}
       <div className="w-full max-w-7xl mx-auto px-4">
-        <div
-          className="grid gap-6 justify-center"
-          style={{
-            gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
-          }}
-        >
-          {/* Boucle sur les recettes à afficher */}
-          {recipeToMap.map((recipe) => (
+        {/* Affiche une page de 9 recettes en responsive (1 colonne mobile, 2 tablette, 3 desktop) */}
+        <div className="grid gap-6 justify-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {recipesPage.map((recipe) => (
             <Link
               to="/Details"
               key={recipe.id}
               onClick={() =>
                 localStorage.setItem("recipeId", recipe.id.toString())
               }
+              className="hover:no-underline"
             >
-              <article className="flex bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden max-h-60 group w-full">
-                {/* Colonne gauche : image et tags */}
-                <div className="flex flex-col items-center justify-between bg-primary/10 p-2 w-36">
-                  <div className="relative">
-                    <img
-                      src={recipe.picture}
-                      alt="Recette"
-                      className="w-[100px] h-[100px] object-cover rounded-full border-4 border-white shadow-lg group-hover:scale-105 transition-transform duration-200"
-                    />
-                  </div>
-                  <div className="bg-secondary/40 backdrop-blur-sm rounded-xl mt-2 px-2 py-2 flex flex-col items-center gap-1 shadow-inner">
-                    <div className="text-amber-500 text-lg">
-                      {renderStars(recipe.rate)}
-                    </div>
-                    <div className="flex flex-col items-center gap-2 mt-1">
-                      {/* Affiche le régime et la difficulté */}
-                      <span className="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full text-sm shadow-sm">
-                        {recipe.diet_name}
-                      </span>
-                      <span className="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-sm shadow-sm">
-                        {recipe.difficulty}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {/* Colonne droite : infos recette */}
-                <div className="p-3 flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className="font-extrabold text-lg mb-1 block text-primary">
-                      {recipe.recipe_name}
-                    </span>
-                    <p className="text-gray-500 line-clamp-2 mb-2">
-                      {recipe.description}
-                    </p>
-                    <div className="flex flex-col items-center md:items-start gap-1 mb-3 mt-2">
-                      {/* Affiche le temps de préparation et les calories */}
-                      <span className="flex items-center gap-1 text-gray-600 text-base md:text-left">
-                        <span role="img" aria-label="temps">
-                          ⏱️
-                        </span>{" "}
-                        {recipe.time_preparation} min
-                      </span>
-                      <span className="flex items-center gap-1 text-gray-600 text-base md:text-left">
-                        <span role="img" aria-label="calories">
-                          🔥
-                        </span>{" "}
-                        {recipe.kcal} Kcal/Pers.
-                      </span>
-                    </div>
-                  </div>
-                  {/* Bouton pour voir la recette */}
-                  <div className="flex justify-center">
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-2 bg-amber-300 hover:bg-amber-400 rounded-full px-4 py-1.5 font-semibold shadow transition-transform duration-150 hover:scale-105"
-                    >
-                      👨🏻‍🍳 Voir la recette
-                    </button>
-                  </div>
-                </div>
-              </article>
+              <RecipeCard
+                recipe={{
+                  id: recipe.id,
+                  name: recipe.recipe_name || recipe.name,
+                  picture: recipe.picture,
+                  description: recipe.description,
+                  kcal: recipe.kcal,
+                  time_preparation: recipe.time_preparation,
+                  difficulty: recipe.difficulty,
+                  diet_name: recipe.diet_name,
+                  rate: recipe.rate,
+                }}
+              />
             </Link>
           ))}
         </div>
+        {/* Pagination controls en bas */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-4 my-8">
+            <button
+              type="button"
+              className="px-4 py-2 rounded-full bg-primary text-white font-bold disabled:opacity-50"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Précédent
+            </button>
+            <span className="text-secondary font-bold text-lg">
+              Page {page} / {totalPages}
+            </span>
+            <button
+              type="button"
+              className="px-4 py-2 rounded-full bg-primary text-white font-bold disabled:opacity-50"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              Suivant
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

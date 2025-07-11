@@ -1,3 +1,4 @@
+import Edit_Recipe from "@/components/Admin/Edit_Recipe";
 import CommentRecipe from "@/components/CommentRecipe";
 import RatingStars from "@/components/RatingStars";
 import StepsRecipe from "@/components/StepsRecipe";
@@ -15,11 +16,6 @@ import { FaMinus } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from "react-router";
 
-interface CommentInterface {
-  text: string;
-  member: string;
-}
-
 function DetailsRecipe() {
   const recipeId = Number(localStorage.getItem("recipeId"));
   const { isFavorite, toggleFavorite } = useHandleFavorite(recipeId, false);
@@ -29,8 +25,12 @@ function DetailsRecipe() {
   const [ustensils, setUstensils] = useState<TypeUstensil[]>([]);
   const [numberPersons, setNumberPersons] = useState<number>(1);
   const [rate, setRate] = useState<number>(0);
-  const [comments, setComments] = useState<CommentInterface[]>([]);
-  const { isConnected, idUserOnline } = useUser();
+  const [comments, setComments] = useState<{ text: string; member: string }[]>(
+    [],
+  );
+  const { isConnected, idUserOnline, isAdmin } = useUser();
+  const [showEdit, setShowEdit] = useState(false);
+
 
   // Fetch the recipe details using the recipeId
   useEffect(() => {
@@ -39,28 +39,24 @@ function DetailsRecipe() {
       .then((data) => {
         setRecipe(data);
       });
-    //Fetch the ingredients for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         setIngredients(data);
       });
-    //Fetch the ustensils for recipe
     fetch(`${import.meta.env.VITE_API_URL}/api/ustensil/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         setUstensils(data);
       });
-    //fetch rate and comments
     fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe/${recipeId}`)
       .then((response) => response.json())
       .then((data) => {
         setRate(data.rate);
         setComments(data.comments);
-        // console.log(data.rate);
-        // console.log(data.comments);
       });
   }, [recipeId]);
+
 
   //diminuer le nbr de personnes avec limite basse a 1
   function handleLess() {
@@ -70,6 +66,32 @@ function DetailsRecipe() {
       setNumberPersons(1);
     }
   }
+
+  function handleUserRate(rate: number) {
+    if (!isConnected) {
+      alert("Vous devez être connecté pour donner une note.");
+      navigate("/Compte");
+    } else {
+      fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipeId,
+          userId: idUserOnline,
+          rate: rate,
+        }),
+      }).then((response) => {
+        if (response.ok) {
+          alert("Note ajoutée avec succès");
+        } else {
+          alert("Erreur lors de l'ajout de la note");
+        }
+      });
+    }
+  }
+
 
   function handleShopping(recipeId: number, numberPersons: number) {
     if (!isConnected) {
@@ -91,50 +113,79 @@ function DetailsRecipe() {
     }
   }
 
-  function handleUserRate(star: number) {
-    if (!isConnected) {
-      alert("Vous devez être connecté pour donner une note.");
-      navigate("/Compte");
-      return;
-    }
-    setRate(star);
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipeId, userId: idUserOnline, rate: star }),
-    }).then((response) => {
-      if (response.ok) {
-        alert("Note ajoutée avec succès");
-      } else {
-        alert("Erreur lors de l'ajout de la note");
+  const renderStars = (rate: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rate) {
+        stars.push(<span key={i}>⭐</span>);
       }
-    });
-  }
+    }
+    return stars;
+  };
 
   return (
     <>
-      <header>
-        <img
-          className="h-50 absolute top-17 left-1/2 transform -translate-x-1/2 z-1"
-          src={recipe?.picture}
-          alt={recipe?.name}
+      {/* Bouton d'édition visible seulement pour l'admin */}
+      {isAdmin && (
+        <div className="flex justify-end m-4">
+          <button
+            className="bg-primary text-white px-4 py-2 rounded"
+            onClick={() => setShowEdit((v) => !v)}
+            type="button"
+          >
+            {showEdit ? "Annuler la modification" : "Modifier la recette"}
+          </button>
+        </div>
+      )}
+      {/* Formulaire d'édition */}
+      {showEdit && (
+        <Edit_Recipe
+          recipe={recipe}
+          ingredients={ingredients}
+          ustensils={ustensils}
+          onClose={() => setShowEdit(false)}
+          onUpdate={() => {
+            // Recharge la recette et ses ingrédients/ustensiles
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/recipe/detail/${recipeId}`,
+            )
+              .then((response) => response.json())
+              .then((data) => setRecipe(data));
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${recipeId}`,
+            )
+              .then((response) => response.json())
+              .then((data) => setIngredients(data));
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/ustensil/recipe/${recipeId}`,
+            )
+              .then((response) => response.json())
+              .then((data) => setUstensils(data));
+          }}
         />
+      )}
+      <img
+        className="h-72 absolute top-20 left-1/2 transform -translate-x-1/2 z-1"
+        src={recipe?.picture}
+        alt={recipe?.name}
+      />
+      <h2 className="p-8 pt-20 text-3xl">
+        {recipe?.name} {renderStars(rate)}
+      </h2>
+      <section className="flex text-secondary justify-between m-4">
+        <article className="flex">
+          <img
+            className="w-14 h-14"
+            src="/horlogeIcone.png"
+            alt="icone d'horloge"
+          />
+          <article className="text-lg font-bold m-auto">
+            {recipe?.time_preparation} min
 
-        <h2 className="p-8 pt-20 text-3xl text-center">{recipe?.name}</h2>
-      </header>
-
-      <section className="flex flex-col md:flex-row text-secondary justify-between m-4 gap-4 md:gap-0">
-        <div className="flex justify-around">
-          <article className="flex items-center">
-            <img
-              className="w-10 h-10 md:w-14 md:h-14"
-              src="/horlogeIcone.png"
-              alt="durée"
-            />
-            <span className="ml-2 text-lg font-bold">
-              {recipe?.time_preparation} min
-            </span>
           </article>
 
           <article className="flex items-center">
