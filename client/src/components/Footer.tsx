@@ -1,10 +1,15 @@
+import { useUser } from "@/context/UserContext";
 import { Link, useLocation } from "react-router";
 
 function Footer() {
   const location = useLocation();
+  const { isEasterEgg, setIsEasterEgg } = useUser();
   function handleEggs() {
     if (location.pathname === "/Mixer") {
       document.body.style.cursor = 'url("/pointer-bonjour.png"), auto';
+      if (!isEasterEgg) {
+        setIsEasterEgg(true);
+      }
     }
   }
   return (
