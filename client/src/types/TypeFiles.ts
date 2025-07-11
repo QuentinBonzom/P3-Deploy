@@ -103,11 +103,12 @@ export interface newMember {
 }
 
 export interface Member {
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
   id: number;
-  admin: boolean;
-  inscription: string;
+  admin?: boolean;
+  password?: string;
+  inscription?: string;
 }
 
 export interface Recipe {
