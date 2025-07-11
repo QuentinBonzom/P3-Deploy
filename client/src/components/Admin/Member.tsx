@@ -10,7 +10,6 @@ function MemberManage() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   //gestion role admin

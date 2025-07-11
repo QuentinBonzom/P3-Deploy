@@ -20,7 +20,6 @@ import ustensilActions from "./modules/ustensil/ustensilActions";
 router.use("/api/member", security.checkToken); // middleware pour les routes membres
 router.use("/api/admin", securityAdmin.checkTokenAdmin); // middleware pour les routes admin
 
-
 router.get("/api/unity", unityActions.browse);
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
@@ -51,7 +50,6 @@ router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note 
 router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
 router.post("/api/favorite/recipe", recipeActions.updateFavorite); //pour ajouter une recette aux favoris")
 
-
 //Authentification
 
 router.post("/api/signup", memberActions.add, memberActions.login); // le "Add" permet de rajouter le compte et l'action "login" de ce log directement avec un token.
@@ -70,8 +68,6 @@ router.delete("/api/member/:id", memberActions.deleteAccount); //supression comp
 router.get("/api/member", memberActions.checkId); // token Check
 router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes favorites d'un membre
 
-
-
 //Zone Admin ----------------------
 
 router.get("/api/admin/member", memberActions.browse);
@@ -79,7 +75,8 @@ router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
 router.patch("/api/admin/recipe/:id", recipeActions.update,);
 router.patch("/api/admin/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
-router.post("/api/admin/recipe", recipeActions.add); //TODO check for issue linked to Ustensil 
+router.post("/api/admin/recipe", recipeActions.add); //TODO check for issue linked to Ustensil
+
 
 /* ************************************************************************* */
 

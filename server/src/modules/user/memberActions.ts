@@ -120,9 +120,9 @@ const deleteMemberAsAdmin: RequestHandler = async (req, res, next) => {
   try {
     // On récupère l'ID du membre à supprimer depuis les paramètres de la requête
     const MemberId = req.query.idToDelete;
-    console.log("requete", req);
+    // console.log("requete", req);
     const adminId = Number(req.params.id);
-    console.log("adminId", adminId);
+    // console.log("adminId", adminId);
     // Si l'ID est dans les paramètres, on le prend, sinon on prend l'ID du token
     // On vérifie si l'utilisateur a le droit de supprimer le compte
     // Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
@@ -170,7 +170,7 @@ const editMember: RequestHandler = async (req, res, next) => {
       password: password || undefined,
     });
     if (!updated) res.status(404).json({ message: "Utilisateur introuvable" });
-    res.json(updated);
+    res.status(200).json(updated);
     return;
   } catch (err) {
     next(err);
