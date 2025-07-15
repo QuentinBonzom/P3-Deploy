@@ -23,7 +23,9 @@ interface UserContextValue {
   isAdmin: boolean;
   idUserOnline: number | null;
   userOnline?: TypeUser; // Optional, can be undefined
+  isEasterEgg: boolean;
   // setUserOnline: React.Dispatch<React.SetStateAction<string>>; // Commented out or remove if not used elsewhere
+  setIsEasterEgg: React.Dispatch<React.SetStateAction<boolean>>;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
@@ -55,6 +57,8 @@ export function UserProvider({ children }: ContextInterface) {
   });
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [userOnline, setUserOnline] = useState<TypeUser>();
+  //boulean easterEgg
+  const [isEasterEgg, setIsEasterEgg] = useState(false);
 
   // Verification du Token --------------------------------------
   useEffect(() => {
@@ -246,6 +250,8 @@ export function UserProvider({ children }: ContextInterface) {
         isAdmin,
         setIsAdmin,
         userOnline,
+        isEasterEgg,
+        setIsEasterEgg,
       }}
     >
       {children}
