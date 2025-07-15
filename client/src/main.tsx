@@ -19,6 +19,7 @@ import Mixer from "./pages/Mixer/Mixer.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Details from "./pages/RecipeDetails/Detail.tsx";
 import Recipe from "./pages/RecipeDetails/Recipe.tsx";
+// import MemberRegisteredList from "./pages/Account/MemberRegisteredList.tsx";
 // Try creating these components in the "pages" folder
 
 // import About from "./pages/About";

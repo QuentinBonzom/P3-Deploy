@@ -47,6 +47,7 @@ function List() {
           //console.log(recipeToMap);
           setRecipe(recipeToMap);
         });
+
       fetch(
         `${import.meta.env.VITE_API_URL}/api/ingredient/recipe/${item.recipeId}`,
       )
@@ -72,7 +73,6 @@ function List() {
             ),
           );
 
-          console.log(newIngredients);
           setIngredients(newIngredients);
         });
     });
@@ -86,7 +86,7 @@ function List() {
       const token = localStorage.getItem("token");
       console.log(currentList);
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/list/${userOnline?.id}`,
+        `${import.meta.env.VITE_API_URL}/api/member/${userOnline?.id}/list`,
         {
           method: "POST",
           headers: {

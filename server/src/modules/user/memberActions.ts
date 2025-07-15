@@ -120,9 +120,9 @@ const deleteMemberAsAdmin: RequestHandler = async (req, res, next) => {
   try {
     // On récupère l'ID du membre à supprimer depuis les paramètres de la requête
     const MemberId = req.query.idToDelete;
-    console.log("requete", req);
+    // console.log("requete", req);
     const adminId = Number(req.params.id);
-    console.log("adminId", adminId);
+    // console.log("adminId", adminId);
     // Si l'ID est dans les paramètres, on le prend, sinon on prend l'ID du token
     // On vérifie si l'utilisateur a le droit de supprimer le compte
     // Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
@@ -162,17 +162,15 @@ const checkId: RequestHandler = async (req, res, next) => {
 
 const editMember: RequestHandler = async (req, res, next) => {
   try {
-    const memberId = Number(req.userId); // On prend l'ID du token
+    const memberId = Number(req.userId);
     const { name, email, password } = req.body;
-    //  On vérifie si l'utilisateur a le droit de modifier le compte
-    //  Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
     const updated = await memberRepository.update(memberId, {
       name,
       email,
       password: password || undefined,
     });
     if (!updated) res.status(404).json({ message: "Utilisateur introuvable" });
-    res.json(updated);
+    res.status(200).json(updated);
     return;
   } catch (err) {
     next(err);
@@ -223,20 +221,21 @@ const readMemberProfile: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
-// const rate: RequestHandler = async (req, res, next) => {
-//   try {
-//     const memberId = Number(req.params.id);
-//     const favorites = await memberRepository.favoriteList(memberId);
 
-//     if (favorites == null) {
-//       res.sendStatus(404);
-//     } else {
-//       res.json(favorites);
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+const readRegisteredList: RequestHandler = async (req, res, next) => {
+  try {
+    const memberId = Number(req.params.id);
+    const registered = await memberRepository.registeredList(memberId);
+
+    if (registered == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(registered);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
 
 const UpdateAdminStatus: RequestHandler = async (req, res, next) => {
   try {
@@ -270,9 +269,8 @@ export default {
   deleteMemberAsAdmin,
   editMember,
   readFavorite,
-  // rate,
+  readRegisteredList,
   readCommented,
   readMemberProfile,
-
   UpdateAdminStatus,
 };

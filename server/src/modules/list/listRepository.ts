@@ -35,18 +35,5 @@ class ListRepository {
     );
     return results.map((result) => result.rows[0]?.id);
   }
-
-  async memberList(userId: number) {
-    const result = await databaseClient.query(
-      `
-      SELECT id
-      FROM list
-      
-      WHERE user_id = $1
-    `,
-      [userId],
-    );
-    return result.rows;
-  }
 }
 export default new ListRepository();

@@ -10,7 +10,6 @@ function MemberManage() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   //gestion role admin
@@ -19,7 +18,7 @@ function MemberManage() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/member/${member.id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/${member.id}`,
         {
           method: "PATCH",
           headers: {

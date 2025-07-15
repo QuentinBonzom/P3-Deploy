@@ -117,22 +117,28 @@ function CreateRecipe() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recipe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        recipe: {
-          ...formData,
-          time_preparation: Number.parseInt(formData.time_preparation),
-          kcal: Number.parseInt(formData.kcal),
-          id_category: Number.parseInt(formData.id_category),
-          id_diet: Number.parseInt(formData.id_diet),
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/admin/recipe`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
         },
-        ingredients: selectedIngredients,
-        ustensils: selectedUstensils.map((u) => u.id), // envoie uniquement les IDs
-      }),
-    });
+        body: JSON.stringify({
+          recipe: {
+            ...formData,
+            time_preparation: Number.parseInt(formData.time_preparation),
+            kcal: Number.parseInt(formData.kcal),
+            id_category: Number.parseInt(formData.id_category),
+            id_diet: Number.parseInt(formData.id_diet),
+          },
+          ingredients: selectedIngredients,
+          ustensils: selectedUstensils.map((u) => u.id), // envoie uniquement les IDs
+        }),
+      },
+    );
 
     const data = await response.json();
     const recipeId = data?.id;

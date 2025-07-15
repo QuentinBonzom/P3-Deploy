@@ -2,7 +2,7 @@ import { useUser } from "@/context/UserContext";
 import { useEffect, useState } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-interface Favorite {
+interface FavoriteType {
   recipe_id: number;
   name: string;
   picture: string;
@@ -13,7 +13,7 @@ interface Favorite {
 
 function MemberFavoriteList() {
   const { idUserOnline } = useUser();
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteType[]>([]);
 
   useEffect(() => {
     fetch(
@@ -29,7 +29,7 @@ function MemberFavoriteList() {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
-        return response.json() as Promise<Favorite[]>;
+        return response.json() as Promise<FavoriteType[]>;
       })
       .then((data) => {
         setFavorites(data);
