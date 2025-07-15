@@ -2,7 +2,7 @@ import type { TypeUstensil } from "@/types/TypeFiles";
 
 function UstensilRecipe({ ustensil }: { ustensil: TypeUstensil[] | null }) {
   return (
-    <section className="flex p-6 gap-4">
+    <section className="flex p-6 gap-4 flex-wrap justify-around">
       {ustensil?.map((ustensil) => (
         <div
           key={ustensil.ustensil_id}

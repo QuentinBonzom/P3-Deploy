@@ -246,7 +246,7 @@ function Recettes() {
       </section>
 
       {/* Affichage des cartes de recettes */}
-      <div className="w-full max-w-7xl mx-auto px-4">
+      <div className="w-full max-w-7xl mx-auto px-4 my-8">
         {/* Affiche une page de 9 recettes en responsive (1 colonne mobile, 2 tablette, 3 desktop) */}
         <div className="grid gap-6 justify-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {recipesPage.map((recipe) => (
