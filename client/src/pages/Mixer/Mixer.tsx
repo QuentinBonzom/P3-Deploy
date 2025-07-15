@@ -91,9 +91,14 @@ function Mixer() {
   function handleMixLogo() {
     if (isEasterEgg) {
       setIsEasterEgg(false);
-      setIsInMixer(true);
+
       setMixing(true);
       document.body.style.cursor = "default";
+      setTimeout(() => {
+        setMixing(false);
+        setIsInMixer(true);
+      }, 2000);
+
       console.log(isInMixer);
     }
   }
@@ -215,6 +220,7 @@ function Mixer() {
       )}
       {/* Recettes dessous */}
       <div className="w-full my-16 flex gap-4 overflow-x-scroll px-6 justify-center">
+        {isInMixer ? <img src={"/rechercher.png"} alt="loupe" /> : null}
         {recipes.length === 0 && <p>Aucune recette</p>}
         {recipes.map((r) => (
           <RecipeCard
