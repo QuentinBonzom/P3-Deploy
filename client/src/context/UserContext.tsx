@@ -119,7 +119,6 @@ export function UserProvider({ children }: ContextInterface) {
 
       // navigate("/Compte");
       window.location.reload();
-
     } else {
       setIsConnected(false);
       setIdUserOnline(null);
