@@ -12,14 +12,16 @@ type Recipe = {
   diet_name: string;
   rate?: number;
 };
+interface RecipeCardProps {
+  recipe: Recipe;
+  onClick?: () => void;
+}
 
 const CARD_WIDTH = "340px";
 const CARD_HEIGHT = "480px";
-const RecipeCard = ({
-  recipe,
-  onClick,
-}: { recipe: Recipe; onClick?: () => void }) => (
-  <div
+const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => (
+  <button
+    type="button"
     className="group relative flex flex-col bg-white rounded-3xl  border-2 border-[#dd682d] overflow-hidden transition-transform hover:scale-105 hover:shadow-[0_8px_32px_0_rgba(221,104,45,0.25)]"
     style={{
       minWidth: CARD_WIDTH,
@@ -92,6 +94,7 @@ const RecipeCard = ({
       <div className="flex items-end justify-center mt-auto">
         <button
           type="button"
+          
           className="mt-4 mx-auto flex items-center gap-2 bg-primary text-white font-bold px-5 py-2 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-200 text-base focus:outline-none focus:ring-2 focus:ring-primary"
           tabIndex={-1}
           onClick={(e) => {
@@ -105,7 +108,7 @@ const RecipeCard = ({
     </div>
     {/* Effet hover : overlay coloré */}
     <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl" />
-  </div>
+  </button>
 );
 
 export default RecipeCard;
