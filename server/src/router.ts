@@ -57,7 +57,7 @@ router.post("/api/login", memberActions.login); //l'action "login" permet de ce 
 
 //Zone Membre ----------------------
 
-router.get("/api/member", memberActions.checkId); // token Check
+
 router.patch("/api/member", memberActions.editMember); // modification du profile membre
 router.get("/api/member/:id/profile", memberActions.readMemberProfile); // pour afficher le profile d'un membre
 router.get("/api/member/:id/favorite", memberActions.readFavorite); // liste des recettes favorites d'un membre
