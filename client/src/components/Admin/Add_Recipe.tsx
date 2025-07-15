@@ -8,6 +8,7 @@ import type {
   TypeUstensil,
 } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 function CreateRecipe() {
   //contient toutes les données du formulaire de la recette et initialise avec un objet vide
@@ -152,7 +153,9 @@ function CreateRecipe() {
       });
     }
 
-    alert("Recette enregistrée !");
+    toast.success("Recette enregistrée avec succès", {
+      style: { background: "#452a00", color: "#fde9cc" },
+    });
     setFormData({
       name: "",
       description: "",

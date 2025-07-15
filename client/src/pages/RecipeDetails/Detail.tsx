@@ -15,6 +15,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 function DetailsRecipe() {
   const recipeId = Number(localStorage.getItem("recipeId"));
@@ -30,7 +31,6 @@ function DetailsRecipe() {
   );
   const { isConnected, idUserOnline, isAdmin } = useUser();
   const [showEdit, setShowEdit] = useState(false);
-
 
   // Fetch the recipe details using the recipeId
   useEffect(() => {
@@ -57,7 +57,6 @@ function DetailsRecipe() {
       });
   }, [recipeId]);
 
-
   //diminuer le nbr de personnes avec limite basse a 1
   function handleLess() {
     if (numberPersons > 1) {
@@ -69,7 +68,9 @@ function DetailsRecipe() {
 
   function handleUserRate(rate: number) {
     if (!isConnected) {
-      alert("Vous devez être connecté pour donner une note.");
+      toast.error("Vous devez être connecté pour ajouter une note", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
       navigate("/Compte");
     } else {
       fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe`, {
@@ -84,19 +85,25 @@ function DetailsRecipe() {
         }),
       }).then((response) => {
         if (response.ok) {
-          alert("Note ajoutée avec succès");
+          toast.success("Note ajoutée avec succès", {
+            style: { background: "#452a00", color: "#fde9cc" },
+          });
         } else {
-          alert("Erreur lors de l'ajout de la note");
+          toast.error("Erreur lors de l'ajout de la note", {
+            style: { background: "#452a00", color: "#fde9cc" },
+          });
         }
       });
     }
   }
 
-
   function handleShopping(recipeId: number, numberPersons: number) {
     if (!isConnected) {
-      alert(
-        "Vous devez être connecté pour ajouter des ingrédients à votre liste de courses.",
+      toast.warning(
+        "Vous devez être connecté pour ajouter des ingrédients à votre liste de courses",
+        {
+          style: { background: "#452a00", color: "#fde9cc" },
+        },
       );
       navigate("/Compte");
     } else {
@@ -110,6 +117,9 @@ function DetailsRecipe() {
       };
       currentList.push(thisRecipePersonns);
       localStorage.setItem("currentList", JSON.stringify(currentList));
+      toast.success("Votre liste de courses est bien mise à jour", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     }
   }
 
@@ -185,7 +195,6 @@ function DetailsRecipe() {
           />
           <article className="text-lg font-bold m-auto">
             {recipe?.time_preparation} min
-
           </article>
 
           <article className="flex items-center">
@@ -197,7 +206,7 @@ function DetailsRecipe() {
               {isFavorite ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
             </button>
           </article>
-        </div>
+        </article>
 
         <article className="flex justify-center items-center">
           <img

@@ -383,8 +383,6 @@ class recipeRepository {
   }
 
   async addComment(recipeId: number, userId: number, comment: string) {
-    console.log({ recipeId, userId, comment });
-
     const result = await databaseClient.query(
       `
       INSERT INTO action (recipe_id, user_id, comment)

@@ -41,7 +41,6 @@ const add: RequestHandler = async (req, res, next) => {
     };
 
     const passHash = bcrypt.hashSync(newMember.password, 8);
-    console.log(passHash);
 
     const hashMember = {
       name: newMember.name,
@@ -68,7 +67,6 @@ const login: RequestHandler = async (req, res, next) => {
   try {
     //req.user pour se connecter directement après inscription
     const user = req.user || (await memberRepository.login(req.body.email));
-    //console.log("user", user);
     if (user) {
       const isPasswordValid = bcrypt.compareSync(
         req.body.password,
@@ -120,9 +118,7 @@ const deleteMemberAsAdmin: RequestHandler = async (req, res, next) => {
   try {
     // On récupère l'ID du membre à supprimer depuis les paramètres de la requête
     const MemberId = req.query.idToDelete;
-    // console.log("requete", req);
     const adminId = Number(req.params.id);
-    // console.log("adminId", adminId);
     // Si l'ID est dans les paramètres, on le prend, sinon on prend l'ID du token
     // On vérifie si l'utilisateur a le droit de supprimer le compte
     // Si l'ID est dans les paramètres et qu'il ne correspond pas à l'ID du token, on refuse l'action
