@@ -42,6 +42,7 @@ router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
 router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
 router.get("/api/ingredient/recipe/:id", ingredientActions.recipeIngredient); //tout les ingrediends, quantité et unite pour une recette(id)
 router.get("/api/ustensil/recipe/:id", ustensilActions.recipeUstensil); //tout les ustensiles pour une recette(id)
+router.get("/api/ustensil", ustensilActions.getAllUstensils);
 
 //rate + comment + favorite
 
@@ -72,10 +73,9 @@ router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes
 router.get("/api/admin/member", memberActions.browse);
 router.get("/api/admin/recipes", recipeActions.listRecipesAdmin);
 router.delete("/api/admin/:id", memberActions.deleteMemberAsAdmin);
-router.patch("/api/admin/recipe/:id", recipeActions.update,);
+router.patch("/api/admin/recipe/:id", recipeActions.update);
 router.patch("/api/admin/:id", memberActions.UpdateAdminStatus); // Change le status d'un membre en (admin:true ou admin:false)
 router.post("/api/admin/recipe", recipeActions.add); //TODO check for issue linked to Ustensil
-
 
 /* ************************************************************************* */
 

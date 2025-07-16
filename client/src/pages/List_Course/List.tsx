@@ -1,5 +1,6 @@
 import { useUser } from "@/context/UserContext";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import type { TypeIngredient, TypeRecipe } from "@/types/TypeFiles";
 
@@ -99,9 +100,9 @@ function List() {
         },
       );
       if (response.ok) {
-        const data = await response.json();
-        console.log("Liste validée", data);
-        alert("Liste validée avec succès");
+        toast.success("Liste validée avec succès", {
+          style: { background: "#452a00", color: "#fde9cc" },
+        });
         // vider la liste de courses
         localStorage.removeItem("currentList");
         setCurrentList([]);

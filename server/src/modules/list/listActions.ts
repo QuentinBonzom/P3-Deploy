@@ -7,7 +7,6 @@ const addList: RequestHandler = async (req, res, next) => {
     const userId = Number(req.params.id);
     // Extract the list from the request body
     const { list } = req.body;
-    // console.log("Received list:", list, "for user ID:", userId);
 
     // Validate that the list is an array
     if (!Array.isArray(list)) {
