@@ -20,10 +20,14 @@ export function useHandleFavorite(recipeId: number, initialValue: boolean) {
     const nextValue = !isFavorite;
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/favorite/recipe`,
+        `${import.meta.env.VITE_API_URL}/api/member/favorite/recipe`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${localStorage.getItem("token") || ""}`,
+          },
+
           body: JSON.stringify({
             recipeId,
             userId: idUserOnline,

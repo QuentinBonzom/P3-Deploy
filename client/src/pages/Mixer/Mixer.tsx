@@ -219,7 +219,6 @@ function Mixer() {
         </div>
       )}
 
-
       {/* Affichage recettes */}
 
       <div className="w-full my-10">
@@ -236,8 +235,9 @@ function Mixer() {
               <p className="text-center w-full">Aucune recette</p>
             ) : (
               recipes.map((recipe) => (
-                <div
-                onClick={() => handleRecipeId(recipe.id)}
+                <button
+                  type="button"
+                  onClick={() => handleRecipeId(recipe.id)}
                   key={recipe.id}
                   className="snap-center flex-shrink-0"
                   style={{
@@ -246,7 +246,7 @@ function Mixer() {
                   }}
                 >
                   <RecipeCard recipe={recipe} />
-                </div>
+                </button>
               ))
             )}
           </div>
@@ -257,7 +257,11 @@ function Mixer() {
             <p className="col-span-full text-center">Aucune recette</p>
           ) : (
             recipes.map((recipe) => (
-              <RecipeCard onClick={() => handleRecipeId(recipe.id)} key={recipe.id} recipe={recipe} />
+              <RecipeCard
+                onClick={() => handleRecipeId(recipe.id)}
+                key={recipe.id}
+                recipe={recipe}
+              />
             ))
           )}
         </div>

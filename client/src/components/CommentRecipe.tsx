@@ -32,10 +32,11 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
         userId: userId,
       };
       //fetch pour poster la donnée dans la requete
-      fetch(`${import.meta.env.VITE_API_URL}/api/comment/recipe`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/member/comment/recipe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("token") || ""}`,
         },
         body: JSON.stringify(commentData),
       }).then((response) => {

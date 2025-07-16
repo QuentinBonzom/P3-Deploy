@@ -14,12 +14,11 @@ import ustensilActions from "./modules/ustensil/ustensilActions";
 /* ************************************************************************* */
 // Define Your API Routes Here
 /* ************************************************************************* */
-
 // Mur Middleware Securité-------------------------
-
 router.use("/api/member", security.checkToken); // middleware pour les routes membres
 router.use("/api/admin", securityAdmin.checkTokenAdmin); // middleware pour les routes admin
 
+//Public Actions
 router.get("/api/unity", unityActions.browse);
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
@@ -33,31 +32,22 @@ router.get("/api/recipe/time/:id", recipeActions.time);
 router.get("/api/recipe/difficulty/:id", recipeActions.difficulty);
 router.get("/api/accueil/category", recipeActions.accueilCategory);
 
-//ingredient + ustencils
+//ingredient + ustencils + rate
 
 router.get("/api/ingredient", ingredientActions.browse);
 router.get("/api/ingredients", ingredientActions.browse);
 router.get("/api/ingredients/by-type", ingredientActions.browseWithType);
 router.get("/api/recipe/by-ingredients", recipeActions.byIngredients);
-router.delete("/api/recipe/:id", recipeActions.deleteRecipe);
 router.get("/api/ingredient/recipe/:id", ingredientActions.recipeIngredient); //tout les ingrediends, quantité et unite pour une recette(id)
 router.get("/api/ustensil/recipe/:id", ustensilActions.recipeUstensil); //tout les ustensiles pour une recette(id)
 router.get("/api/ustensil", ustensilActions.getAllUstensils);
-
-//rate + comment + favorite
-
-router.post("/api/rate/recipe", recipeActions.addRate); //pour ajouter une note sur une recette
 router.get("/api/rate/recipe/:id", recipeActions.rate); //pour afficher la note et les commentaires d'une recette
-router.post("/api/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
-router.post("/api/favorite/recipe", recipeActions.updateFavorite); //pour ajouter une recette aux favoris")
 
 //Authentification
 
 router.post("/api/signup", memberActions.add, memberActions.login); // le "Add" permet de rajouter le compte et l'action "login" de ce log directement avec un token.
 router.post("/api/login", memberActions.login); //l'action "login" permet de ce log directement avec un token si membre existant.
-
 //Zone Membre ----------------------
-
 router.patch("/api/member", memberActions.editMember); // modification du profile membre
 router.get("/api/member/:id/profile", memberActions.readMemberProfile); // pour afficher le profile d'un membre
 router.get("/api/member/:id/favorite", memberActions.readFavorite); // liste des recettes favorites d'un membre
@@ -67,6 +57,9 @@ router.post("/api/member/:id/list", listActions.addList); //ajouter une liste de
 router.delete("/api/member/:id", memberActions.deleteAccount); //supression compte
 router.get("/api/member", memberActions.checkId); // token Check
 router.get("/api/member/:id", memberActions.readFavorite); // liste des recettes favorites d'un membre
+router.post("/api/member/rate/recipe", recipeActions.addRate); //pour ajouter une note sur une recette
+router.post("/api/member/comment/recipe", recipeActions.addComment); //pour ajouter un commentaire sur une recette
+router.post("/api/member/favorite/recipe", recipeActions.updateFavorite); //pour ajouter une recette aux favoris")
 
 //Zone Admin ----------------------
 

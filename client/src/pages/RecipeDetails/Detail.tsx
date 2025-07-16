@@ -73,10 +73,11 @@ function DetailsRecipe() {
       });
       navigate("/Compte");
     } else {
-      fetch(`${import.meta.env.VITE_API_URL}/api/rate/recipe`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/member/rate/recipe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("token") || ""}`,
         },
         body: JSON.stringify({
           recipeId,
