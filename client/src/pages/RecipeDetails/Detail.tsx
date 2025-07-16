@@ -31,7 +31,6 @@ function DetailsRecipe() {
   const { isConnected, idUserOnline, isAdmin } = useUser();
   const [showEdit, setShowEdit] = useState(false);
 
-
   // Fetch the recipe details using the recipeId
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/recipe/detail/${recipeId}`)
@@ -56,7 +55,6 @@ function DetailsRecipe() {
         setComments(data.comments);
       });
   }, [recipeId]);
-
 
   //diminuer le nbr de personnes avec limite basse a 1
   function handleLess() {
@@ -91,7 +89,6 @@ function DetailsRecipe() {
       });
     }
   }
-
 
   function handleShopping(recipeId: number, numberPersons: number) {
     if (!isConnected) {
@@ -185,7 +182,6 @@ function DetailsRecipe() {
           />
           <article className="text-lg font-bold m-auto">
             {recipe?.time_preparation} min
-
           </article>
 
           <article className="flex items-center">
@@ -197,7 +193,7 @@ function DetailsRecipe() {
               {isFavorite ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
             </button>
           </article>
-        </div>
+        </article>
 
         <article className="flex justify-center items-center">
           <img
