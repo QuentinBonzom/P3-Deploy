@@ -52,12 +52,6 @@ export function LoginForm({
                       >
                         Mot de passe
                       </Label>
-                      <a
-                        href="#password" // ---------------------------------------------------------------ATTENTION !!!!!!
-                        className="ml-auto text-sm underline-offset-2 hover:underline text-secondary"
-                      >
-                        Mot de passe oublié
-                      </a>
                     </div>
 
                     <Input
@@ -66,6 +60,9 @@ export function LoginForm({
                       type="password"
                       value={password}
                       className="block text-secondary mb-1"
+                      minLength={3}
+                      maxLength={64}
+                      title="8 caractères minimum"
                       required
                     />
                   </div>
