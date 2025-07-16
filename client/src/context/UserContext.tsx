@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 //Interface pour Children Joker du Typage
 interface ContextInterface {
@@ -23,7 +24,9 @@ interface UserContextValue {
   isAdmin: boolean;
   idUserOnline: number | null;
   userOnline?: TypeUser; // Optional, can be undefined
+  isEasterEgg: boolean;
   // setUserOnline: React.Dispatch<React.SetStateAction<string>>; // Commented out or remove if not used elsewhere
+  setIsEasterEgg: React.Dispatch<React.SetStateAction<boolean>>;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
@@ -55,6 +58,8 @@ export function UserProvider({ children }: ContextInterface) {
   });
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [userOnline, setUserOnline] = useState<TypeUser>();
+  //boulean easterEgg
+  const [isEasterEgg, setIsEasterEgg] = useState(false);
 
   // Verification du Token --------------------------------------
   useEffect(() => {
@@ -77,7 +82,6 @@ export function UserProvider({ children }: ContextInterface) {
       })
         .then((response) => response.json())
         .then((data) => {
-          //console.log(data);
           if (data.message !== " Unauthorized") {
             setUserOnline(data);
             setIsConnected(true);
@@ -92,7 +96,6 @@ export function UserProvider({ children }: ContextInterface) {
     }
   }, []);
 
-  // console.log(isAdmin);
   // Creation du Token -----------------------------------------
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -107,11 +110,9 @@ export function UserProvider({ children }: ContextInterface) {
 
     if (response.ok) {
       const data = await response.json();
-      // console.log(data);
       localStorage.setItem("token", data.token); // stocké en string
       setIsConnected(true);
       setIsAdmin(data.admin);
-      // console.log("isAdmin", data.admin);
       setIdUserOnline(data.userId);
 
       setUserOnline(data);
@@ -124,13 +125,14 @@ export function UserProvider({ children }: ContextInterface) {
       setIdUserOnline(null);
       setUserOnline(undefined);
       navigate("/Compte");
-      alert("Compte inconnu");
+      toast.error("Identifiant ou mot de passe incorrect", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     }
   }
 
   async function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(user);
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/signup`, {
       method: "POST",
       headers: {
@@ -145,6 +147,9 @@ export function UserProvider({ children }: ContextInterface) {
       setIdUserOnline(data.userId);
       setUserOnline(data);
       navigate("/Compte");
+      toast.success("Compte créé avec succès", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     }
   }
 
@@ -168,7 +173,10 @@ export function UserProvider({ children }: ContextInterface) {
   async function handleUpdateMember(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    if (!token) return alert("Non connecté !");
+    if (!token)
+      return toast.warning("Non connecté", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/member`, {
         method: "PATCH",
@@ -185,13 +193,19 @@ export function UserProvider({ children }: ContextInterface) {
       if (!res.ok) {
         const err = await res.json();
         console.error(err);
-        return alert("Erreur lors de la mise à jour du profil.");
+        return toast.error("Erreur lors de la mise à jour du profil", {
+          style: { background: "#452a00", color: "#fde9cc" },
+        });
       }
       const response = await res.json();
       setUser((prev) => ({ ...prev, ...response, password: "" }));
-      alert("Profil mis à jour !");
+      toast.success("Profil mis à jour", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     } catch (err) {
-      alert("Erreur réseau");
+      toast.warning("Erreur réseau", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     }
   }
 
@@ -199,6 +213,7 @@ export function UserProvider({ children }: ContextInterface) {
     if (!window.confirm("Voulez-vous vraiment supprimer votre compte ?"))
       return;
     const token = localStorage.getItem("token");
+    0;
 
     if (!token) return;
     try {
@@ -212,9 +227,13 @@ export function UserProvider({ children }: ContextInterface) {
       if (!res.ok) {
         const err = await res.json();
         console.error(err);
-        return alert("Erreur lors de la suppression du compte.");
+        return toast.error("Erreur lors de la suppréssion du compte", {
+          style: { background: "#452a00", color: "#fde9cc" },
+        });
       }
-      alert("Compte supprimé !");
+      toast.success("Compte supprimé avec succès", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
       localStorage.removeItem("token");
       setIsConnected(false);
       // Optionally redirect
@@ -223,7 +242,6 @@ export function UserProvider({ children }: ContextInterface) {
       alert("Erreur réseau");
     }
   }
-  // console.log(isConnected);
   //return provider avec tout les UseState/ logique / fetch Applicable sur les composants ou App.tsx consommant le context
   return (
     <UserContext.Provider
@@ -246,6 +264,8 @@ export function UserProvider({ children }: ContextInterface) {
         isAdmin,
         setIsAdmin,
         userOnline,
+        isEasterEgg,
+        setIsEasterEgg,
       }}
     >
       {children}
