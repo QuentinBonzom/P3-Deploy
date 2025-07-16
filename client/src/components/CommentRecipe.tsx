@@ -1,6 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 interface CommentInterface {
   text: string;
@@ -16,7 +17,9 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
     // Prevent default form submission
     e.preventDefault();
     if (!isConnected) {
-      alert("Vous devez être connecté pour ajouter un commentaire.");
+      toast.error("Vous devez être connecté pour ajouter un commentaire", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
       navigate("/Compte");
     } else {
       //update or create comment with recipeId, userId
@@ -28,7 +31,6 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
         recipeId: recipeId,
         userId: userId,
       };
-      console.log(JSON.stringify(commentData), commentData);
       //fetch pour poster la donnée dans la requete
       fetch(`${import.meta.env.VITE_API_URL}/api/member/comment/recipe`, {
         method: "POST",
@@ -39,11 +41,15 @@ function CommentRecipe({ comments }: { comments: CommentInterface[] }) {
         body: JSON.stringify(commentData),
       }).then((response) => {
         if (response.ok) {
-          alert("Commentaire ajouté avec succès");
+          toast.success("Commentaire ajouté avec succès", {
+            style: { background: "#452a00", color: "#fde9cc" },
+          });
           window.location.reload();
         } else {
           // Handle error
-          alert("Erreur lors de l'ajout du commentaire");
+          toast.error("Erreur lors de l'ajout du commentaire", {
+            style: { background: "#452a00", color: "#fde9cc" },
+          });
         }
       });
     }

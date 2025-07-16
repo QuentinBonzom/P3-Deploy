@@ -17,6 +17,8 @@ import ustensilActions from "./modules/ustensil/ustensilActions";
 // Mur Middleware Securité-------------------------
 router.use("/api/member", security.checkToken); // middleware pour les routes membres
 router.use("/api/admin", securityAdmin.checkTokenAdmin); // middleware pour les routes admin
+
+//Public Actions
 router.get("/api/unity", unityActions.browse);
 router.get("/api/diet", dietActions.browse);
 router.get("/api/category", categoryActions.browse);
