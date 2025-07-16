@@ -162,7 +162,7 @@ export function UserProvider({ children }: ContextInterface) {
     setIdUserOnline(null);
     setUserOnline(undefined);
     localStorage.removeItem("currentList");
-    // window.location.reload();
+    window.location.reload();
   }
 
   async function handleUpdateMember(e: React.FormEvent<HTMLFormElement>) {

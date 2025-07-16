@@ -12,23 +12,15 @@ type Recipe = {
   diet_name: string;
   rate?: number;
 };
+interface RecipeCardProps {
+  recipe: Recipe;
+  onClick?: () => void;
+}
 
-const CARD_WIDTH = "340px";
-const CARD_HEIGHT = "480px";
-const RecipeCard = ({
-  recipe,
-  onClick,
-}: { recipe: Recipe; onClick?: () => void }) => (
-  <div
-    className="group relative flex flex-col bg-white rounded-3xl  border-2 border-[#dd682d] overflow-hidden transition-transform hover:scale-105 hover:shadow-[0_8px_32px_0_rgba(221,104,45,0.25)]"
-    style={{
-      minWidth: CARD_WIDTH,
-      maxWidth: CARD_WIDTH,
-      minHeight: CARD_HEIGHT,
-      maxHeight: CARD_HEIGHT,
-      width: CARD_WIDTH,
-      height: CARD_HEIGHT,
-    }}
+const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => (
+  <button
+    type="button"
+    className="group relative flex flex-col bg-white rounded-3xl border-2 border-[#dd682d] overflow-hidden transition-transform hover:scale-105 hover:shadow-[0_8px_32px_0_rgba(221,104,45,0.25)] w-full max-w-xs h-[480px] mx-auto"
     onClick={onClick}
     tabIndex={onClick ? 0 : undefined}
     role={onClick ? "button" : undefined}
@@ -105,7 +97,7 @@ const RecipeCard = ({
     </div>
     {/* Effet hover : overlay coloré */}
     <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl" />
-  </div>
+  </button>
 );
 
 export default RecipeCard;
