@@ -24,11 +24,6 @@ export default function FiltresRecipe({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // // Ajoute ce log pour vérifier les options reçues
-  // useEffect(() => {
-  //   console.log(`[FiltresRecipe] ${label} options:`, options);
-  // }, [options, label]);
-
   return (
     <div className="relative" ref={ref}>
       <button

@@ -1,14 +1,14 @@
 function About() {
   return (
     <>
-      <section className="px-6 md:px-35 lg:px-40">
+      <section className="px-6 md:mx-30 lg:mx-50 xl:mx-120">
         <h1 className="font-bold text-2xl text-center mt-10 pb-5">
           EasyCook, c’est quoi ?
         </h1>
         <h2 className="text-secondary text-lg pt-5 pb-2">
           Votre assistant cuisine
         </h2>
-        <p className="pb-10 text-justify">
+        <p className="pb-5 text-justify">
           Notre plateforme vous permet de découvrir des recettes simples,
           variées et savoureuses, adaptées à tous les goûts et à tous les
           niveaux. Vous pouvez sélectionner vos plats préférés pour la semaine
@@ -21,12 +21,7 @@ function About() {
           équilibrée, sans stress ni prise de tête. Nous mettons la technologie
           au service du goût et de la praticité.
         </p>
-        <img
-          className="flex items-center rounded-md w-96"
-          src="./about.jpg"
-          alt="about"
-        />
-        <h2 className="text-secondary text-lg pt-10 pb-2">Notre vision</h2>
+        <h2 className="text-secondary text-lg pt-5 pb-2">Notre vision</h2>
         <p className="pb-10 text-justify">
           Nous croyons profondément que cuisiner doit rester un plaisir, et non
           une contrainte. Dans un monde où le rythme de vie s’accélère, où les
@@ -45,6 +40,14 @@ function About() {
           l’action (la liste de courses), nous participons à une alimentation
           plus consciente, plus joyeuse, et plus durable.
         </p>
+        <img
+          className="md:hidden flex items-center rounded-md w-96 mb-10"
+          src="./about.jpg"
+          alt="about"
+        />
+        <div className="hidden md:flex justify-center mb-10">
+          <img className="rounded-md w-350" src="./aboutok.png" alt="about" />
+        </div>
       </section>
     </>
   );

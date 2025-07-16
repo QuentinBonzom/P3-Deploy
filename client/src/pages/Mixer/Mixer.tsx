@@ -1,9 +1,14 @@
+import { useUser } from "@/context/UserContext";
 import { useEffect, useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
+import { useNavigate } from "react-router";
 import RecipeCard from "../../components/RecipeCard";
 
 function Mixer() {
+  const { isEasterEgg, setIsEasterEgg } = useUser();
+  const [isInMixer, setIsInMixer] = useState(false);
+  const navigate = useNavigate();
   type Ingredient = {
     ingredient_id: number;
     ingredient_name: string;
@@ -78,6 +83,26 @@ function Mixer() {
     }, 2200);
   };
 
+  function handleRecipeId(recipeId: number) {
+    localStorage.setItem("recipeId", recipeId.toString());
+    navigate("/Details");
+  }
+
+  function handleMixLogo() {
+    if (isEasterEgg) {
+      setIsEasterEgg(false);
+
+      setMixing(true);
+      document.body.style.cursor = "default";
+      setTimeout(() => {
+        setMixing(false);
+        setIsInMixer(true);
+      }, 2000);
+
+      console.log(isInMixer);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center mx-4">
       <div className="flex flex-col gap-6 mt-8 w-full max-w-5xl px-2 md:flex-row md:justify-center md:items-start">
@@ -150,6 +175,12 @@ function Mixer() {
         <div className="max-w-md flex flex-col items-center justify-center bg-[#f9e7cf] rounded-2xl px-3 shadow border-2 border-[#2d1c0b]/10 mx-auto mt-6 md:mt-0 pb-5 pt-8">
           <div className="relative w-[320px] h-[420px] flex justify-center items-end">
             <img
+              onClick={() => handleMixLogo()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleMixLogo();
+                }
+              }}
               src={mixerImg}
               alt="Mixeur"
               className={`absolute left-1/2 -translate-x-1/2 z-10 w-50 md:w-60 bottom-15 ${mixing ? "shake" : ""}`}
@@ -204,7 +235,9 @@ function Mixer() {
               <p className="text-center w-full">Aucune recette</p>
             ) : (
               recipes.map((recipe) => (
-                <div
+                <button
+                  type="button"
+                  onClick={() => handleRecipeId(recipe.id)}
                   key={recipe.id}
                   className="snap-center flex-shrink-0"
                   style={{
@@ -213,7 +246,7 @@ function Mixer() {
                   }}
                 >
                   <RecipeCard recipe={recipe} />
-                </div>
+                </button>
               ))
             )}
           </div>
@@ -224,7 +257,11 @@ function Mixer() {
             <p className="col-span-full text-center">Aucune recette</p>
           ) : (
             recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard
+                onClick={() => handleRecipeId(recipe.id)}
+                key={recipe.id}
+                recipe={recipe}
+              />
             ))
           )}
         </div>

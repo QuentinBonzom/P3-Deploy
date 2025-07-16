@@ -1,24 +1,24 @@
 export interface TypeRecipe {
-  numberPersons: number;
+  numberPersons?: number;
   id: number;
   name: string;
-  time_preparation: number;
-  description: string;
-  difficulty: string;
-  picture: string;
-  step1: string;
-  step2: string;
-  step3: string;
-  step4: string;
-  step5: string;
-  step6: string;
-  step7: string;
-  kcal: number;
-  recipe_name: string;
+  time_preparation?: number;
+  description?: string;
+  difficulty?: string;
+  picture?: string;
+  step1?: string;
+  step2?: string;
+  step3?: string;
+  step4?: string;
+  step5?: string;
+  step6?: string;
+  step7?: string;
+  kcal?: number;
+  recipe_name?: string;
   rate: number;
-  diet_name: string;
-  id_category: number;
-  id_diet: number;
+  diet_name?: string;
+  id_category?: number;
+  id_diet?: number;
 }
 
 export interface TypeDiet {
@@ -54,9 +54,9 @@ export interface TypeIngredient {
 
 export interface TypeUnity {
   id: number;
-  value: number;
+  value?: number;
   name: string;
-  unity_id: number;
+  unity_id?: number;
 }
 
 export interface TypeAction {
@@ -103,11 +103,11 @@ export interface newMember {
 }
 
 export interface Member {
-  name?: string;
-  email?: string;
+  name: string;
+  email: string;
   id: number;
-  admin?: boolean;
-  password?: string;
+  admin: boolean;
+  password: string;
   inscription?: string;
 }
 

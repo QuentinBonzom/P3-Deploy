@@ -1,8 +1,7 @@
 import { useUser } from "@/context/UserContext";
 import type { Member } from "@/types/TypeFiles";
 import { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "sonner";
 
 function MemberManage() {
   const { idUserOnline } = useUser();
@@ -34,12 +33,16 @@ function MemberManage() {
           m.id === member.id ? { ...m, admin: !member.admin } : m,
         ),
       );
-      toast.success("Statut admin mis à jour", { autoClose: 5000 });
+      toast.success("Statut admin mis à jour", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
       setSelectedMember((prev) =>
         prev ? { ...prev, admin: !prev.admin } : prev,
       );
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour admin", { autoClose: 5000 });
+      toast.error("Erreur lors de la mise à jour admin", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     } finally {
       setLoading(false);
     }
@@ -58,12 +61,16 @@ function MemberManage() {
       );
       if (!response.ok) throw new Error("Erreur lors de la suppression");
       setMemberMap((prev) => prev.filter((member) => member.id !== memberId));
-      toast.success("Utilisateur supprimé", { autoClose: 5000 });
+      toast.error("Utilisateur supprimé", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
       setShowDeleteModal(false);
       setShowModal(false);
       setSelectedMember(null);
     } catch (error) {
-      toast.error("Suppression échouée", { autoClose: 5000 });
+      toast.error("Suppression échouée", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
     }
   };
 
@@ -87,7 +94,9 @@ function MemberManage() {
         const data = await response.json();
         if (Array.isArray(data)) setMemberMap(data);
       } catch (error) {
-        toast.error("Erreur de récupération des membres", { autoClose: 5000 });
+        toast.error("Erreur lors de la récupération des membres", {
+          style: { background: "#452a00", color: "#fde9cc" },
+        });
       }
     };
     fetchMembers();
@@ -227,7 +236,6 @@ function MemberManage() {
           </div>
         </div>
       )}
-      <ToastContainer position="top-right" />
     </div>
   );
 }

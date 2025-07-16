@@ -9,7 +9,6 @@ interface JWTPayload {
 const checkToken: RequestHandler = (req, res, next) => {
   //variable token qui est une requete du headers et controle le token coté client.
   const token = req.headers.authorization;
-  //console.log(token);
 
   if (!token) {
     res.status(401).send({ message: "Unauthorized" });

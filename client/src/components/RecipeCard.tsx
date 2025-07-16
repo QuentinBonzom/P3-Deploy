@@ -4,12 +4,12 @@ import { FaUtensils } from "react-icons/fa6";
 type Recipe = {
   id: number;
   name: string;
-  picture: string;
+  picture?: string;
   description?: string;
-  kcal: number;
+  kcal?: number;
   time_preparation?: string | number;
-  difficulty: string;
-  diet_name: string;
+  difficulty?: string;
+  diet_name?: string;
   rate?: number;
 };
 interface RecipeCardProps {
@@ -21,6 +21,7 @@ const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => (
   <button
     type="button"
     className="group relative flex flex-col bg-white rounded-3xl border-2 border-[#dd682d] overflow-hidden transition-transform hover:scale-105 hover:shadow-[0_8px_32px_0_rgba(221,104,45,0.25)] w-full max-w-xs h-[480px] mx-auto"
+
     onClick={onClick}
     tabIndex={onClick ? 0 : undefined}
     role={onClick ? "button" : undefined}

@@ -27,7 +27,9 @@ function Contact_Form() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
 
-      toast.success("Message sent successfully!");
+      toast.success("Message envoyé avec succès", {
+        style: { background: "#452a00", color: "#fde9cc" },
+      });
       reset();
     } catch (error) {
       toast.error("Erreur lors de l'envoi. Veuillez réessayer.");

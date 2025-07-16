@@ -34,20 +34,26 @@ function MemberAccountPage() {
   }, [idUserOnline]);
 
   return (
-    <section>
+    <section className="mb-6 bg-[#f9e7cf] shadow-lg rounded-2xl px-2 border-2 border-[#e6d9be] min-w-[260px] max-w-xs">
       {profile.map((pro) => (
-        <article key={pro.id}>
-          <h2>{pro.name}</h2>
+        <article className="flex flex-col items-center" key={pro.id}>
+          <h2 className="p-4 text-center">Bonjour {pro.name}</h2>
           {isAdmin ? (
-            <button type="button" className="bg-green-700 px-2 py-1 rounded-xl">
-              Admin
+            <button
+              type="button"
+              className="bg-green-700 px-5 py-2 mb-3 rounded-xl"
+            >
+              Statut : admin
             </button>
           ) : (
-            <button type="button" className="bg-blue-700 px-2 py-1 rounded-xl">
-              Member
+            <button
+              type="button"
+              className="bg-blue-700 px-5 py-2 mb-3 rounded-xl"
+            >
+              Statut : membre
             </button>
           )}
-          <p>Email : {pro.email}</p>
+          <p className="m-5 text-center font-semibold">Email : {pro.email}</p>
         </article>
       ))}
     </section>
